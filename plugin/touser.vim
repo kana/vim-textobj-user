@@ -21,6 +21,7 @@ function! TOUser_Move(pattern, flags)
   let i = v:count1
   while 0 < i
     let result = searchpos(a:pattern, a:flags.'W')
+    let i = i - 1
   endwhile
   return result
 endfunction

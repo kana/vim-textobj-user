@@ -1,0 +1,68 @@
+*touser.txt*	Support for user-defined text objects
+
+Version 0.0
+Copyright (C) 2007 kana <http://nicht.s8.xrea.com/>
+License: MIT license (see <http://www.opensource.org/licenses/mit-license>)
+$Id$
+
+
+
+
+==============================================================================
+INTRODUCTION						*touser-introduction*
+
+touser is a Vim plugin to support user-defined text objects which can be
+defined by regular expression.
+
+
+
+
+==============================================================================
+FUNCTIONS						*touser-function*
+
+TOUser_Move({pattern}, {flags})				*TOUser_Move()*
+	Move the cursor to the appropriate object defined by {pattern}.
+
+	{flags} is a string, which can contain the following character flags:
+	'b'     search backward instead of forward.
+	'e'     move to the end of the match.
+
+	Return value is not defined.
+
+TOUser_Select({pattern}, {flags})			*TOUser_Select()*
+	Select the appropriate object defined by {pattern}.
+	If the cursor is already in the range of an object, select it.
+	If the cursor is not in the range of an object, select the nearest
+	object after the cursor.
+
+	{flags} is a string, which can contain the following character flags:
+	'b'     select the nearest object BEFORE the cursor if the cursor is
+	        not in the range of an object.
+
+	Return value is not defined.
+
+
+
+
+==============================================================================
+BUGS							*touser-bugs*
+
+- TOUser_Select() overrides the current {Visual},
+  unlike built-in text objects such as iw/aw, is/as, and so forth.
+
+- TOUser_Select() can not be used with [count].
+
+
+
+
+==============================================================================
+CHANGELOG						*touser-changelog*
+
+0.0	2007-10-11T17:03:00+09:00
+	- First release.
+
+
+
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:

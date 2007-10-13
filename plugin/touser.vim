@@ -53,6 +53,38 @@ function! TOUser_Select(pattern, flags)
 endfunction
 
 
+function! TOUser_Define(pattern, guideline)
+  for function_name in keys(a:guideline)
+    let _lhss = a:guideline[function_name]
+    if type(_lhss) == type('')
+      let lhss = [_lhss]
+    else
+      let lhss = _lhss
+    endif
+
+    for lhs in lhss
+      if function_name == 'move-to-next'
+        execute 'nnoremap' s:mapargs(lhs, 'Move', a:pattern, '')
+      elseif function_name == 'move-to-next-end'
+        execute 'nnoremap' s:mapargs(lhs, 'Move', a:pattern, 'e')
+      elseif function_name == 'move-to-prev'
+        execute 'nnoremap' s:mapargs(lhs, 'Move', a:pattern, 'b')
+      elseif function_name == 'move-to-prev-end'
+        execute 'nnoremap' s:mapargs(lhs, 'Move', a:pattern, 'be')
+      elseif function_name == 'select-next' || function_name == 'select'
+        execute 'vnoremap' s:mapargs(lhs, 'Select', a:pattern, '')
+        execute 'onoremap' s:mapargs(lhs, 'Select', a:pattern, '')
+      elseif function_name == 'select-prev'
+        execute 'vnoremap' s:mapargs(lhs, 'Select', a:pattern, 'b')
+        execute 'onoremap' s:mapargs(lhs, 'Select', a:pattern, 'b')
+      else
+        throw 'Unknown function name: ' . string(function_name)
+      endif
+    endfor
+  endfor
+endfunction
+
+
 
 
 
@@ -73,6 +105,14 @@ endfunction
 function! s:range_validp(pos_head, pos_tail)
   let NULL_POS = [0, 0]
   return (a:pos_head != NULL_POS) && (a:pos_tail != NULL_POS)
+endfunction
+
+
+
+
+function! s:mapargs(lhs, func, pattern, flags)
+  return printf('<silent> %s  :<C-u>call TOUser_%s(%s, %s)<Return>',
+              \ a:lhs, a:func, string(a:pattern), string(a:flags))
 endfunction
 
 

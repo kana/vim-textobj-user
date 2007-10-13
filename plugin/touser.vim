@@ -29,6 +29,7 @@ endfunction
 
 " FIXME: growing the current selection like iw/aw, is/as, and others.
 " FIXME: countable.
+" FIXME: In a case of a:pattern matches with one character.
 function! TOUser_Select(pattern, flags)
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
 

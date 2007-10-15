@@ -79,10 +79,12 @@ TOUser_Define({pattern}, {pattern1}, {pattern2}, {guideline})
 	'move-to-next-end'	TOUser_Move({pattern}, 'e')
 	'move-to-prev-end'	TOUser_Move({pattern}, 'be')
 	'select'		synonym for 'select-next'
-	'select-next'		TOUser_Select({pattern}, '')
-	'select-prev'		TOUser_Select({pattern}, 'b')
-	'select-pair-all'	TOUser_SelectPair({pattern1}, {pattern2}, 'a')
-	'select-pair-inner'	TOUser_SelectPair({pattern1}, {pattern2}, 'i')
+	'select-next'		TOUser_Select({pattern}, '', {previous-mode})
+	'select-prev'		TOUser_Select({pattern}, 'b', {previous-mode})
+	'select-pair-all'	TOUser_SelectPair({pattern1}, {pattern2}, 'a',
+				                  {previous-mode})
+	'select-pair-inner'	TOUser_SelectPair({pattern1}, {pattern2}, 'i',
+				                  {previous-mode})
 
 	Example: >
 		call TOUser_Define('foo', '', '',

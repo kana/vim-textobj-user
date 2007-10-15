@@ -41,6 +41,20 @@ TOUser_Select({pattern}, {flags})			*TOUser_Select()*
 
 	Return value is not defined.
 
+TOUser_SelectPair({pattern1}, {pattern2}, {flags})	*TOUser_SelectPair()*
+	Select the appropriate object which starts with {pattern1} and ends
+	with {pattern2}.
+
+	{flags} is a string, which can contain the following character flags:
+	'a'     select the range including {pattern1} and {pattern2},
+	        like |at|.
+	'i'     select the range excluding {pattern1} and {pattern2},
+		like |it|.  This is the default behavior unless 'a' is
+		explicitly specified.  If there is not text between {pattern1}
+		and {pattern2}, this function does nothing.
+
+	Return value is not defined.
+
 TOUser_Define({pattern}, {guideline})			*TOUser_Define()*
 	Support function to define key mappings for the text object defined by
 	{pattern}.  {guideline} is a dictionary consists of key-value pairs

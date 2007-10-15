@@ -48,10 +48,73 @@ function! TOUser_Select(pattern, flags)
     return [pos_head, pos_tail]
   else
     " call cursor(ORIG_POS)
+    " FIXME: on Operator-pending mode.
     normal! gv
     return 0
   endif
 endfunction
+
+
+
+
+" FIXME: NIY, but is this necessary?
+" function! TOUser_MovePair(pattern1, pattern2, flags)
+" endfunction
+
+
+function! TOUser_SelectPair(pattern1, pattern2, flags)
+  let ORIG_POS = s:gpos_to_spos(getpos('.'))
+
+  " adjust the cursor to the head of a:pattern2 if it's already in the range.
+  let pos2c_tail = searchpos(a:pattern2, 'ceW')
+  let pos2c_head = searchpos(a:pattern2, 'bcW')
+  if !s:range_validp(pos2c_head, pos2c_tail)
+    return s:TOUser_SelectPair_Failed()
+  endif
+  if s:range_containsp(pos2c_head, pos2c_tail, ORIG_POS)
+    let more_flags = 'c'
+  else
+    let more_flags = ''
+    call cursor(ORIG_POS)
+  endif
+
+  " get the positions of a:pattern1 and a:pattern2.
+  let pos2p_head = searchpairpos(a:pattern1, '', a:pattern2, 'W'.more_flags)
+  let pos2p_tail = searchpos(a:pattern2, 'ceW')
+  if !s:range_validp(pos2p_head, pos2p_tail)
+    return s:TOUser_SelectPair_Failed()
+  endif
+  call cursor(pos2p_head)
+  let pos1p_head = searchpairpos(a:pattern1, '', a:pattern2, 'bW')
+  let pos1p_tail = searchpos(a:pattern1, 'ceW')
+  if !s:range_validp(pos1p_head, pos1p_tail)
+    return s:TOUser_SelectPair_Failed()
+  endif
+
+  " select the range, then adjust if necessary.
+  if a:flags =~# 'i'
+    if s:range_no_text_without_edgesp(pos1p_tail, pos2p_head)
+      return s:TOUser_SelectPair_Failed()
+    endif
+    call s:range_select(pos1p_tail, pos2p_head)
+
+    " adjust the range.
+    let whichwrap_orig = &whichwrap
+    let &whichwrap = '<,>'
+    execute "normal! \<Left>o\<Right>"
+    let &whichwrap = whichwrap_orig
+  else
+    call s:range_select(pos1p_head, pos2p_tail)
+  endif
+  return
+endfunction
+
+function! s:TOUser_SelectPair_Failed()
+  " FIXME: on Operator-pending mode.
+  normal! gv
+endfunction
+
+
 
 
 function! TOUser_Define(pattern, guideline)
@@ -103,9 +166,49 @@ function! s:gpos_to_spos(gpos)
 endfunction
 
 
-function! s:range_validp(pos_head, pos_tail)
+function! s:pos_headp(pos)
+  return a:pos[1] <= 1
+endfunction
+
+function! s:pos_lastp(pos)
+  return a:pos[1] == len(getline(a:pos[0]))
+endfunction
+
+
+function! s:pos_le(pos1, pos2)  " less than or equal
+  return ((a:pos1[0] < a:pos2[0])
+  \       || (a:pos1[0] == a:pos2[0] && a:pos1[1] <= a:pos2[1]))
+endfunction
+
+
+
+
+function! s:range_containsp(range_head, range_tail, target_pos)
+  return (s:pos_le(a:range_head, a:target_pos)
+  \       && s:pos_le(a:target_pos, a:range_tail))
+endfunction
+
+
+function! s:range_no_text_without_edgesp(range_head, range_tail)
+  let [hl, hc] = a:range_head
+  let [tl, tc] = a:range_tail
+  return ((hl == tl && hc - tc == -1)
+  \       || (hl - tl == -1
+  \           && (s:pos_lastp(a:range_head) && s:pos_headp(a:range_tail))))
+endfunction
+
+
+function! s:range_validp(range_head, range_tail)
   let NULL_POS = [0, 0]
-  return (a:pos_head != NULL_POS) && (a:pos_tail != NULL_POS)
+  return (a:range_head != NULL_POS) && (a:range_tail != NULL_POS)
+endfunction
+
+
+function! s:range_select(range_head, range_tail)
+  " FIXME: always characterwise, is it okay?
+  call cursor(a:range_head)
+  normal! v
+  call cursor(a:range_tail)
 endfunction
 
 

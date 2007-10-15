@@ -30,7 +30,7 @@ endfunction
 " FIXME: growing the current selection like iw/aw, is/as, and others.
 " FIXME: countable.
 " FIXME: In a case of a:pattern matches with one character.
-function! TOUser_Select(pattern, flags)
+function! TOUser_Select(pattern, flags, previous_mode)
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
 
   if a:flags =~# 'b'
@@ -47,10 +47,7 @@ function! TOUser_Select(pattern, flags)
     call cursor(pos_tail)
     return [pos_head, pos_tail]
   else
-    " call cursor(ORIG_POS)
-    " FIXME: on Operator-pending mode.
-    normal! gv
-    return 0
+    return s:cancel_selection(a:previous_mode, ORIG_POS)
   endif
 endfunction
 
@@ -62,14 +59,14 @@ endfunction
 " endfunction
 
 
-function! TOUser_SelectPair(pattern1, pattern2, flags)
+function! TOUser_SelectPair(pattern1, pattern2, flags, previous_mode)
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
 
   " adjust the cursor to the head of a:pattern2 if it's already in the range.
   let pos2c_tail = searchpos(a:pattern2, 'ceW')
   let pos2c_head = searchpos(a:pattern2, 'bcW')
   if !s:range_validp(pos2c_head, pos2c_tail)
-    return s:TOUser_SelectPair_Failed()
+    return s:cancel_selection(a:previous_mode, ORIG_POS)
   endif
   if s:range_containsp(pos2c_head, pos2c_tail, ORIG_POS)
     let more_flags = 'c'
@@ -82,19 +79,19 @@ function! TOUser_SelectPair(pattern1, pattern2, flags)
   let pos2p_head = searchpairpos(a:pattern1, '', a:pattern2, 'W'.more_flags)
   let pos2p_tail = searchpos(a:pattern2, 'ceW')
   if !s:range_validp(pos2p_head, pos2p_tail)
-    return s:TOUser_SelectPair_Failed()
+    return s:cancel_selection(a:previous_mode, ORIG_POS)
   endif
   call cursor(pos2p_head)
   let pos1p_head = searchpairpos(a:pattern1, '', a:pattern2, 'bW')
   let pos1p_tail = searchpos(a:pattern1, 'ceW')
   if !s:range_validp(pos1p_head, pos1p_tail)
-    return s:TOUser_SelectPair_Failed()
+    return s:cancel_selection(a:previous_mode, ORIG_POS)
   endif
 
   " select the range, then adjust if necessary.
   if a:flags =~# 'i'
     if s:range_no_text_without_edgesp(pos1p_tail, pos2p_head)
-      return s:TOUser_SelectPair_Failed()
+      return s:cancel_selection(a:previous_mode, ORIG_POS)
     endif
     call s:range_select(pos1p_tail, pos2p_head)
 
@@ -107,11 +104,6 @@ function! TOUser_SelectPair(pattern1, pattern2, flags)
     call s:range_select(pos1p_head, pos2p_tail)
   endif
   return
-endfunction
-
-function! s:TOUser_SelectPair_Failed()
-  " FIXME: on Operator-pending mode.
-  normal! gv
 endfunction
 
 
@@ -228,6 +220,17 @@ endfunction
 function! s:mapargs_pair(lhs, pattern1, pattern2, flags)
   return printf('<silent> %s  :<C-u>call TOUser_SelectPair(%s, %s, %s)<CR>',
               \ a:lhs, string(a:pattern1), string(a:pattern2), string(a:flags))
+endfunction
+
+
+
+
+function! s:cancel_selection(previous_mode, orig_pos)
+  if a:previous_mode ==# 'v'
+    normal! gv
+  else  " if a:previous_mode ==# 'o'
+    call cursor(a:orig_pos)
+  endif
 endfunction
 
 

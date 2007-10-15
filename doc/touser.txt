@@ -29,19 +29,26 @@ TOUser_Move({pattern}, {flags})				*TOUser_Move()*
 
 	Return value is not defined.
 
-TOUser_Select({pattern}, {flags})			*TOUser_Select()*
+TOUser_Select({pattern}, {flags}, {prevous-mode})	*TOUser_Select()*
 	Select the appropriate object defined by {pattern}.
 	If the cursor is already in the range of an object, select it.
 	If the cursor is not in the range of an object, select the nearest
 	object after the cursor.
 
 	{flags} is a string, which can contain the following character flags:
-	'b'     select the nearest object BEFORE the cursor if the cursor is
-	        not in the range of an object.
+		'b'     select the nearest object BEFORE the cursor if the
+		        cursor is not in the range of an object.
+
+	{previous-mode} is a string that represents the "previous" mode:
+		'o'     Operator-pending mode
+		'v'     Visual mode
+	For example, if this function is called via a mapping for
+	Operator-pending mode, {previous-mode} must be 'o'.
 
 	Return value is not defined.
 
-TOUser_SelectPair({pattern1}, {pattern2}, {flags})	*TOUser_SelectPair()*
+							*TOUser_SelectPair()*
+TOUser_SelectPair({pattern1}, {pattern2}, {flags}, {previous-mode})
 	Select the appropriate object which starts with {pattern1} and ends
 	with {pattern2}.
 
@@ -52,6 +59,8 @@ TOUser_SelectPair({pattern1}, {pattern2}, {flags})	*TOUser_SelectPair()*
 		like |it|.  This is the default behavior unless 'a' is
 		explicitly specified.  If there is not text between {pattern1}
 		and {pattern2}, this function does nothing.
+
+	For the detail of {previous-mode}, see |TOUser_Select()|.
 
 	Return value is not defined.
 
@@ -91,9 +100,6 @@ BUGS							*touser-bugs*
   unlike built-in text objects such as iw/aw, is/as, and so forth.
 
 - TOUser_Select() can not be used with [count].
-
-- TOUser_SelectPair() selects unexpected range in Operator-pending mode
-  if there is no valid selection.
 
 
 

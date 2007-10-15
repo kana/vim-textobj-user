@@ -55,12 +55,13 @@ TOUser_SelectPair({pattern1}, {pattern2}, {flags})	*TOUser_SelectPair()*
 
 	Return value is not defined.
 
-TOUser_Define({pattern}, {guideline})			*TOUser_Define()*
+							*TOUser_Define()*
+TOUser_Define({pattern}, {pattern1}, {pattern2}, {guideline})
 	Support function to define key mappings for the text object defined by
-	{pattern}.  {guideline} is a dictionary consists of key-value pairs
-	where key is a string to represent the name of function and value is
-	a list of strings (each string represents {lhs} for corresponding
-	key).
+	{pattern}, or {pattern1} and {pattern2}.  {guideline} is a dictionary
+	consists of key-value pairs where key is a string to represent the
+	name of function and value is a list of strings (each string
+	represents {lhs} for corresponding key).
 
 	function name		meaning ~
 	-------------		------- ~
@@ -71,9 +72,11 @@ TOUser_Define({pattern}, {guideline})			*TOUser_Define()*
 	'select'		synonym for 'select-next'
 	'select-next'		TOUser_Select({pattern}, '')
 	'select-prev'		TOUser_Select({pattern}, 'b')
+	'select-pair-all'	TOUser_SelectPair({pattern1}, {pattern2}, 'a')
+	'select-pair-inner'	TOUser_SelectPair({pattern1}, {pattern2}, 'i')
 
 	Example: >
-		call TOUser_Define('foo',
+		call TOUser_Define('foo', '', '',
 		                 \ {'move-to-next': 'gj',
 		                 \  'move-to-prev': 'gk',
 		                 \  'select': ['ig', 'ag']})
@@ -89,7 +92,8 @@ BUGS							*touser-bugs*
 
 - TOUser_Select() can not be used with [count].
 
-- TODO: Support paired text objects like |it| / |at|.
+- TOUser_SelectPair() selects unexpected range in Operator-pending mode
+  if there is no valid selection.
 
 
 

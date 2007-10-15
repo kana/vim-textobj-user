@@ -117,7 +117,7 @@ endfunction
 
 
 
-function! TOUser_Define(pattern, guideline)
+function! TOUser_Define(pattern0, pattern1, pattern2, guideline)
   for function_name in keys(a:guideline)
     let _lhss = a:guideline[function_name]
     if type(_lhss) == type('')
@@ -128,19 +128,25 @@ function! TOUser_Define(pattern, guideline)
 
     for lhs in lhss
       if function_name == 'move-to-next'
-        execute 'nnoremap' s:mapargs(lhs, 'Move', a:pattern, '')
+        execute 'nnoremap' s:mapargs(lhs, 'Move', a:pattern0, '')
       elseif function_name == 'move-to-next-end'
-        execute 'nnoremap' s:mapargs(lhs, 'Move', a:pattern, 'e')
+        execute 'nnoremap' s:mapargs(lhs, 'Move', a:pattern0, 'e')
       elseif function_name == 'move-to-prev'
-        execute 'nnoremap' s:mapargs(lhs, 'Move', a:pattern, 'b')
+        execute 'nnoremap' s:mapargs(lhs, 'Move', a:pattern0, 'b')
       elseif function_name == 'move-to-prev-end'
-        execute 'nnoremap' s:mapargs(lhs, 'Move', a:pattern, 'be')
+        execute 'nnoremap' s:mapargs(lhs, 'Move', a:pattern0, 'be')
       elseif function_name == 'select-next' || function_name == 'select'
-        execute 'vnoremap' s:mapargs(lhs, 'Select', a:pattern, '')
-        execute 'onoremap' s:mapargs(lhs, 'Select', a:pattern, '')
+        execute 'vnoremap' s:mapargs(lhs, 'Select', a:pattern0, '')
+        execute 'onoremap' s:mapargs(lhs, 'Select', a:pattern0, '')
       elseif function_name == 'select-prev'
-        execute 'vnoremap' s:mapargs(lhs, 'Select', a:pattern, 'b')
-        execute 'onoremap' s:mapargs(lhs, 'Select', a:pattern, 'b')
+        execute 'vnoremap' s:mapargs(lhs, 'Select', a:pattern0, 'b')
+        execute 'onoremap' s:mapargs(lhs, 'Select', a:pattern0, 'b')
+      elseif function_name == 'select-pair-all'
+        execute 'vnoremap' s:mapargs(lhs, 'SelectPair', a:pattern1, 'a')
+        execute 'onoremap' s:mapargs(lhs, 'SelectPair', a:pattern1, 'a')
+      elseif function_name == 'select-pair-inner'
+        execute 'vnoremap' s:mapargs(lhs, 'SelectPair', a:pattern2, 'i')
+        execute 'onoremap' s:mapargs(lhs, 'SelectPair', a:pattern2, 'i')
       else
         throw 'Unknown function name: ' . string(function_name)
       endif

@@ -96,10 +96,10 @@ TOUser_Define({pattern}, {pattern1}, {pattern2}, {guideline})
 ==============================================================================
 BUGS							*touser-bugs*
 
-- TOUser_Select() overrides the current {Visual},
+- TOUser_Select() and TOUser_SelectPair() override the current {Visual},
   unlike built-in text objects such as iw/aw, is/as, and so forth.
 
-- TOUser_Select() can not be used with [count].
+- TOUser_Select() and TOUser_SelectPair() cannot be used with [count].
 
 
 

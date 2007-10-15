@@ -31,6 +31,7 @@ endfunction
 " FIXME: countable.
 " FIXME: In a case of a:pattern matches with one character.
 function! TOUser_Select(pattern, flags, previous_mode)
+  execute 'normal!' "gv\<Esc>"
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
 
   if a:flags =~# 'b'
@@ -60,6 +61,7 @@ endfunction
 
 
 function! TOUser_SelectPair(pattern1, pattern2, flags, previous_mode)
+  execute 'normal!' "gv\<Esc>"
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
 
   " adjust the cursor to the head of a:pattern2 if it's already in the range.

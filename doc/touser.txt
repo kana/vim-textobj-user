@@ -11,8 +11,11 @@ $Id$
 ==============================================================================
 INTRODUCTION						*touser-introduction*
 
-touser is a Vim plugin to support user-defined text objects which can be
+touser is a Vim plugin to SUPPORT user-defined text objects which can be
 defined by regular expression.
+
+Note that this plugin only provides support functions, does not provides any
+useful text objects.
 
 
 
@@ -24,8 +27,10 @@ TOUser_Move({pattern}, {flags})				*TOUser_Move()*
 	Move the cursor to the appropriate object defined by {pattern}.
 
 	{flags} is a string, which can contain the following character flags:
-	'b'     search backward instead of forward.
-	'e'     move to the end of the match.
+		char	meaning ~
+		----	------- ~
+		'b'     search backward instead of forward.
+		'e'     move to the end of the match.
 
 	Return value is not defined.
 
@@ -36,14 +41,18 @@ TOUser_Select({pattern}, {flags}, {prevous-mode})	*TOUser_Select()*
 	object after the cursor.
 
 	{flags} is a string, which can contain the following character flags:
+		char	meaning ~
+		----	------- ~
 		'b'     select the nearest object BEFORE the cursor if the
 		        cursor is not in the range of an object.
 
-	{previous-mode} is a string that represents the "previous" mode:
-		'o'     Operator-pending mode
-		'v'     Visual mode
+	{previous-mode} is a string that represents the "previous" mode.
 	For example, if this function is called via a mapping for
 	Operator-pending mode, {previous-mode} must be 'o'.
+		char	meaning ~
+		----	------- ~
+		'o'     Operator-pending mode
+		'v'     Visual mode
 
 	Return value is not defined.
 
@@ -53,12 +62,14 @@ TOUser_SelectPair({pattern1}, {pattern2}, {flags}, {previous-mode})
 	with {pattern2}.
 
 	{flags} is a string, which can contain the following character flags:
-	'a'     select the range including {pattern1} and {pattern2},
-	        like |at|.
-	'i'     select the range excluding {pattern1} and {pattern2},
-		like |it|.  This is the default behavior unless 'a' is
-		explicitly specified.  If there is not text between {pattern1}
-		and {pattern2}, this function does nothing.
+		char	meaning ~
+		----	------- ~
+		'a'     select the range including {pattern1} and {pattern2},
+			like |at|.
+		'i'     select the range excluding {pattern1} and {pattern2},
+			like |it|.  This is the default behavior unless 'a' is
+			explicitly specified.  If there is not text between
+			{pattern1} and {pattern2}, this function does nothing.
 
 	For the detail of {previous-mode}, see |TOUser_Select()|.
 
@@ -109,7 +120,7 @@ BUGS							*touser-bugs*
 ==============================================================================
 CHANGELOG						*touser-changelog*
 
-0.0	2007-10-11T17:03:00+09:00
+0.0	2007-10-15T20:41:34+09:00
 	- First release.
 
 

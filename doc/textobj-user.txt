@@ -1,6 +1,6 @@
-*touser.txt*	Support for user-defined text objects
+*textobj-user.txt*	Support for user-defined text objects
 
-Version 0.0
+Version 0.1
 Copyright (C) 2007 kana <http://nicht.s8.xrea.com/>
 License: MIT license (see <http://www.opensource.org/licenses/mit-license>)
 $Id$
@@ -9,9 +9,9 @@ $Id$
 
 
 ==============================================================================
-INTRODUCTION						*touser-introduction*
+INTRODUCTION					*textobj-user-introduction*
 
-touser is a Vim plugin to SUPPORT user-defined text objects which can be
+textobj-user is a Vim plugin to SUPPORT user-defined text objects which can be
 defined by regular expression.
 
 Note that this plugin only provides support functions, does not provides any
@@ -21,9 +21,10 @@ useful text objects.
 
 
 ==============================================================================
-FUNCTIONS						*touser-function*
+FUNCTIONS					*textobj-user-function*
 
-TOUser_Move({pattern}, {flags})				*TOUser_Move()*
+						*textobj#user#move()*
+textobj#user#move({pattern}, {flags})
 	Move the cursor to the appropriate object defined by {pattern}.
 
 	{flags} is a string, which can contain the following character flags:
@@ -34,7 +35,8 @@ TOUser_Move({pattern}, {flags})				*TOUser_Move()*
 
 	Return value is not defined.
 
-TOUser_Select({pattern}, {flags}, {prevous-mode})	*TOUser_Select()*
+						*textobj#user#select()*
+textobj#user#select({pattern}, {flags}, {prevous-mode})
 	Select the appropriate object defined by {pattern}.
 	If the cursor is already in the range of an object, select it.
 	If the cursor is not in the range of an object, select the nearest
@@ -56,8 +58,8 @@ TOUser_Select({pattern}, {flags}, {prevous-mode})	*TOUser_Select()*
 
 	Return value is not defined.
 
-							*TOUser_SelectPair()*
-TOUser_SelectPair({pattern1}, {pattern2}, {flags}, {previous-mode})
+						*textobj#user#select_pair()*
+textobj#user#select_pair({pattern1}, {pattern2}, {flags}, {previous-mode})
 	Select the appropriate object which starts with {pattern1} and ends
 	with {pattern2}.
 
@@ -71,12 +73,12 @@ TOUser_SelectPair({pattern1}, {pattern2}, {flags}, {previous-mode})
 			explicitly specified.  If there is not text between
 			{pattern1} and {pattern2}, this function does nothing.
 
-	For the detail of {previous-mode}, see |TOUser_Select()|.
+	For the detail of {previous-mode}, see |textobj#user#select()|.
 
 	Return value is not defined.
 
-							*TOUser_Define()*
-TOUser_Define({pattern}, {pattern1}, {pattern2}, {guideline})
+						*textobj#user#define()*
+textobj#user#define({pattern}, {pattern1}, {pattern2}, {guideline})
 	Support function to define key mappings for the text object defined by
 	{pattern}, or {pattern1} and {pattern2}.  {guideline} is a dictionary
 	consists of key-value pairs where key is a string to represent the
@@ -85,20 +87,24 @@ TOUser_Define({pattern}, {pattern1}, {pattern2}, {guideline})
 
 	function name		meaning ~
 	-------------		------- ~
-	'move-to-next'		TOUser_Move({pattern}, '')
-	'move-to-prev'		TOUser_Move({pattern}, 'b')
-	'move-to-next-end'	TOUser_Move({pattern}, 'e')
-	'move-to-prev-end'	TOUser_Move({pattern}, 'be')
+	'move-to-next'		textobj#user#move({pattern}, '')
+	'move-to-prev'		textobj#user#move({pattern}, 'b')
+	'move-to-next-end'	textobj#user#move({pattern}, 'e')
+	'move-to-prev-end'	textobj#user#move({pattern}, 'be')
 	'select'		synonym for 'select-next'
-	'select-next'		TOUser_Select({pattern}, '', {previous-mode})
-	'select-prev'		TOUser_Select({pattern}, 'b', {previous-mode})
-	'select-pair-all'	TOUser_SelectPair({pattern1}, {pattern2}, 'a',
-				                  {previous-mode})
-	'select-pair-inner'	TOUser_SelectPair({pattern1}, {pattern2}, 'i',
-				                  {previous-mode})
+	'select-next'		textobj#user#select({pattern}, '',
+				                    {previous-mode})
+	'select-prev'		textobj#user#select({pattern}, 'b',
+				                    {previous-mode})
+	'select-pair-all'	textobj#user#select_pair({pattern1},
+				                         {pattern2},
+				                         'a', {previous-mode})
+	'select-pair-inner'	textobj#user#select_pair({pattern1},
+				                         {pattern2},
+				                         'i', {previous-mode})
 
 	Example: >
-		call TOUser_Define('foo', '', '',
+		call textobj#user#define('foo', '', '',
 		                 \ {'move-to-next': 'gj',
 		                 \  'move-to-prev': 'gk',
 		                 \  'select': ['ig', 'ag']})
@@ -107,18 +113,23 @@ TOUser_Define({pattern}, {pattern1}, {pattern2}, {guideline})
 
 
 ==============================================================================
-BUGS							*touser-bugs*
+BUGS						*textobj-user-bugs*
 
-- TOUser_Select() and TOUser_SelectPair() override the current {Visual},
-  unlike built-in text objects such as iw/aw, is/as, and so forth.
+- textobj#user#select() and textobj#user#select_pair() override the current
+  {Visual}, unlike built-in text objects such as iw/aw, is/as, and so forth.
 
-- TOUser_Select() and TOUser_SelectPair() cannot be used with [count].
+- textobj#user#select() and textobj#user#select_pair() cannot be used with
+  [count].
 
 
 
 
 ==============================================================================
-CHANGELOG						*touser-changelog*
+CHANGELOG					*textobj-user-changelog*
+
+0.1	2007-11-16T01:17:45+09:00
+	- Modify to be autoloaded.
+	- Change the names of all API.
 
 0.0	2007-10-15T20:41:34+09:00
 	- First release.

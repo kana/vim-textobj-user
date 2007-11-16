@@ -1,23 +1,11 @@
-" touser - Support for user-defined text objects
-" Version: 0.0
+" textobj-user - Support for user-defined text objects
+" Version: 0.1
 " Copyright (C) 2007 kana <http://nicht.s8.xrea.com/>
 " License: MIT license (see <http://www.opensource.org/licenses/mit-license>)
 " $Id$  "{{{1
-
-if exists('g:loaded_touser')
-  finish
-endif
-
-
-
-
-
-
-
-
 " Interfaces  "{{{1
 
-function! TOUser_Move(pattern, flags)
+function! textobj#user#move(pattern, flags)
   let i = v:count1
   while 0 < i
     let result = searchpos(a:pattern, a:flags.'W')
@@ -30,7 +18,7 @@ endfunction
 " FIXME: growing the current selection like iw/aw, is/as, and others.
 " FIXME: countable.
 " FIXME: In a case of a:pattern matches with one character.
-function! TOUser_Select(pattern, flags, previous_mode)
+function! textobj#user#select(pattern, flags, previous_mode)
   execute 'normal!' "gv\<Esc>"
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
 
@@ -56,11 +44,11 @@ endfunction
 
 
 " FIXME: NIY, but is this necessary?
-" function! TOUser_MovePair(pattern1, pattern2, flags)
+" function! textobj#user#move_pair(pattern1, pattern2, flags)
 " endfunction
 
 
-function! TOUser_SelectPair(pattern1, pattern2, flags, previous_mode)
+function! textobj#user#select_pair(pattern1, pattern2, flags, previous_mode)
   execute 'normal!' "gv\<Esc>"
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
 
@@ -111,7 +99,7 @@ endfunction
 
 
 
-function! TOUser_Define(pat0, pat1, pat2, guideline)
+function! textobj#user#define(pat0, pat1, pat2, guideline)
   for function_name in keys(a:guideline)
     let _lhss = a:guideline[function_name]
     if type(_lhss) == type('')
@@ -215,21 +203,23 @@ endfunction
 
 
 function! s:mapargs_single_move(lhs, pattern, flags)
-  return printf('<silent> %s  :<C-u>call TOUser_Move(%s, %s)<Return>',
+  return printf('<silent> %s  :<C-u>call textobj#user#move(%s, %s)<CR>',
               \ a:lhs, string(a:pattern), string(a:flags))
 endfunction
 
 function! s:mapargs_single_select(lhs, pattern, flags, previous_mode)
-  return printf('<silent> %s  :<C-u>call TOUser_Select(%s, %s, %s)<Return>',
+  return printf('<silent> %s  :<C-u>call textobj#user#select(%s, %s, %s)<CR>',
               \ a:lhs,
               \ string(a:pattern), string(a:flags), string(a:previous_mode))
 endfunction
 
 function! s:mapargs_pair_select(lhs, pattern1, pattern2, flags, previous_mode)
-  return printf('<silent> %s  :<C-u>call TOUser_SelectPair(%s,%s,%s,%s)<CR>',
-              \ a:lhs,
-              \ string(a:pattern1), string(a:pattern2),
-              \ string(a:flags), string(a:previous_mode))
+  return printf(
+       \   '<silent> %s  :<C-u>call textobj#user#select_pair(%s,%s,%s,%s)<CR>',
+       \   a:lhs,
+       \   string(a:pattern1), string(a:pattern2),
+       \   string(a:flags), string(a:previous_mode)
+       \ )
 endfunction
 
 
@@ -250,16 +240,5 @@ endfunction
 
 
 
-" Etc  "{{{1
-
-let g:loaded_touser = 1
-
-
-
-
-
-
-
-
-" __END__
+" __END__  "{{{1
 " vim: foldmethod=marker

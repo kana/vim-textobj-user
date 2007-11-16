@@ -100,6 +100,9 @@ endfunction
 
 
 function! textobj#user#define(pat0, pat1, pat2, guideline)
+  let pat0 = s:rhs_escape(a:pat0)
+  let pat1 = s:rhs_escape(a:pat1)
+  let pat2 = s:rhs_escape(a:pat2)
   for function_name in keys(a:guideline)
     let _lhss = a:guideline[function_name]
     if type(_lhss) == type('')
@@ -110,25 +113,25 @@ function! textobj#user#define(pat0, pat1, pat2, guideline)
 
     for lhs in lhss
       if function_name == 'move-to-next'
-        execute 'nnoremap' s:mapargs_single_move(lhs, a:pat0, '')
+        execute 'nnoremap' s:mapargs_single_move(lhs, pat0, '')
       elseif function_name == 'move-to-next-end'
-        execute 'nnoremap' s:mapargs_single_move(lhs, a:pat0, 'e')
+        execute 'nnoremap' s:mapargs_single_move(lhs, pat0, 'e')
       elseif function_name == 'move-to-prev'
-        execute 'nnoremap' s:mapargs_single_move(lhs, a:pat0, 'b')
+        execute 'nnoremap' s:mapargs_single_move(lhs, pat0, 'b')
       elseif function_name == 'move-to-prev-end'
-        execute 'nnoremap' s:mapargs_single_move(lhs, a:pat0, 'be')
+        execute 'nnoremap' s:mapargs_single_move(lhs, pat0, 'be')
       elseif function_name == 'select-next' || function_name == 'select'
-        execute 'vnoremap' s:mapargs_single_select(lhs, a:pat0, '', 'v')
-        execute 'onoremap' s:mapargs_single_select(lhs, a:pat0, '', 'o')
+        execute 'vnoremap' s:mapargs_single_select(lhs, pat0, '', 'v')
+        execute 'onoremap' s:mapargs_single_select(lhs, pat0, '', 'o')
       elseif function_name == 'select-prev'
-        execute 'vnoremap' s:mapargs_single_select(lhs, a:pat0, 'b', 'v')
-        execute 'onoremap' s:mapargs_single_select(lhs, a:pat0, 'b', 'o')
+        execute 'vnoremap' s:mapargs_single_select(lhs, pat0, 'b', 'v')
+        execute 'onoremap' s:mapargs_single_select(lhs, pat0, 'b', 'o')
       elseif function_name == 'select-pair-all'
-        execute 'vnoremap' s:mapargs_pair_select(lhs, a:pat1, a:pat2, 'a', 'v')
-        execute 'onoremap' s:mapargs_pair_select(lhs, a:pat1, a:pat2, 'a', 'o')
+        execute 'vnoremap' s:mapargs_pair_select(lhs, pat1, pat2, 'a', 'v')
+        execute 'onoremap' s:mapargs_pair_select(lhs, pat1, pat2, 'a', 'o')
       elseif function_name == 'select-pair-inner'
-        execute 'vnoremap' s:mapargs_pair_select(lhs, a:pat1, a:pat2, 'i', 'v')
-        execute 'onoremap' s:mapargs_pair_select(lhs, a:pat1, a:pat2, 'i', 'o')
+        execute 'vnoremap' s:mapargs_pair_select(lhs, pat1, pat2, 'i', 'v')
+        execute 'onoremap' s:mapargs_pair_select(lhs, pat1, pat2, 'i', 'o')
       else
         throw 'Unknown function name: ' . string(function_name)
       endif
@@ -200,6 +203,15 @@ function! s:range_select(range_head, range_tail)
 endfunction
 
 
+
+
+function! s:rhs_escape(pattern)
+  let r = a:pattern
+  let r = substitute(r, '<', '<LT>', 'g')
+  let r = substitute(r, '>', '<GT>', 'g')
+  let r = substitute(r, '|', '<Bar>', 'g')
+  return r
+endfunction
 
 
 function! s:mapargs_single_move(lhs, pattern, flags)

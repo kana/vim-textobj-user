@@ -33,7 +33,7 @@ textobj#user#move({pattern}, {flags})
 		'b'     search backward instead of forward.
 		'e'     move to the end of the match.
 
-	Return value is not defined.
+	Return value is same as |searchpos()|.
 
 						*textobj#user#select()*
 textobj#user#select({pattern}, {flags}, {prevous-mode})

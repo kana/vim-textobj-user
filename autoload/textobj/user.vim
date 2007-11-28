@@ -206,8 +206,10 @@ endfunction
 
 
 function! s:rhs_escape(pattern)
-  let TABLE = {'<': '<LT>', '>': '<GT>', '|': '<Bar>'}
-  return substitute(a:pattern, '[<>|]', '\=TABLE[submatch(0)]', 'g')
+  let r = a:pattern
+  let r = substitute(r, '<', '<LT>', 'g')
+  let r = substitute(r, '|', '<Bar>', 'g')
+  return r
 endfunction
 
 

@@ -24,7 +24,7 @@ useful text objects.
 FUNCTIONS					*textobj-user-function*
 
 						*textobj#user#move()*
-textobj#user#move({pattern}, {flags})
+textobj#user#move({pattern}, {flags}, {previous-mode})
 	Move the cursor to the appropriate object defined by {pattern}.
 
 	{flags} is a string, which can contain the following character flags:
@@ -32,6 +32,16 @@ textobj#user#move({pattern}, {flags})
 		----	------- ~
 		'b'     search backward instead of forward.
 		'e'     move to the end of the match.
+
+	{previous-mode} is a string representing the "previous" mode,
+	that is, which mode of mapping causes the calling of this function.
+	For example, if this function is called via a mapping for
+	Operator-pending mode, {previous-mode} must be 'o'.
+		char	meaning ~
+		----	------- ~
+		'n'     Normal mode
+		'o'     Operator-pending mode
+		'v'     Visual mode
 
 	Return value is same as |searchpos()|.
 
@@ -48,13 +58,7 @@ textobj#user#select({pattern}, {flags}, {prevous-mode})
 		'b'     select the nearest object BEFORE the cursor if the
 		        cursor is not in the range of an object.
 
-	{previous-mode} is a string that represents the "previous" mode.
-	For example, if this function is called via a mapping for
-	Operator-pending mode, {previous-mode} must be 'o'.
-		char	meaning ~
-		----	------- ~
-		'o'     Operator-pending mode
-		'v'     Visual mode
+	For the detail of {previous-mode}, see |textobj#user#move()|.
 
 	Return value is not defined.
 
@@ -73,7 +77,7 @@ textobj#user#select_pair({pattern1}, {pattern2}, {flags}, {previous-mode})
 			explicitly specified.  If there is not text between
 			{pattern1} and {pattern2}, this function does nothing.
 
-	For the detail of {previous-mode}, see |textobj#user#select()|.
+	For the detail of {previous-mode}, see |textobj#user#move()|.
 
 	Return value is not defined.
 
@@ -130,6 +134,8 @@ CHANGELOG					*textobj-user-changelog*
 0.2	2008-01-07T08:44:14+09:00
 	- textobj#user#select(): Fix the wrong selecting in Operator-pending
 	  mode.
+	- textobj#user#move(): Modify to be able to use in Visual and
+	  Operator-pending mode.
 
 0.1	2007-11-16T01:17:45+09:00
 	- Modify to be autoloaded.

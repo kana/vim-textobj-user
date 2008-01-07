@@ -5,7 +5,10 @@
 " $Id$  "{{{1
 " Interfaces  "{{{1
 
-function! textobj#user#move(pattern, flags)
+function! textobj#user#move(pattern, flags, previous_mode)
+  if a:previous_mode ==# 'v'
+    normal! gv
+  endif
   let i = v:count1
   while 0 < i
     let result = searchpos(a:pattern, a:flags.'W')
@@ -115,13 +118,21 @@ function! textobj#user#define(pat0, pat1, pat2, guideline)
 
     for lhs in lhss
       if function_name == 'move-to-next'
-        execute 'nnoremap' s:mapargs_single_move(lhs, pat0, '')
+        execute 'nnoremap' s:mapargs_single_move(lhs, pat0, '', 'n')
+        execute 'vnoremap' s:mapargs_single_move(lhs, pat0, '', 'v')
+        execute 'onoremap' s:mapargs_single_move(lhs, pat0, '', 'o')
       elseif function_name == 'move-to-next-end'
-        execute 'nnoremap' s:mapargs_single_move(lhs, pat0, 'e')
+        execute 'nnoremap' s:mapargs_single_move(lhs, pat0, 'e', 'n')
+        execute 'vnoremap' s:mapargs_single_move(lhs, pat0, 'e', 'v')
+        execute 'onoremap' s:mapargs_single_move(lhs, pat0, 'e', 'o')
       elseif function_name == 'move-to-prev'
-        execute 'nnoremap' s:mapargs_single_move(lhs, pat0, 'b')
+        execute 'nnoremap' s:mapargs_single_move(lhs, pat0, 'b', 'n')
+        execute 'vnoremap' s:mapargs_single_move(lhs, pat0, 'b', 'v')
+        execute 'onoremap' s:mapargs_single_move(lhs, pat0, 'b', 'o')
       elseif function_name == 'move-to-prev-end'
-        execute 'nnoremap' s:mapargs_single_move(lhs, pat0, 'be')
+        execute 'nnoremap' s:mapargs_single_move(lhs, pat0, 'be', 'n')
+        execute 'vnoremap' s:mapargs_single_move(lhs, pat0, 'be', 'v')
+        execute 'onoremap' s:mapargs_single_move(lhs, pat0, 'be', 'o')
       elseif function_name == 'select-next' || function_name == 'select'
         execute 'vnoremap' s:mapargs_single_select(lhs, pat0, '', 'v')
         execute 'onoremap' s:mapargs_single_select(lhs, pat0, '', 'o')
@@ -215,9 +226,10 @@ function! s:rhs_escape(pattern)
 endfunction
 
 
-function! s:mapargs_single_move(lhs, pattern, flags)
-  return printf('<silent> %s  :<C-u>call textobj#user#move(%s, %s)<CR>',
-              \ a:lhs, string(a:pattern), string(a:flags))
+function! s:mapargs_single_move(lhs, pattern, flags, previous_mode)
+  return printf('<silent> %s  :<C-u>call textobj#user#move(%s, %s, %s)<CR>',
+              \ a:lhs,
+              \ string(a:pattern), string(a:flags), string(a:previous_mode))
 endfunction
 
 function! s:mapargs_single_select(lhs, pattern, flags, previous_mode)

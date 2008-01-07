@@ -1,6 +1,6 @@
 " textobj-user - Support for user-defined text objects
 " Version: 0.2
-" Copyright (C) 2007 kana <http://nicht.s8.xrea.com/>
+" Copyright (C) 2007-2008 kana <http://nicht.s8.xrea.com/>
 " License: MIT license (see <http://www.opensource.org/licenses/mit-license>)
 " $Id$  "{{{1
 " Interfaces  "{{{1

@@ -1,7 +1,7 @@
 *textobj-user.txt*	Support for user-defined text objects
 
 Version 0.2.1
-Copyright (C) 2007-2008 kana <http://nicht.s8.xrea.com/>
+Copyright (C) 2007-2008 kana <http://whileimautomaton.net/>
 License: MIT license (see <http://www.opensource.org/licenses/mit-license>)
 
 

@@ -1,5 +1,5 @@
 " textobj-user - Support for user-defined text objects
-" Version: 0.2
+" Version: 0.2.1
 " Copyright (C) 2007-2008 kana <http://nicht.s8.xrea.com/>
 " License: MIT license (see <http://www.opensource.org/licenses/mit-license>)
 " $Id$  "{{{1
@@ -54,7 +54,9 @@ endfunction
 
 
 function! textobj#user#select_pair(pattern1, pattern2, flags, previous_mode)
-  execute 'normal!' "gv\<Esc>"
+  if a:previous_mode ==# 'v'
+    execute 'normal!' "gv\<Esc>"
+  endif
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
 
   " adjust the cursor to the head of a:pattern2 if it's already in the range.

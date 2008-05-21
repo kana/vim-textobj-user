@@ -1,6 +1,6 @@
 *textobj-user.txt*	Support for user-defined text objects
 
-Version 0.2
+Version 0.2.1
 Copyright (C) 2007-2008 kana <http://nicht.s8.xrea.com/>
 License: MIT license (see <http://www.opensource.org/licenses/mit-license>)
 $Id$
@@ -130,6 +130,10 @@ BUGS						*textobj-user-bugs*
 
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
+
+0.2.1	2008-05-22T00:17:24+09:00
+	- textobj#user#select_pair(): Fix the bug that it selects wrong text
+	  in Operator-pending mode.
 
 0.2	2008-01-07T08:44:14+09:00
 	- textobj#user#select(): Fix the wrong selecting in Operator-pending

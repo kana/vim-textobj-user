@@ -1,6 +1,6 @@
 *textobj-user.txt*	Support for user-defined text objects
 
-Version 0.2.2
+Version 0.3
 Copyright (C) 2007-2008 kana <http://whileimautomaton.net/>
 License: MIT license (see <http://www.opensource.org/licenses/mit-license>)
 
@@ -114,6 +114,93 @@ textobj#user#define({pattern}, {pattern1}, {pattern2}, {guideline})
 		                 \  'move-to-prev': 'gk',
 		                 \  'select': ['ig', 'ag']})
 <
+						*textobj#user#plugin()*
+textobj#user#plugin({plugin}, {feature-specs})
+	Define key mappings and a command to support writing a plugin which
+	provides various user-defined text objects.
+	
+	Example: If textobj#user#plugin() is called like the following: >
+
+		call textobj#user#plugin('foo', {
+		\   'cdata': {
+		\     'pattern': ['<!\[CDATA\[', '\]\]>'],
+		\     'select-a': 'aC',
+		\     'select-i': 'iC',
+		\   },
+		\   'date': {
+		\     'pattern': '\<\d\{4}-\d\{2}-\d\{2}\>',
+		\     'select': ['ad', 'id'],
+		\   },
+		\   'helptag': {
+		\     'pattern': '\*[^*]\+\*',
+		\     'move-n': ',j',
+		\     'move-p': ',k',
+		\     'move-N': ',J',
+		\     'move-P': ',K',
+		\   },
+		\ })
+<
+		(1) New command :TextobjFooDefaultKeyMappings will be defined.
+		This command defines the following key mappings as the default
+		ones for the new text objects (this command doesn't override
+		existing {lhs}s unless "!" is given): >
+
+			omap aC  <Plug>(textobj-foo-cdata-a)
+			vmap aC  <Plug>(textobj-foo-cdata-a)
+			omap iC  <Plug>(textobj-foo-cdata-i)
+			vmap iC  <Plug>(textobj-foo-cdata-i)
+			omap ad  <Plug>(textobj-foo-date)
+			vmap ad  <Plug>(textobj-foo-date)
+			omap id  <Plug>(textobj-foo-date)
+			vmap id  <Plug>(textobj-foo-date)
+			map ,j  <Plug>(textobj-foo-helptag-n)
+			map ,k  <Plug>(textobj-foo-helptag-p)
+			map ,J  <Plug>(textobj-foo-helptag-N)
+			map ,K  <Plug>(textobj-foo-helptag-P)
+<
+		(2) New variable g:__textobj_foo will be defined.  This is
+		a dictionary which contains various functions and values.
+
+		(3) Key mappings <Plug>(textobj-foo-...) will be defined to
+		execute appropriate action if "pattern" is given for the
+		entry.
+
+	{plugin} is the name of a plugin.  It must be a string which consits
+	of only lowercase alphabets.
+
+	{feature-specs} is a dictionary (and given value is cached by this
+	plugin, so you have to pass copied one if necessary).  In this
+	dictionary, each key/value pair expresses one text object -- each key
+	is a string of the name of the text object, and each value is
+	a dictionary which denotes some details of the text object:
+
+	"pattern"	{regexp} or [{regexp}, {regexp}]
+		A regular expression which matches to a text object.  If the
+		value is a list of two regular expressions, it denotes that
+		the text object starts with the first regular expression and
+		ends with the second regular expression.
+
+	"move-n"	{lhs} or [{lhs}, ...]
+		A string which is a key sequence to move the cursor to the
+		next text object.  If the value is a list of strings, each
+		string is mapped to move the cursor.
+
+	"move-p"	{lhs} or [{lhs}, ...]
+	"move-N"	{lhs} or [{lhs}, ...]
+	"move-P"	{lhs} or [{lhs}, ...]
+		Like "move-n", but each string is treated as a key sequence
+		to move the cursor to the previous text object, the end of the
+		next text object, or the end of the previous text object.
+
+	"select"	{lhs} or [{lhs}, ...]
+		Like "move-n", but each string is treated as a key sequence
+		to select the text object.
+
+	"select-a"	{lhs} or [{lhs}, ...]
+	"select-i"	{lhs} or [{lhs}, ...]
+		Like "select", but each string is treated as a key sequence
+		to select "a" text object or "inner" text object.
+
 
 
 
@@ -131,6 +218,10 @@ BUGS						*textobj-user-bugs*
 
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
+
+0.3	2008-06-04T21:16:02+09:00
+	- |textobj#user#plugin()|: New.
+	- |textobj#user#define()|: Now obsolete.  Use textobj#user#define().
 
 0.2.2	2008-06-02T06:26:12+09:00
 	- Fix wrong sentences in the document.

@@ -1,8 +1,9 @@
 " textobj-user - Support for user-defined text objects
-" Version: 0.2.2
+" Version: 0.3
 " Copyright (C) 2007-2008 kana <http://whileimautomaton.net/>
 " License: MIT license (see <http://www.opensource.org/licenses/mit-license>)
 " Interfaces  "{{{1
+" simple  "{{{2
 
 function! textobj#user#move(pattern, flags, previous_mode)
   if a:previous_mode ==# 'v'
@@ -46,6 +47,8 @@ endfunction
 
 
 
+
+" pair  "{{{2
 
 " FIXME: NIY, but is this necessary?
 " function! textobj#user#move_pair(pattern1, pattern2, flags)
@@ -105,7 +108,7 @@ endfunction
 
 
 
-function! textobj#user#define(pat0, pat1, pat2, guideline)
+function! textobj#user#define(pat0, pat1, pat2, guideline)  "{{{2
   let pat0 = s:rhs_escape(a:pat0)
   let pat1 = s:rhs_escape(a:pat1)
   let pat2 = s:rhs_escape(a:pat2)
@@ -156,11 +159,32 @@ endfunction
 
 
 
+function! textobj#user#plugin(plugin_name, feature_specs)  "{{{2
+  if a:plugin_name =~# '\L'
+    throw '{plugin} contains non-lowercase alphabet: ' . string(a:plugin_name)
+  endif
+  let plugin = a:plugin_name
+  let Plugin = substitute(a:plugin_name, '^\(\l\)', '\u\1', 0)
+
+  let g:__textobj_{plugin} = s:plugin.new(a:plugin_name, a:feature_specs)
+
+  execute
+  \ 'command! -bang -bar -nargs=0 Textobj'.Plugin.'DefaultKeyMappings'
+  \ 'call g:__textobj_'.plugin.'.define_default_key_mappings("<bang>" == "!")'
+  call g:__textobj_{plugin}.define_interface_key_mappings()
+
+  return g:__textobj_{plugin}
+endfunction
+
+
+
+
 
 
 
 
 " Misc.  "{{{1
+" pos  "{{{2
 
 " Terms:
 "   gpos        [bufnum, lnum, col, off] - a value returned by getpos()
@@ -187,6 +211,8 @@ endfunction
 
 
 
+
+" range  "{{{2
 
 function! s:range_containsp(range_head, range_tail, target_pos)
   return (s:pos_le(a:range_head, a:target_pos)
@@ -219,6 +245,8 @@ endfunction
 
 
 
+" for textobj#user#define()  "{{{2
+
 function! s:rhs_escape(pattern)
   let r = a:pattern
   let r = substitute(r, '<', '<LT>', 'g')
@@ -250,6 +278,147 @@ endfunction
 
 
 
+
+" for textobj#user#plugin()  "{{{2
+
+let s:plugin = {}
+
+
+function s:plugin.new(plugin_name, feature_specs)
+  let _ = extend({'name': a:plugin_name, 'feature_specs': a:feature_specs},
+  \              s:plugin, 'keep')
+  call _.normalize()
+  return _
+endfunction
+
+function s:plugin.normalize()
+  for [feature_name, specs] in items(self.feature_specs)
+    for [spec_name, spec_info] in items(specs)
+      if spec_name =~# '^\(move-[npNP]\|select\(\|-[ai]\)\)$'
+        if type(spec_info) == type('')
+          let specs[spec_name] = [spec_info]
+        endif
+      endif
+
+      unlet spec_info
+    endfor
+  endfor
+endfunction
+
+
+function! s:plugin.define_default_key_mappings(banged_p)
+  for [feature_name, specs] in items(self.feature_specs)
+    for [spec_name, spec_info] in items(specs)
+      let rhs = self.interface_mapping_name(feature_name, spec_name)
+      if spec_name ==# 'pattern'
+        " ignore
+      elseif spec_name =~# '^move-[npNP]$'
+        for lhs in spec_info
+          call s:map(a:banged_p, lhs, rhs)
+        endfor
+      elseif spec_name =~# '^select\(\|-[ai]\)$'
+        for lhs in spec_info
+          call s:objmap(a:banged_p, lhs, rhs)
+        endfor
+      else
+        throw 'Unknown command: ' . string(spec_name)
+      endif
+
+      unlet spec_info
+    endfor
+  endfor
+endfunction
+
+function! s:plugin.define_interface_key_mappings()
+  let RHS = ':<C-u>call g:__textobj_' . self.name . '.%s'
+  \         . '("%s", "%s", "%s")<Return>'
+  for [feature_name, specs] in items(self.feature_specs)
+    if !has_key(specs, 'pattern')
+      continue
+    endif
+
+    for [spec_name, spec_info] in items(specs)
+      let lhs = '<silent> '
+      \         . self.interface_mapping_name(feature_name, spec_name)
+      if spec_name ==# 'pattern'
+        " ignore
+      elseif spec_name =~# '^move-[npNP]$'
+        let flags = ''
+        let flags .= (spec_name =~ '[pP]$' ? 'b' : '')
+        let flags .= (spec_name =~ '[NP]$' ? 'e' : '')
+        call s:nnoremap(1, lhs, printf(RHS, 'move', feature_name, flags, 'n'))
+        call s:vnoremap(1, lhs, printf(RHS, 'move', feature_name, flags, 'v'))
+        call s:onoremap(1, lhs, printf(RHS, 'move', feature_name, flags, 'o'))
+      elseif spec_name ==# 'select'
+        let flags = ''
+        call s:vnoremap(1, lhs, printf(RHS, 'select', feature_name, flags,'v'))
+        call s:onoremap(1, lhs, printf(RHS, 'select', feature_name, flags,'o'))
+      elseif spec_name =~# '^select-[ai]$'
+        let flags = ''
+        let flags .= (spec_name =~ 'a$' ? 'a' : '')
+        let flags .= (spec_name =~ 'i$' ? 'i' : '')
+        call s:vnoremap(1,lhs,printf(RHS,'select_pair',feature_name,flags,'v'))
+        call s:onoremap(1,lhs,printf(RHS,'select_pair',feature_name,flags,'o'))
+      else
+        throw 'Unknown command: ' . string(spec_name)
+      endif
+
+      unlet spec_info
+    endfor
+  endfor
+endfunction
+
+
+function! s:plugin.interface_mapping_name(feature_name, spec_name)
+  return printf('<Plug>(textobj-%s-%s%s)', self.name, a:feature_name,
+  \             substitute(a:spec_name, '^\(move\|select\)', '', ''))
+endfunction
+
+
+function! s:plugin.move(feature_name, flags, previous_mode)
+  let specs = self.feature_specs[a:feature_name]
+  call textobj#user#move(specs.pattern, a:flags, a:previous_mode)
+endfunction
+
+function! s:plugin.select(feature_name, flags, previous_mode)
+  let specs = self.feature_specs[a:feature_name]
+  call textobj#user#select(specs.pattern, a:flags, a:previous_mode)
+endfunction
+
+function! s:plugin.select_pair(feature_name, flags, previous_mode)
+  let specs = self.feature_specs[a:feature_name]
+  call textobj#user#select_pair(specs.pattern[0], specs.pattern[1],
+  \                             a:flags, a:previous_mode)
+endfunction
+
+
+function! s:_map(map_commands, forced_p, lhs, rhs)
+  for _ in a:map_commands
+    execute 'silent!' (_) (a:forced_p ? '' : '<unique>') a:lhs  a:rhs
+  endfor
+endfunction
+
+function! s:map(forced_p, lhs, rhs)
+  call s:_map(['nmap', 'vmap', 'omap'], a:forced_p, a:lhs, a:rhs)
+endfunction
+function! s:objmap(forced_p, lhs, rhs)
+  call s:_map(['vmap', 'omap'], a:forced_p, a:lhs, a:rhs)
+endfunction
+
+function! s:nnoremap(forced_p, lhs, rhs)
+  call s:_map(['nnoremap'], a:forced_p, a:lhs, a:rhs)
+endfunction
+function! s:vnoremap(forced_p, lhs, rhs)
+  call s:_map(['vnoremap'], a:forced_p, a:lhs, a:rhs)
+endfunction
+function! s:onoremap(forced_p, lhs, rhs)
+  call s:_map(['onoremap'], a:forced_p, a:lhs, a:rhs)
+endfunction
+
+
+
+
+" Etc  "{{{2
 
 function! s:cancel_selection(previous_mode, orig_pos)
   if a:previous_mode ==# 'v'

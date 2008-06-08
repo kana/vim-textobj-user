@@ -1,5 +1,5 @@
 " textobj-user - Support for user-defined text objects
-" Version: 0.3
+" Version: 0.3.1
 " Copyright (C) 2007-2008 kana <http://whileimautomaton.net/>
 " License: MIT license (see <http://www.opensource.org/licenses/mit-license>)
 " Interfaces  "{{{1
@@ -172,6 +172,10 @@ function! textobj#user#plugin(plugin_name, feature_specs)  "{{{2
   \ 'command! -bang -bar -nargs=0 Textobj'.Plugin.'DefaultKeyMappings'
   \ 'call g:__textobj_'.plugin.'.define_default_key_mappings("<bang>" == "!")'
   call g:__textobj_{plugin}.define_interface_key_mappings()
+  if (!has_key(a:feature_specs, '*no-default-key-mappings*'))
+  \  && (!exists('g:textobj_'.plugin.'_no_default_key_mappings'))
+    execute 'Textobj'.Plugin.'DefaultKeyMappings'
+  endif
 
   return g:__textobj_{plugin}
 endfunction

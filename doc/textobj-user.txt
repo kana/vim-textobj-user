@@ -1,6 +1,6 @@
 *textobj-user.txt*	Support for user-defined text objects
 
-Version 0.3
+Version 0.3.1
 Copyright (C) 2007-2008 kana <http://whileimautomaton.net/>
 License: MIT license (see <http://www.opensource.org/licenses/mit-license>)
 
@@ -165,6 +165,10 @@ textobj#user#plugin({plugin}, {feature-specs})
 		execute appropriate action if "pattern" is given for the
 		entry.
 
+		(4) :TextobjFooDefaultKeyMappings will be executed unless
+		{feature-specs} contains the key "*no-default-key-mappings" or
+		the variable g:textobj_foo_no_default_key_mappings is defined.
+
 	{plugin} is the name of a plugin.  It must be a string which consits
 	of only lowercase alphabets.
 
@@ -201,6 +205,10 @@ textobj#user#plugin({plugin}, {feature-specs})
 		Like "select", but each string is treated as a key sequence
 		to select "a" text object or "inner" text object.
 
+	"*no-default-key-mappings*"	anything
+		If this key exists, :Textobj{Plugin}DefaultKeyMappings will
+		not be executed.  The corresponding value doesn't matter.
+
 
 
 
@@ -218,6 +226,10 @@ BUGS						*textobj-user-bugs*
 
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
+
+0.3.1	2008-06-08T22:05:02+09:00
+	- |textobj#user#plugin()|: Execute :Textobj{Plugin}DefaultKeyMappings
+	  if necessary.
 
 0.3	2008-06-04T21:16:02+09:00
 	- |textobj#user#plugin()|: New.

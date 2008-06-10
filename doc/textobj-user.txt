@@ -1,6 +1,6 @@
 *textobj-user.txt*	Support for user-defined text objects
 
-Version 0.3.1
+Version 0.3.2
 Copyright (C) 2007-2008 kana <http://whileimautomaton.net/>
 License: MIT license (see <http://www.opensource.org/licenses/mit-license>)
 
@@ -138,6 +138,9 @@ textobj#user#plugin({plugin}, {feature-specs})
 		\     'move-N': ',J',
 		\     'move-P': ',K',
 		\   },
+		\   '-': {
+		\     'select': ['ax', 'ix'],
+		\   },
 		\ })
 <
 		(1) New command :TextobjFooDefaultKeyMappings will be defined.
@@ -153,6 +156,10 @@ textobj#user#plugin({plugin}, {feature-specs})
 			vmap ad  <Plug>(textobj-foo-date)
 			omap id  <Plug>(textobj-foo-date)
 			vmap id  <Plug>(textobj-foo-date)
+			omap ax  <Plug>(textobj-foo)
+			vmap ax  <Plug>(textobj-foo)
+			omap ix  <Plug>(textobj-foo)
+			vmap ix  <Plug>(textobj-foo)
 			map ,j  <Plug>(textobj-foo-helptag-n)
 			map ,k  <Plug>(textobj-foo-helptag-p)
 			map ,J  <Plug>(textobj-foo-helptag-N)
@@ -226,6 +233,12 @@ BUGS						*textobj-user-bugs*
 
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
+
+0.3.2	2008-06-11T02:53:41+09:00
+	- |textobj#user#plugin()|: Change the names of interface mappings for
+	  the feature of which name is '-'.
+	  Old: <Plug>(textobj-{plugin}---a)
+	  New: <Plug>(textobj-{plugin}-a)
 
 0.3.1	2008-06-08T22:05:02+09:00
 	- |textobj#user#plugin()|: Execute :Textobj{Plugin}DefaultKeyMappings

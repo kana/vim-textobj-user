@@ -374,8 +374,13 @@ endfunction
 
 
 function! s:plugin.interface_mapping_name(feature_name, spec_name)
-  return printf('<Plug>(textobj-%s-%s%s)', self.name, a:feature_name,
-  \             substitute(a:spec_name, '^\(move\|select\)', '', ''))
+  let _ = printf('<Plug>(textobj-%s-%s-%s)',
+  \              self.name,
+  \              a:feature_name,
+  \              substitute(a:spec_name, '^\(move\|select\)', '', ''))
+  let _ = substitute(_, '-\+', '-', 'g')
+  let _ = substitute(_, '-\ze)$', '', '')
+  return _
 endfunction
 
 

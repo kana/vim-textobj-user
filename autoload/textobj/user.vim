@@ -1,5 +1,5 @@
 " textobj-user - Support for user-defined text objects
-" Version: 0.3.1
+" Version: 0.3.3
 " Copyright (C) 2007-2008 kana <http://whileimautomaton.net/>
 " License: MIT license (see <http://www.opensource.org/licenses/mit-license>)
 " Interfaces  "{{{1
@@ -314,7 +314,7 @@ function! s:plugin.define_default_key_mappings(banged_p)
   for [feature_name, specs] in items(self.feature_specs)
     for [spec_name, spec_info] in items(specs)
       let rhs = self.interface_mapping_name(feature_name, spec_name)
-      if spec_name ==# 'pattern'
+      if spec_name ~=# '^\*.*\*$'
         " ignore
       elseif spec_name =~# '^move-[npNP]$'
         for lhs in spec_info
@@ -337,14 +337,14 @@ function! s:plugin.define_interface_key_mappings()
   let RHS = ':<C-u>call g:__textobj_' . self.name . '.%s'
   \         . '("%s", "%s", "%s")<Return>'
   for [feature_name, specs] in items(self.feature_specs)
-    if !has_key(specs, 'pattern')
+    if !has_key(specs, '*pattern*')
       continue
     endif
 
     for [spec_name, spec_info] in items(specs)
       let lhs = '<silent> '
       \         . self.interface_mapping_name(feature_name, spec_name)
-      if spec_name ==# 'pattern'
+      if spec_name ~=# '^\*.*\*$'
         " ignore
       elseif spec_name =~# '^move-[npNP]$'
         let flags = ''
@@ -386,17 +386,17 @@ endfunction
 
 function! s:plugin.move(feature_name, flags, previous_mode)
   let specs = self.feature_specs[a:feature_name]
-  call textobj#user#move(specs.pattern, a:flags, a:previous_mode)
+  call textobj#user#move(specs['*pattern*'], a:flags, a:previous_mode)
 endfunction
 
 function! s:plugin.select(feature_name, flags, previous_mode)
   let specs = self.feature_specs[a:feature_name]
-  call textobj#user#select(specs.pattern, a:flags, a:previous_mode)
+  call textobj#user#select(specs['*pattern*'], a:flags, a:previous_mode)
 endfunction
 
 function! s:plugin.select_pair(feature_name, flags, previous_mode)
   let specs = self.feature_specs[a:feature_name]
-  call textobj#user#select_pair(specs.pattern[0], specs.pattern[1],
+  call textobj#user#select_pair(specs['*pattern*'][0], specs['*pattern*'][1],
   \                             a:flags, a:previous_mode)
 endfunction
 

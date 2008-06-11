@@ -1,6 +1,6 @@
 *textobj-user.txt*	Support for user-defined text objects
 
-Version 0.3.2
+Version 0.3.3
 Copyright (C) 2007-2008 kana <http://whileimautomaton.net/>
 License: MIT license (see <http://www.opensource.org/licenses/mit-license>)
 
@@ -123,16 +123,16 @@ textobj#user#plugin({plugin}, {feature-specs})
 
 		call textobj#user#plugin('foo', {
 		\   'cdata': {
-		\     'pattern': ['<!\[CDATA\[', '\]\]>'],
+		\     '*pattern*': ['<!\[CDATA\[', '\]\]>'],
 		\     'select-a': 'aC',
 		\     'select-i': 'iC',
 		\   },
 		\   'date': {
-		\     'pattern': '\<\d\{4}-\d\{2}-\d\{2}\>',
+		\     '*pattern*': '\<\d\{4}-\d\{2}-\d\{2}\>',
 		\     'select': ['ad', 'id'],
 		\   },
 		\   'helptag': {
-		\     'pattern': '\*[^*]\+\*',
+		\     '*pattern*': '\*[^*]\+\*',
 		\     'move-n': ',j',
 		\     'move-p': ',k',
 		\     'move-N': ',J',
@@ -169,7 +169,7 @@ textobj#user#plugin({plugin}, {feature-specs})
 		a dictionary which contains various functions and values.
 
 		(3) Key mappings <Plug>(textobj-foo-...) will be defined to
-		execute appropriate action if "pattern" is given for the
+		execute appropriate action if "*pattern*" is given for the
 		entry.
 
 		(4) :TextobjFooDefaultKeyMappings will be executed unless
@@ -185,7 +185,7 @@ textobj#user#plugin({plugin}, {feature-specs})
 	is a string of the name of the text object, and each value is
 	a dictionary which denotes some details of the text object:
 
-	"pattern"	{regexp} or [{regexp}, {regexp}]
+	"*pattern*"	{regexp} or [{regexp}, {regexp}]
 		A regular expression which matches to a text object.  If the
 		value is a list of two regular expressions, it denotes that
 		the text object starts with the first regular expression and
@@ -233,6 +233,11 @@ BUGS						*textobj-user-bugs*
 
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
+
+0.3.3	2008-06-11T21:16:53+09:00
+	- |textobj#user#plugin()|:
+	  - Rename the feature "*pattern*" instead of "pattern".
+	  - Fix incorrect processing on "*no-default-key-mappings*".
 
 0.3.2	2008-06-11T02:53:41+09:00
 	- |textobj#user#plugin()|: Change the names of interface mappings for

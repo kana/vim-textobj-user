@@ -6,9 +6,8 @@
 " simple  "{{{2
 
 function! textobj#user#move(pattern, flags, previous_mode)
-  if a:previous_mode ==# 'v'
-    normal! gv
-  endif
+  call s:prepare_movement(a:previous_mode)
+
   let i = v:count1
   while 0 < i
     let result = searchpos(a:pattern, a:flags.'W')
@@ -22,9 +21,7 @@ endfunction
 " FIXME: countable.
 " FIXME: In a case of a:pattern matches with one character.
 function! textobj#user#select(pattern, flags, previous_mode)
-  if a:previous_mode ==# 'v'
-    execute 'normal!' "gv\<Esc>"
-  endif
+  call s:prepare_selection(a:previous_mode)
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
 
   if a:flags =~# 'b'
@@ -56,9 +53,7 @@ endfunction
 
 
 function! textobj#user#select_pair(pattern1, pattern2, flags, previous_mode)
-  if a:previous_mode ==# 'v'
-    execute 'normal!' "gv\<Esc>"
-  endif
+  call s:prepare_selection(a:previous_mode)
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
 
   " adjust the cursor to the head of a:pattern2 if it's already in the range.
@@ -428,6 +423,19 @@ endfunction
 
 
 " Etc  "{{{2
+
+function! s:prepare_movement(previous_mode)
+  if a:previous_mode ==# 'v'
+    normal! gv
+  endif
+endfunction
+
+function! s:prepare_selection(previous_mode)
+  if a:previous_mode ==# 'v'
+    execute 'normal!' "gv\<Esc>"
+  endif
+endfunction
+
 
 function! s:cancel_selection(previous_mode, orig_pos)
   if a:previous_mode ==# 'v'

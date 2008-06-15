@@ -154,20 +154,20 @@ endfunction
 
 
 
-function! textobj#user#plugin(plugin_name, feature_specs)  "{{{2
+function! textobj#user#plugin(plugin_name, obj_specs)  "{{{2
   if a:plugin_name =~# '\L'
     throw '{plugin} contains non-lowercase alphabet: ' . string(a:plugin_name)
   endif
   let plugin = a:plugin_name
   let Plugin = substitute(a:plugin_name, '^\(\l\)', '\u\1', 0)
 
-  let g:__textobj_{plugin} = s:plugin.new(a:plugin_name, a:feature_specs)
+  let g:__textobj_{plugin} = s:plugin.new(a:plugin_name, a:obj_specs)
 
   execute
   \ 'command! -bang -bar -nargs=0 Textobj'.Plugin.'DefaultKeyMappings'
   \ 'call g:__textobj_'.plugin.'.define_default_key_mappings("<bang>" == "!")'
   call g:__textobj_{plugin}.define_interface_key_mappings()
-  if (!has_key(a:feature_specs, '*no-default-key-mappings*'))
+  if (!has_key(a:obj_specs, '*no-default-key-mappings*'))
   \  && (!exists('g:textobj_'.plugin.'_no_default_key_mappings'))
     execute 'Textobj'.Plugin.'DefaultKeyMappings'
   endif
@@ -282,15 +282,15 @@ endfunction
 " basics  "{{{3
 let s:plugin = {}
 
-function s:plugin.new(plugin_name, feature_specs)
-  let _ = extend({'name': a:plugin_name, 'feature_specs': a:feature_specs},
+function s:plugin.new(plugin_name, obj_specs)
+  let _ = extend({'name': a:plugin_name, 'obj_specs': a:obj_specs},
   \              s:plugin, 'keep')
   call _.normalize()
   return _
 endfunction
 
 function s:plugin.normalize()
-  for [feature_name, specs] in items(self.feature_specs)
+  for [obj_name, specs] in items(self.obj_specs)
     for [spec_name, spec_info] in items(specs)
       if spec_name =~# '^\(move-[npNP]\|select\(\|-[ai]\)\)$'
         if type(spec_info) == type('')
@@ -298,16 +298,16 @@ function s:plugin.normalize()
         endif
       endif
 
-      unlet spec_info
+      unlet spec_info  " to avoid E706.
     endfor
   endfor
 endfunction
 
 
 function! s:plugin.define_default_key_mappings(banged_p)  "{{{3
-  for [feature_name, specs] in items(self.feature_specs)
+  for [obj_name, specs] in items(self.obj_specs)
     for [spec_name, spec_info] in items(specs)
-      let rhs = self.interface_mapping_name(feature_name, spec_name)
+      let rhs = self.interface_mapping_name(obj_name, spec_name)
       if spec_name =~# '^\*.*\*$'
         " ignore
       elseif spec_name =~# '^move-[npNP]$'
@@ -322,7 +322,7 @@ function! s:plugin.define_default_key_mappings(banged_p)  "{{{3
         throw 'Unknown command: ' . string(spec_name)
       endif
 
-      unlet spec_info
+      unlet spec_info  " to avoid E706.
     endfor
   endfor
 endfunction
@@ -331,43 +331,43 @@ endfunction
 function! s:plugin.define_interface_key_mappings()  "{{{3
   let RHS = ':<C-u>call g:__textobj_' . self.name . '.%s'
   \         . '("%s", "%s", "<mode>")<Return>'
-  for [feature_name, specs] in items(self.feature_specs)
+  for [obj_name, specs] in items(self.obj_specs)
     if !has_key(specs, '*pattern*')
       continue
     endif
 
     for [spec_name, spec_info] in items(specs)
       let lhs = '<silent> '
-      \         . self.interface_mapping_name(feature_name, spec_name)
+      \         . self.interface_mapping_name(obj_name, spec_name)
       if spec_name =~# '^\*.*\*$'
         " ignore
       elseif spec_name =~# '^move-[npNP]$'
         let flags = ''
         let flags .= (spec_name =~ '[pP]$' ? 'b' : '')
         let flags .= (spec_name =~ '[NP]$' ? 'e' : '')
-        call s:noremap(1, lhs, printf(RHS, 'move', feature_name, flags))
+        call s:noremap(1, lhs, printf(RHS, 'move', obj_name, flags))
       elseif spec_name ==# 'select'
         let flags = ''
-        call s:objnoremap(1, lhs, printf(RHS, 'select', feature_name, flags))
+        call s:objnoremap(1, lhs, printf(RHS, 'select', obj_name, flags))
       elseif spec_name =~# '^select-[ai]$'
         let flags = ''
         let flags .= (spec_name =~ 'a$' ? 'a' : '')
         let flags .= (spec_name =~ 'i$' ? 'i' : '')
-        call s:objnoremap(1, lhs, printf(RHS, 'select_pair', feature_name, flags))
+        call s:objnoremap(1, lhs, printf(RHS, 'select_pair', obj_name, flags))
       else
         throw 'Unknown command: ' . string(spec_name)
       endif
 
-      unlet spec_info
+      unlet spec_info  " to avoid E706.
     endfor
   endfor
 endfunction
 
 
-function! s:plugin.interface_mapping_name(feature_name, spec_name)  "{{{3
+function! s:plugin.interface_mapping_name(obj_name, spec_name)  "{{{3
   let _ = printf('<Plug>(textobj-%s-%s-%s)',
   \              self.name,
-  \              a:feature_name,
+  \              a:obj_name,
   \              substitute(a:spec_name, '^\(move\|select\)', '', ''))
   let _ = substitute(_, '-\+', '-', 'g')
   let _ = substitute(_, '-\ze)$', '', '')
@@ -376,18 +376,18 @@ endfunction
 
 
 " *pattern* implementations  "{{{3
-function! s:plugin.move(feature_name, flags, previous_mode)
-  let specs = self.feature_specs[a:feature_name]
+function! s:plugin.move(obj_name, flags, previous_mode)
+  let specs = self.obj_specs[a:obj_name]
   call textobj#user#move(specs['*pattern*'], a:flags, a:previous_mode)
 endfunction
 
-function! s:plugin.select(feature_name, flags, previous_mode)
-  let specs = self.feature_specs[a:feature_name]
+function! s:plugin.select(obj_name, flags, previous_mode)
+  let specs = self.obj_specs[a:obj_name]
   call textobj#user#select(specs['*pattern*'], a:flags, a:previous_mode)
 endfunction
 
-function! s:plugin.select_pair(feature_name, flags, previous_mode)
-  let specs = self.feature_specs[a:feature_name]
+function! s:plugin.select_pair(obj_name, flags, previous_mode)
+  let specs = self.obj_specs[a:obj_name]
   call textobj#user#select_pair(specs['*pattern*'][0], specs['*pattern*'][1],
   \                             a:flags, a:previous_mode)
 endfunction

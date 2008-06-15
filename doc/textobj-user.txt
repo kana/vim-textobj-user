@@ -115,7 +115,7 @@ textobj#user#define({pattern}, {pattern1}, {pattern2}, {guideline})
 		                 \  'select': ['ig', 'ag']})
 <
 						*textobj#user#plugin()*
-textobj#user#plugin({plugin}, {feature-specs})
+textobj#user#plugin({plugin}, {obj-specs})
 	Define key mappings and a command to support writing a plugin which
 	provides various user-defined text objects.
 	
@@ -169,27 +169,24 @@ textobj#user#plugin({plugin}, {feature-specs})
 		a dictionary which contains various functions and values.
 
 		(3) Key mappings <Plug>(textobj-foo-...) will be defined to
-		execute appropriate action if "*pattern*" is given for the
-		entry.
+		execute appropriate action if the key "*pattern*" exists in
+		{obj-specs}.
 
 		(4) :TextobjFooDefaultKeyMappings will be executed unless
-		{feature-specs} contains the key "*no-default-key-mappings" or
-		the variable g:textobj_foo_no_default_key_mappings is defined.
+		{obj-specs} contains the key "*no-default-key-mappings" or the
+		variable g:textobj_foo_no_default_key_mappings is defined.
 
 	{plugin} is the name of a plugin.  It must be a string which consits
 	of only lowercase alphabets.
 
-	{feature-specs} is a dictionary (and given value is cached by this
+	{obj-specs} is a dictionary (and given value is cached by this
 	plugin, so you have to pass copied one if necessary).  In this
-	dictionary, each key/value pair expresses one text object -- each key
-	is a string of the name of the text object, and each value is
-	a dictionary which denotes some details of the text object:
+	dictionary, each key/value pair expresses one text object:
+	- each key is a string of the name of the text object, and
+	- each value (called as "specs") is a dictionary which denotes some
+	  details of the text object.
 
-	"*pattern*"	{regexp} or [{regexp}, {regexp}]
-		A regular expression which matches to a text object.  If the
-		value is a list of two regular expressions, it denotes that
-		the text object starts with the first regular expression and
-		ends with the second regular expression.
+	The following specs are available:
 
 	"move-n"	{lhs} or [{lhs}, ...]
 		A string which is a key sequence to move the cursor to the
@@ -199,22 +196,29 @@ textobj#user#plugin({plugin}, {feature-specs})
 	"move-p"	{lhs} or [{lhs}, ...]
 	"move-N"	{lhs} or [{lhs}, ...]
 	"move-P"	{lhs} or [{lhs}, ...]
-		Like "move-n", but each string is treated as a key sequence
-		to move the cursor to the previous text object, the end of the
+		Like "move-n", but each string is treated as a key sequence to
+		move the cursor to the previous text object, the end of the
 		next text object, or the end of the previous text object.
 
 	"select"	{lhs} or [{lhs}, ...]
-		Like "move-n", but each string is treated as a key sequence
-		to select the text object.
+		Like "move-n", but each string is treated as a key sequence to
+		select the text object.
 
 	"select-a"	{lhs} or [{lhs}, ...]
 	"select-i"	{lhs} or [{lhs}, ...]
 		Like "select", but each string is treated as a key sequence
 		to select "a" text object or "inner" text object.
 
+	"*pattern*"	{regexp} or [{regexp}, {regexp}]
+		A regular expression which matches to a text object.  If the
+		value is a list of two regular expressions, it denotes that
+		the text object starts with the first regular expression and
+		ends with the second regular expression.
+
 	"*no-default-key-mappings*"	anything
 		If this key exists, :Textobj{Plugin}DefaultKeyMappings will
-		not be executed.  The corresponding value doesn't matter.
+		not be executed when textobj#user#plugin() is called.  The
+		corresponding value doesn't matter.
 
 
 
@@ -236,12 +240,12 @@ CHANGELOG					*textobj-user-changelog*
 
 0.3.3	2008-06-11T21:16:53+09:00
 	- |textobj#user#plugin()|:
-	  - Rename the feature "*pattern*" instead of "pattern".
+	  - Rename the spec "*pattern*" instead of "pattern".
 	  - Fix incorrect processing on "*no-default-key-mappings*".
 
 0.3.2	2008-06-11T02:53:41+09:00
 	- |textobj#user#plugin()|: Change the names of interface mappings for
-	  the feature of which name is '-'.
+	  the text object of which name is '-'.
 	  Old: <Plug>(textobj-{plugin}---a)
 	  New: <Plug>(textobj-{plugin}-a)
 

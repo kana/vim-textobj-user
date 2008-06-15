@@ -279,9 +279,8 @@ endfunction
 
 
 " for textobj#user#plugin()  "{{{2
-
+" basics  "{{{3
 let s:plugin = {}
-
 
 function s:plugin.new(plugin_name, feature_specs)
   let _ = extend({'name': a:plugin_name, 'feature_specs': a:feature_specs},
@@ -305,7 +304,7 @@ function s:plugin.normalize()
 endfunction
 
 
-function! s:plugin.define_default_key_mappings(banged_p)
+function! s:plugin.define_default_key_mappings(banged_p)  "{{{3
   for [feature_name, specs] in items(self.feature_specs)
     for [spec_name, spec_info] in items(specs)
       let rhs = self.interface_mapping_name(feature_name, spec_name)
@@ -328,7 +327,8 @@ function! s:plugin.define_default_key_mappings(banged_p)
   endfor
 endfunction
 
-function! s:plugin.define_interface_key_mappings()
+
+function! s:plugin.define_interface_key_mappings()  "{{{3
   let RHS = ':<C-u>call g:__textobj_' . self.name . '.%s'
   \         . '("%s", "%s", "%s")<Return>'
   for [feature_name, specs] in items(self.feature_specs)
@@ -368,7 +368,7 @@ function! s:plugin.define_interface_key_mappings()
 endfunction
 
 
-function! s:plugin.interface_mapping_name(feature_name, spec_name)
+function! s:plugin.interface_mapping_name(feature_name, spec_name)  "{{{3
   let _ = printf('<Plug>(textobj-%s-%s-%s)',
   \              self.name,
   \              a:feature_name,
@@ -379,6 +379,7 @@ function! s:plugin.interface_mapping_name(feature_name, spec_name)
 endfunction
 
 
+" *pattern* implementations  "{{{3
 function! s:plugin.move(feature_name, flags, previous_mode)
   let specs = self.feature_specs[a:feature_name]
   call textobj#user#move(specs['*pattern*'], a:flags, a:previous_mode)
@@ -396,6 +397,7 @@ function! s:plugin.select_pair(feature_name, flags, previous_mode)
 endfunction
 
 
+" map wrappers  "{{{3
 function! s:_map(map_commands, forced_p, lhs, rhs)
   for _ in a:map_commands
     execute 'silent!' (_) (a:forced_p ? '' : '<unique>') a:lhs  a:rhs

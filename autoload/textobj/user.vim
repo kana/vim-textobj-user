@@ -330,7 +330,7 @@ endfunction
 
 function! s:plugin.define_interface_key_mappings()  "{{{3
   let RHS = ':<C-u>call g:__textobj_' . self.name . '.%s'
-  \         . '("%s", "%s", "%s")<Return>'
+  \         . '("%s", "%s", "<mode>")<Return>'
   for [feature_name, specs] in items(self.feature_specs)
     if !has_key(specs, '*pattern*')
       continue
@@ -345,19 +345,15 @@ function! s:plugin.define_interface_key_mappings()  "{{{3
         let flags = ''
         let flags .= (spec_name =~ '[pP]$' ? 'b' : '')
         let flags .= (spec_name =~ '[NP]$' ? 'e' : '')
-        call s:nnoremap(1, lhs, printf(RHS, 'move', feature_name, flags, 'n'))
-        call s:vnoremap(1, lhs, printf(RHS, 'move', feature_name, flags, 'v'))
-        call s:onoremap(1, lhs, printf(RHS, 'move', feature_name, flags, 'o'))
+        call s:noremap(1, lhs, printf(RHS, 'move', feature_name, flags))
       elseif spec_name ==# 'select'
         let flags = ''
-        call s:vnoremap(1, lhs, printf(RHS, 'select', feature_name, flags,'v'))
-        call s:onoremap(1, lhs, printf(RHS, 'select', feature_name, flags,'o'))
+        call s:objnoremap(1, lhs, printf(RHS, 'select', feature_name, flags))
       elseif spec_name =~# '^select-[ai]$'
         let flags = ''
         let flags .= (spec_name =~ 'a$' ? 'a' : '')
         let flags .= (spec_name =~ 'i$' ? 'i' : '')
-        call s:vnoremap(1,lhs,printf(RHS,'select_pair',feature_name,flags,'v'))
-        call s:onoremap(1,lhs,printf(RHS,'select_pair',feature_name,flags,'o'))
+        call s:objnoremap(1, lhs, printf(RHS, 'select_pair', feature_name, flags))
       else
         throw 'Unknown command: ' . string(spec_name)
       endif
@@ -400,25 +396,27 @@ endfunction
 " map wrappers  "{{{3
 function! s:_map(map_commands, forced_p, lhs, rhs)
   for _ in a:map_commands
-    execute 'silent!' (_) (a:forced_p ? '' : '<unique>') a:lhs  a:rhs
+    execute 'silent!' (_) (a:forced_p ? '' : '<unique>') a:lhs
+    \       substitute(a:rhs, '<mode>', _[0], 'g')
   endfor
 endfunction
+
+
+function! s:noremap(forced_p, lhs, rhs)
+  call s:_map(['nnoremap', 'vnoremap', 'onoremap'], a:forced_p, a:lhs, a:rhs)
+endfunction
+
+function! s:objnoremap(forced_p, lhs, rhs)
+  call s:_map(['vnoremap', 'onoremap'], a:forced_p, a:lhs, a:rhs)
+endfunction
+
 
 function! s:map(forced_p, lhs, rhs)
   call s:_map(['nmap', 'vmap', 'omap'], a:forced_p, a:lhs, a:rhs)
 endfunction
+
 function! s:objmap(forced_p, lhs, rhs)
   call s:_map(['vmap', 'omap'], a:forced_p, a:lhs, a:rhs)
-endfunction
-
-function! s:nnoremap(forced_p, lhs, rhs)
-  call s:_map(['nnoremap'], a:forced_p, a:lhs, a:rhs)
-endfunction
-function! s:vnoremap(forced_p, lhs, rhs)
-  call s:_map(['vnoremap'], a:forced_p, a:lhs, a:rhs)
-endfunction
-function! s:onoremap(forced_p, lhs, rhs)
-  call s:_map(['onoremap'], a:forced_p, a:lhs, a:rhs)
 endfunction
 
 

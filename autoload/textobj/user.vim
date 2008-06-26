@@ -1,5 +1,5 @@
 " textobj-user - Support for user-defined text objects
-" Version: 0.3.3
+" Version: 0.3.4
 " Copyright (C) 2007-2008 kana <http://whileimautomaton.net/>
 " License: MIT license (see <http://www.opensource.org/licenses/mit-license>)
 " Interfaces  "{{{1
@@ -298,6 +298,14 @@ function s:plugin.normalize()
         endif
       endif
 
+      if spec_name =~# '^\*.*-function\*$'
+        if !has_key(specs, '*sfile*')
+          throw ''
+        endif
+        let specs[spec_name]
+        \ = substitute(spec_info, '^s:', s:snr_prefix(specs['*sfile*']), '')
+      endif
+
       unlet spec_info  " to avoid E706.
     endfor
   endfor
@@ -329,36 +337,53 @@ endfunction
 
 
 function! s:plugin.define_interface_key_mappings()  "{{{3
-  let RHS = ':<C-u>call g:__textobj_' . self.name . '.%s'
-  \         . '("%s", "%s", "<mode>")<Return>'
-  for [obj_name, specs] in items(self.obj_specs)
-    if !has_key(specs, '*pattern*')
-      continue
-    endif
+  let RHS_PATTERN = ':<C-u>call g:__textobj_' . self.name . '.%s'
+  \                 . '("%s", "%s", "<mode>")<Return>'
+  let RHS_FUNCTION = ':<C-u>call function('
+  \                  .   'g:__textobj_' . self.name . '.obj_specs["%s"]["%s"]'
+  \                  . ')'
+  \                  . '("<mode>")<Return>'
 
-    for [spec_name, spec_info] in items(specs)
-      let lhs = '<silent> '
-      \         . self.interface_mapping_name(obj_name, spec_name)
-      if spec_name =~# '^\*.*\*$'
-        " ignore
-      elseif spec_name =~# '^move-[npNP]$'
-        let flags = ''
-        let flags .= (spec_name =~ '[pP]$' ? 'b' : '')
-        let flags .= (spec_name =~ '[NP]$' ? 'e' : '')
-        call s:noremap(1, lhs, printf(RHS, 'move', obj_name, flags))
-      elseif spec_name ==# 'select'
-        let flags = ''
-        call s:objnoremap(1, lhs, printf(RHS, 'select', obj_name, flags))
-      elseif spec_name =~# '^select-[ai]$'
-        let flags = ''
-        let flags .= (spec_name =~ 'a$' ? 'a' : '')
-        let flags .= (spec_name =~ 'i$' ? 'i' : '')
-        call s:objnoremap(1, lhs, printf(RHS, 'select_pair', obj_name, flags))
+  for [obj_name, specs] in items(self.obj_specs)
+    for spec_name in filter(keys(specs), 'v:val[0] != "*" && v:val[-1] != "*"')
+      " lhs
+      let lhs = '<silent> ' . self.interface_mapping_name(obj_name, spec_name)
+
+      " rhs
+      let _ = '*' . spec_name . '-function*'
+      if has_key(specs, _)
+        let rhs = printf(RHS_FUNCTION, obj_name, _)
+      elseif has_key(specs, '*pattern*')
+        if spec_name =~# '^move-[npNP]$'
+          let flags = ''
+          let flags .= (spec_name =~ '[pP]$' ? 'b' : '')
+          let flags .= (spec_name =~ '[NP]$' ? 'e' : '')
+          let impl_fname = 'move'
+        elseif spec_name ==# 'select'
+          let flags = ''
+          let impl_fname = 'select'
+        elseif spec_name =~# '^select-[ai]$'
+          let flags = ''
+          let flags .= (spec_name =~ 'a$' ? 'a' : '')
+          let flags .= (spec_name =~ 'i$' ? 'i' : '')
+          let impl_fname = 'select_pair'
+        else
+          echoerr 'Unknown spec:' string(spec_name)
+          continue
+        endif
+        let rhs = printf(RHS_PATTERN, impl_fname, obj_name, flags)
       else
-        throw 'Unknown command: ' . string(spec_name)
+        " skip to allow to define user's own {rhs} of the interface mapping.
+        continue
       endif
 
-      unlet spec_info  " to avoid E706.
+      " map
+      if spec_name =~# '^move'
+        let MapFunction = function('s:noremap')
+      else  " spec_name =~# '^select'
+        let MapFunction = function('s:objnoremap')
+      endif
+      call MapFunction(1, lhs, rhs)
     endfor
   endfor
 endfunction
@@ -443,6 +468,22 @@ function! s:cancel_selection(previous_mode, orig_pos)
   else  " if a:previous_mode ==# 'o'
     call cursor(a:orig_pos)
   endif
+endfunction
+
+
+function! s:snr_prefix(sfile)
+  redir => result
+  silent scriptnames
+  redir END
+
+  for line in split(result, '\n')
+    let _ = matchlist(line, '^\s*\(\d\+\):\s*\(.*\)$')
+    if a:sfile ==# _[2]
+      return printf("\<SNR>%d_", _[1])
+    endif
+  endfor
+
+  return 's:'
 endfunction
 
 

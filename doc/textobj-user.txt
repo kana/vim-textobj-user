@@ -1,6 +1,6 @@
 *textobj-user.txt*	Support for user-defined text objects
 
-Version 0.3.3
+Version 0.3.4
 Copyright (C) 2007-2008 kana <http://whileimautomaton.net/>
 License: MIT license (see <http://www.opensource.org/licenses/mit-license>)
 
@@ -139,6 +139,7 @@ textobj#user#plugin({plugin}, {obj-specs})
 		\     'move-P': ',K',
 		\   },
 		\   '-': {
+		\     '*select-function*': 'SelectFoo',
 		\     'select': ['ax', 'ix'],
 		\   },
 		\ })
@@ -168,12 +169,13 @@ textobj#user#plugin({plugin}, {obj-specs})
 		(2) New variable g:__textobj_foo will be defined.  This is
 		a dictionary which contains various functions and values.
 
-		(3) Key mappings <Plug>(textobj-foo-...) will be defined to
-		execute appropriate action if the key "*pattern*" exists in
-		{obj-specs}.
+		(3) Key mappings <Plug>(textobj-foo-...) which execute
+		appropriate actions will be defined if "*pattern*" or
+		"*{spec}-function*" is given for a {spec}.  Otherwise,
+		<Plug>(textobj-foo-...) will not be defined.
 
 		(4) :TextobjFooDefaultKeyMappings will be executed unless
-		{obj-specs} contains the key "*no-default-key-mappings" or the
+		{specs} contains the key "*no-default-key-mappings" or the
 		variable g:textobj_foo_no_default_key_mappings is defined.
 
 	{plugin} is the name of a plugin.  It must be a string which consits
@@ -220,6 +222,16 @@ textobj#user#plugin({plugin}, {obj-specs})
 		not be executed when textobj#user#plugin() is called.  The
 		corresponding value doesn't matter.
 
+	"*{spec}-function*"	{fname}
+		If this key exists, use the function named {fname} instead of
+		the default algorithm based on regular expression to move the
+		cursor or to select a text for {spec}.
+
+	"*sfile*"	{string}
+		Value must be expand('<sfile>').  This value is used to
+		calculate <SNR> prefix for script-local functions which are
+		specified "*{spec}-function*".
+
 
 
 
@@ -237,6 +249,12 @@ BUGS						*textobj-user-bugs*
 
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
+
+0.3.4	2008-06-26T14:13:33+09:00
+	- |textobj#user#plugin()|:
+	  - Add "*{spec}-function*" to customize the way to move the cursor or
+	    to select a text by the given function instead of regular
+	    expression based selection.
 
 0.3.3	2008-06-11T21:16:53+09:00
 	- |textobj#user#plugin()|:

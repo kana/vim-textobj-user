@@ -23,6 +23,14 @@ License: MIT license  {{{
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 }}}
 
+CONTENTS					*textobj-user-contents*
+
+Introduction		|textobj-user-introduction|
+Interface		|textobj-user-interface|
+  Functions		  |textobj-user-functions|
+Bugs			|textobj-user-bugs|
+Changelog		|textobj-user-changelog|
+
 
 
 
@@ -40,6 +48,9 @@ is your work.
 
 
 ==============================================================================
+INTERFACE					*textobj-user-interface*
+
+------------------------------------------------------------------------------
 FUNCTIONS					*textobj-user-function*
 
 						*textobj#user#move()*

@@ -37,7 +37,7 @@ Changelog		|textobj-user-changelog|
 ==============================================================================
 INTRODUCTION					*textobj-user-introduction*
 
-textobj-user is a Vim plugin to SUPPORT writing user-defined text objects,
+*textobj-user* is a Vim plugin to SUPPORT writing user-defined text objects,
 especially, simple text objects which can be defined by regular expression.
 
 Note that this plugin only provides functions to support writing user-defined

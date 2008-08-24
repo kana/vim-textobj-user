@@ -1,6 +1,6 @@
 *textobj-user.txt*	Support for user-defined text objects
 
-Version 0.3.4
+Version 0.3.5
 Copyright (C) 2007-2008 kana <http://whileimautomaton.net/>
 License: MIT license  {{{
     Permission is hereby granted, free of charge, to any person obtaining
@@ -257,6 +257,28 @@ textobj#user#plugin({plugin}, {obj-specs})
 		the default algorithm based on regular expression to move the
 		cursor or to select a text for {spec}.
 
+		The function must take no argument and it must return a list
+		to denote the area to be selected or 0 to denote that there is
+		nothing to select.  The detail of a list is as follows:
+			[motion_type, start_position, end_position]
+		- "motion_type" denotes the default type of motion.  Valid
+		  values are "v", "V" or "\<C-v>".  The meaning of the values
+		  are characterwise, linewise or blockwise.
+		- "start_position" denotes the start position of the area to
+		  be selected.  The detail of this value is the same as
+		  |getpos()|.
+		- "end_position" is like "start_position", but it denotes the
+		  end position of the area to be selected.
+
+		Example definition: >
+			funcion! SelectSomething()
+			  if SomethinWrong()
+			    return 0
+			  endif
+
+			  return ['v', getpos("'["), getpos("']")]
+			endfunction
+<
 	"*sfile*"	{string}
 		Value must be expand('<sfile>').  This value is used to
 		calculate <SNR> prefix for script-local functions which are
@@ -279,6 +301,15 @@ BUGS						*textobj-user-bugs*
 
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
+
+0.3.5	2008-08-24T23:01:45+09:00
+	Incompatible changes with 0.3.4 or ealier:
+	- |textobj#user#plugin()|: Change the specification of functions for
+	  "*{spec}-function*".
+
+	Other changes:
+	- |textobj#user#plugin()|: Add missing description of functions for
+	  "*{spec}-function*".
 
 0.3.4	2008-06-26T14:13:33+09:00
 	- |textobj#user#plugin()|:

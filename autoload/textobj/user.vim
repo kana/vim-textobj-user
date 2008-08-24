@@ -1,5 +1,5 @@
 " textobj-user - Support for user-defined text objects
-" Version: 0.3.4
+" Version: 0.3.5
 " Copyright (C) 2007-2008 kana <http://whileimautomaton.net/>
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
@@ -358,10 +358,10 @@ endfunction
 function! s:plugin.define_interface_key_mappings()  "{{{3
   let RHS_PATTERN = ':<C-u>call g:__textobj_' . self.name . '.%s'
   \                 . '("%s", "%s", "<mode>")<Return>'
-  let RHS_FUNCTION = ':<C-u>call function('
-  \                  .   'g:__textobj_' . self.name . '.obj_specs["%s"]["%s"]'
-  \                  . ')'
-  \                  . '("<mode>")<Return>'
+  let RHS_FUNCTION = ':<C-u>call <SID>select_function_wrapper('
+  \                  .   'g:__textobj_' . self.name . '.obj_specs["%s"]["%s"],'
+  \                  .   '"<mode>"'
+  \                  . ')<Return>'
 
   for [obj_name, specs] in items(self.obj_specs)
     for spec_name in filter(keys(specs), 'v:val[0] != "*" && v:val[-1] != "*"')
@@ -461,6 +461,24 @@ endfunction
 
 function! s:objmap(forced_p, lhs, rhs)
   call s:_map(['vmap', 'omap'], a:forced_p, a:lhs, a:rhs)
+endfunction
+
+
+" *select-function* wrapper  "{{{3
+function! s:select_function_wrapper(function_name, previous_mode)
+  let ORIG_POS = s:gpos_to_spos(getpos('.'))
+  call s:prepare_selection(a:previous_mode)
+
+  let _ = function(a:function_name)()
+  if _ is 0
+    call s:cancel_selection(a:previous_mode, ORIG_POS)
+  else
+    let [motion_type, start_position, end_position] = _
+    call setpos('.', start_position)
+    execute 'normal!' motion_type
+    call setpos('.', end_position)
+    echomsg string(_)
+  endif
 endfunction
 
 

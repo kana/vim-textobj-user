@@ -45,6 +45,10 @@ text objects, and this plugin does not provide any useful text objects.  That
 is your work.
 
 
+Requirements:
+- Vim 7.0 or later
+
+
 
 
 ==============================================================================

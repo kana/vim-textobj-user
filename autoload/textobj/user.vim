@@ -477,7 +477,6 @@ function! s:select_function_wrapper(function_name, previous_mode)
     call setpos('.', start_position)
     execute 'normal!' motion_type
     call setpos('.', end_position)
-    echomsg string(_)
   endif
 endfunction
 

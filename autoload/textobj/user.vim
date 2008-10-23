@@ -1,5 +1,5 @@
 " textobj-user - Support for user-defined text objects
-" Version: 0.3.6
+" Version: 0.3.7
 " Copyright (C) 2007-2008 kana <http://whileimautomaton.net/>
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining

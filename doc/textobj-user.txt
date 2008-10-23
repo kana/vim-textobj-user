@@ -1,6 +1,6 @@
 *textobj-user.txt*	Support for user-defined text objects
 
-Version 0.3.6
+Version 0.3.7
 Script ID: 2100
 Copyright (C) 2007-2008 kana <http://whileimautomaton.net/>
 License: MIT license  {{{

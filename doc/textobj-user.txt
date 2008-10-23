@@ -307,6 +307,10 @@ BUGS						*textobj-user-bugs*
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
 
+0.3.7	2008-10-24T02:25:59+09:00
+	- |textobj#user#select()|: Fix a bug that it didn't select an object
+	  which: (1) matches to multiple lines and (2) contains the cursor.
+
 0.3.6	2008-08-31T03:17:55+09:00
 	- Remove unnecessary messages for some cases.  They were just for
 	  debugging.

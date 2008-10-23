@@ -43,12 +43,21 @@ function! textobj#user#select(pattern, flags, previous_mode)
   call s:prepare_selection(a:previous_mode)
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
 
-  if a:flags =~# 'b'
-    let pos_head = searchpos(a:pattern, 'bcW')
-    let pos_tail = searchpos(a:pattern, 'eW')
+  let posf_tail = searchpos(a:pattern, 'ceW')
+  let posf_head = searchpos(a:pattern, 'bW')
+  call cursor(ORIG_POS)
+  let posb_head = searchpos(a:pattern, 'bcW')
+  let posb_tail = searchpos(a:pattern, 'eW')
+
+  " search() family with 'c' flag may not be matched to a pattern which
+  " matches to multiple lines.  To choose appropriate range, we have to check
+  " another range whether it contains the cursor or not.
+  if (a:flags =~# 'b'
+  \   || (s:range_containsp(posb_head, posb_tail, ORIG_POS)
+  \       && s:range_validp(posb_head, posb_tail)))
+    let [pos_head, pos_tail] = [posb_head, posb_tail]
   else
-    let pos_tail = searchpos(a:pattern, 'ceW')
-    let pos_head = searchpos(a:pattern, 'bW')
+    let [pos_head, pos_tail] = [posf_head, posf_tail]
   endif
 
   if s:range_validp(pos_head, pos_tail)

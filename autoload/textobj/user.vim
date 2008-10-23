@@ -62,9 +62,7 @@ function! textobj#user#select(pattern, flags, previous_mode)
 
   if s:range_validp(pos_head, pos_tail)
     call cursor(pos_head)
-    execute 'normal!' (exists('v:motion_force') && v:motion_force != ''
-    \                  ? v:motion_force
-    \                  : 'v')
+    execute 'normal!' s:wise('v')
     call cursor(pos_tail)
     return [pos_head, pos_tail]
   else
@@ -486,9 +484,7 @@ function! s:select_function_wrapper(function_name, previous_mode)
   else
     let [motion_type, start_position, end_position] = _
     call setpos('.', start_position)
-    execute 'normal!' (exists('v:motion_force') && v:motion_force != ''
-    \                  ? v:motion_force
-    \                  : motion_type)
+    execute 'normal!' s:wise(motion_type)
     call setpos('.', end_position)
   endif
 endfunction
@@ -533,6 +529,13 @@ function! s:snr_prefix(sfile)
   endfor
 
   return 's:'
+endfunction
+
+
+function! s:wise(default)
+  return (exists('v:motion_force') && v:motion_force != ''
+  \       ? v:motion_force
+  \       : a:default)
 endfunction
 
 

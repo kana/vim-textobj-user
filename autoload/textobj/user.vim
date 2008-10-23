@@ -62,7 +62,9 @@ function! textobj#user#select(pattern, flags, previous_mode)
 
   if s:range_validp(pos_head, pos_tail)
     call cursor(pos_head)
-    normal! v
+    execute 'normal!' (exists('v:motion_force') && v:motion_force != ''
+    \                  ? v:motion_force
+    \                  : 'v')
     call cursor(pos_tail)
     return [pos_head, pos_tail]
   else

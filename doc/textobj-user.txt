@@ -301,6 +301,8 @@ BUGS						*textobj-user-bugs*
 - textobj#user#select() and textobj#user#select_pair() cannot be used with
   [count].
 
+- textobj#user#select_pair() with |o_CTRL-V| may not work properly.
+
 
 
 
@@ -310,9 +312,10 @@ CHANGELOG					*textobj-user-changelog*
 0.3.7	2008-10-24T02:25:59+09:00
 	- |textobj#user#select()|: Fix a bug that it didn't select an object
 	  which: (1) matches to multiple lines and (2) contains the cursor.
-	- |textobj#user#select()|, |textobj#user#plugin()| with
-	  "*{spec}-function*": Support |o_v| and others.  To use this feature,
-	  you have to apply the following patch to Vim:
+	- |textobj#user#select()|, |textobj#user#select_pair()|,
+	  |textobj#user#plugin()| with "*{spec}-function*":
+	  Support |o_v| and others.  To use this feature, you have to apply
+	  the following patch to Vim:
 	  http://github.com/kana/vim/commits/hack/vimvar-motion_force
 
 0.3.6	2008-08-31T03:17:55+09:00

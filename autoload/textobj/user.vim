@@ -80,6 +80,7 @@ endfunction
 " endfunction
 
 
+" BUGS: With o_CTRL-V, this may not work properly.
 function! textobj#user#select_pair(pattern1, pattern2, flags, previous_mode)
   call s:prepare_selection(a:previous_mode)
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
@@ -263,9 +264,8 @@ endfunction
 
 
 function! s:range_select(range_head, range_tail)
-  " FIXME: always characterwise, is it okay?
   call cursor(a:range_head)
-  normal! v
+  execute 'normal!' s:wise('v')
   call cursor(a:range_tail)
 endfunction
 

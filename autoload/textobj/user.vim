@@ -486,7 +486,9 @@ function! s:select_function_wrapper(function_name, previous_mode)
   else
     let [motion_type, start_position, end_position] = _
     call setpos('.', start_position)
-    execute 'normal!' motion_type
+    execute 'normal!' (exists('v:motion_force') && v:motion_force != ''
+    \                  ? v:motion_force
+    \                  : motion_type)
     call setpos('.', end_position)
   endif
 endfunction

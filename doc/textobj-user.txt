@@ -259,8 +259,8 @@ textobj#user#plugin({plugin}, {obj-specs})
 
 	"*{spec}-function*"	{fname}
 		If this key exists, use the function named {fname} instead of
-		the default algorithm based on regular expression to move the
-		cursor or to select a text for {spec}.
+		the default algorithm based on regular expression to select
+		a text for {spec}.
 
 		The function must take no argument and it must return a list
 		to denote the area to be selected or 0 to denote that there is
@@ -310,8 +310,9 @@ CHANGELOG					*textobj-user-changelog*
 0.3.7	2008-10-24T02:25:59+09:00
 	- |textobj#user#select()|: Fix a bug that it didn't select an object
 	  which: (1) matches to multiple lines and (2) contains the cursor.
-	- |textobj#user#select()|: Support |o_v| and others.  To use this
-	  feature, you have to apply the following patch to Vim:
+	- |textobj#user#select()|, |textobj#user#plugin()| with
+	  "*{spec}-function*": Support |o_v| and others.  To use this feature,
+	  you have to apply the following patch to Vim:
 	  http://github.com/kana/vim/commits/hack/vimvar-motion_force
 
 0.3.6	2008-08-31T03:17:55+09:00

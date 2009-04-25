@@ -61,8 +61,9 @@ function! textobj#user#select(pattern, flags, previous_mode)
   endif
 
   if s:range_validp(pos_head, pos_tail)
-    call cursor(pos_head)
     execute 'normal!' s:wise('v')
+    call cursor(pos_head)
+    normal! o
     call cursor(pos_tail)
     return [pos_head, pos_tail]
   else
@@ -264,8 +265,9 @@ endfunction
 
 
 function! s:range_select(range_head, range_tail)
-  call cursor(a:range_head)
   execute 'normal!' s:wise('v')
+  call cursor(a:range_head)
+  normal! o
   call cursor(a:range_tail)
 endfunction
 
@@ -483,8 +485,9 @@ function! s:select_function_wrapper(function_name, previous_mode)
     call s:cancel_selection(a:previous_mode, ORIG_POS)
   else
     let [motion_type, start_position, end_position] = _
-    call setpos('.', start_position)
     execute 'normal!' s:wise(motion_type)
+    call setpos('.', start_position)
+    normal! o
     call setpos('.', end_position)
   endif
 endfunction

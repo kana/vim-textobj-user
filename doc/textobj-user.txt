@@ -315,11 +315,11 @@ BUGS						*textobj-user-bugs*
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
 
-0.3.8	2009-04-26T02:10:08+09:00
+0.3.8	2009-04-26T02:10:08+09:00		*textobj-user-changelog-0.3.8*
 	- Fix a bug that it was not possible to select any range which starts
 	  with the end of a line.
 
-0.3.7	2008-10-24T02:25:59+09:00
+0.3.7	2008-10-24T02:25:59+09:00		*textobj-user-changelog-0.3.7*
 	- |textobj#user#select()|: Fix a bug that it didn't select an object
 	  which: (1) matches to multiple lines and (2) contains the cursor.
 	- |textobj#user#select()|, |textobj#user#select_pair()|,
@@ -328,11 +328,11 @@ CHANGELOG					*textobj-user-changelog*
 	  the following patch to Vim:
 	  http://github.com/kana/vim/commits/hack/vimvar-motion_force
 
-0.3.6	2008-08-31T03:17:55+09:00
+0.3.6	2008-08-31T03:17:55+09:00		*textobj-user-changelog-0.3.6*
 	- Remove unnecessary messages for some cases.  They were just for
 	  debugging.
 
-0.3.5	2008-08-24T23:01:45+09:00
+0.3.5	2008-08-24T23:01:45+09:00		*textobj-user-changelog-0.3.5*
 	Incompatible changes with 0.3.4 or ealier:
 	- |textobj#user#plugin()|: Change the specification of functions for
 	  "*{spec}-function*".
@@ -341,49 +341,49 @@ CHANGELOG					*textobj-user-changelog*
 	- |textobj#user#plugin()|: Add missing description of functions for
 	  "*{spec}-function*".
 
-0.3.4	2008-06-26T14:13:33+09:00
+0.3.4	2008-06-26T14:13:33+09:00		*textobj-user-changelog-0.3.4*
 	- |textobj#user#plugin()|:
 	  - Add "*{spec}-function*" to customize the way to move the cursor or
 	    to select a text by the given function instead of regular
 	    expression based selection.
 
-0.3.3	2008-06-11T21:16:53+09:00
+0.3.3	2008-06-11T21:16:53+09:00		*textobj-user-changelog-0.3.3*
 	- |textobj#user#plugin()|:
 	  - Rename the spec "*pattern*" instead of "pattern".
 	  - Fix incorrect processing on "*no-default-key-mappings*".
 
-0.3.2	2008-06-11T02:53:41+09:00
+0.3.2	2008-06-11T02:53:41+09:00		*textobj-user-changelog-0.3.2*
 	- |textobj#user#plugin()|: Change the names of interface mappings for
 	  the text object of which name is '-'.
 	  Old: <Plug>(textobj-{plugin}---a)
 	  New: <Plug>(textobj-{plugin}-a)
 
-0.3.1	2008-06-08T22:05:02+09:00
+0.3.1	2008-06-08T22:05:02+09:00		*textobj-user-changelog-0.3.1*
 	- |textobj#user#plugin()|: Execute :Textobj{Plugin}DefaultKeyMappings
 	  if necessary.
 
-0.3	2008-06-04T21:16:02+09:00
+0.3	2008-06-04T21:16:02+09:00		*textobj-user-changelog-0.3*
 	- |textobj#user#plugin()|: New.
 	- |textobj#user#define()|: Now obsolete.  Use textobj#user#define().
 
-0.2.2	2008-06-02T06:26:12+09:00
+0.2.2	2008-06-02T06:26:12+09:00		*textobj-user-changelog-0.2.2*
 	- Fix wrong sentences in the document.
 
-0.2.1	2008-05-22T00:17:24+09:00
+0.2.1	2008-05-22T00:17:24+09:00		*textobj-user-changelog-0.2.1*
 	- textobj#user#select_pair(): Fix the bug that it selects wrong text
 	  in Operator-pending mode.
 
-0.2	2008-01-07T08:44:14+09:00
+0.2	2008-01-07T08:44:14+09:00		*textobj-user-changelog-0.2*
 	- textobj#user#select(): Fix the wrong selecting in Operator-pending
 	  mode.
 	- textobj#user#move(): Modify to be able to use in Visual and
 	  Operator-pending mode.
 
-0.1	2007-11-16T01:17:45+09:00
+0.1	2007-11-16T01:17:45+09:00		*textobj-user-changelog-0.1*
 	- Modify to be autoloaded.
 	- Change the names of all API.
 
-0.0	2007-10-15T20:41:34+09:00
+0.0	2007-10-15T20:41:34+09:00		*textobj-user-changelog-0.0*
 	- First release.
 
 

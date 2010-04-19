@@ -50,7 +50,7 @@ Requirements:
 - Vim 7.0 or later
 
 Latest version:
-http://github.com/kana/config/commits/vim-textobj-user
+http://github.com/kana/vim-textobj-user
 
 Document in HTML format:
 http://kana.github.com/config/vim/textobj-user.html

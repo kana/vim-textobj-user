@@ -29,21 +29,21 @@ function s:describe__textobj_user_plugin()  "{{{1
   let x = ''
 
   let o = '<Plug>(textobj-fruit-apple)'
-  Should Test1('aa') ==# [x, o, o, o, x, x, x]
-  Should Test1('ia') ==# [x, o, o, o, x, x, x]
+  Should Test1('aa') ==# [x, o, x, o, x, x, x]
+  Should Test1('ia') ==# [x, o, x, o, x, x, x]
   let o = '<Plug>(textobj-fruit-apple-n)'
-  Should Test1('ja') ==# [o, o, o, o, x, x, x]
+  Should Test1('ja') ==# [o, o, x, o, x, x, x]
   let o = '<Plug>(textobj-fruit-apple-p)'
-  Should Test1('ka') ==# [o, o, o, o, x, x, x]
+  Should Test1('ka') ==# [o, o, x, o, x, x, x]
 
   let o = '<Plug>(textobj-fruit-banana-a)'
-  Should Test1('ab') ==# [x, o, o, o, x, x, x]
+  Should Test1('ab') ==# [x, o, x, o, x, x, x]
   let o = '<Plug>(textobj-fruit-banana-i)'
-  Should Test1('ib') ==# [x, o, o, o, x, x, x]
+  Should Test1('ib') ==# [x, o, x, o, x, x, x]
 
   let o = '<Plug>(textobj-fruit)'
-  Should Test1('ac') ==# [x, o, o, o, x, x, x]
-  Should Test1('ic') ==# [x, o, o, o, x, x, x]
+  Should Test1('ac') ==# [x, o, x, o, x, x, x]
+  Should Test1('ic') ==# [x, o, x, o, x, x, x]
 
   It should define named key mappings.
 

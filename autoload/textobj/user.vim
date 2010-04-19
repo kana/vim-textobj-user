@@ -466,20 +466,24 @@ endfunction
 
 
 function! s:noremap(forced_p, lhs, rhs)
-  call s:_map(['nnoremap', 'vnoremap', 'onoremap'], a:forced_p, a:lhs, a:rhs)
+  let v = s:proper_visual_mode(a:lhs)
+  call s:_map(['nnoremap', v.'noremap', 'onoremap'], a:forced_p, a:lhs, a:rhs)
 endfunction
 
 function! s:objnoremap(forced_p, lhs, rhs)
-  call s:_map(['vnoremap', 'onoremap'], a:forced_p, a:lhs, a:rhs)
+  let v = s:proper_visual_mode(a:lhs)
+  call s:_map([v.'noremap', 'onoremap'], a:forced_p, a:lhs, a:rhs)
 endfunction
 
 
 function! s:map(forced_p, lhs, rhs)
-  call s:_map(['nmap', 'vmap', 'omap'], a:forced_p, a:lhs, a:rhs)
+  let v = s:proper_visual_mode(a:lhs)
+  call s:_map(['nmap', v.'map', 'omap'], a:forced_p, a:lhs, a:rhs)
 endfunction
 
 function! s:objmap(forced_p, lhs, rhs)
-  call s:_map(['vmap', 'omap'], a:forced_p, a:lhs, a:rhs)
+  let v = s:proper_visual_mode(a:lhs)
+  call s:_map([v.'map', 'omap'], a:forced_p, a:lhs, a:rhs)
 endfunction
 
 
@@ -547,6 +551,29 @@ function! s:wise(default)
   return (exists('v:motion_force') && v:motion_force != ''
   \       ? v:motion_force
   \       : a:default)
+endfunction
+
+
+function! s:proper_visual_mode(lhs)
+  " Return the mode prefix of proper "visual" mode for a:lhs key sequence.
+  " a:lhs should not be defined in Select mode if a:lhs starts with
+  " a printable character.  Otherwise a:lhs may be defined in Select mode.
+
+  " a:lhs may be prefixed with :map-arguments such as <buffer>.
+  " It's necessary to remove them to determine the first character in a:lhs.
+  let s1 = substitute(
+  \   a:lhs,
+  \   '\v^(\<(buffer|silent|special|script|expr|unique)\>\s*)*',
+  \   '',
+  \   ''
+  \ )
+  " All characters in a:lhs are printable characters, so it's necessary to
+  " convert <>-escaped notation into corresponding characters.
+  let s2 = substitute(s1,
+  \                   '^\(<[^<>]\+>\)',
+  \                   '\=eval("\"\\" . submatch(1) . "\"")',
+  \                   '')
+  return s2 =~# '^\p' ? 'x' : 'v'
 endfunction
 
 

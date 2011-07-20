@@ -538,7 +538,7 @@ function! s:snr_prefix(sfile)
 
   for line in split(result, '\n')
     let _ = matchlist(line, '^\s*\(\d\+\):\s*\(.*\)$')
-    if a:sfile ==# _[2]
+    if fnamemodify(a:sfile, ':p') ==# fnamemodify(_[2], ':p')
       return printf("\<SNR>%d_", _[1])
     endif
   endfor

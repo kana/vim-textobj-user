@@ -394,8 +394,8 @@ function! s:plugin.define_interface_key_mappings()  "{{{3
       elseif has_key(specs, '*pattern*')
         if spec_name =~# '^move-[npNP]$'
           let flags = ''
-          let flags .= (spec_name =~ '[pP]$' ? 'b' : '')
-          let flags .= (spec_name =~ '[NP]$' ? 'e' : '')
+          let flags .= (spec_name =~# '[pP]$' ? 'b' : '')
+          let flags .= (spec_name =~# '[NP]$' ? 'e' : '')
           let impl_fname = 'move'
         elseif spec_name ==# 'select'
           let flags = ''

@@ -402,8 +402,8 @@ function! s:plugin.define_interface_key_mappings()  "{{{3
           let impl_fname = 'select'
         elseif spec_name =~# '^select-[ai]$'
           let flags = ''
-          let flags .= (spec_name =~ 'a$' ? 'a' : '')
-          let flags .= (spec_name =~ 'i$' ? 'i' : '')
+          let flags .= (spec_name =~# 'a$' ? 'a' : '')
+          let flags .= (spec_name =~# 'i$' ? 'i' : '')
           let impl_fname = 'select_pair'
         else
           echoerr 'Unknown spec:' string(spec_name)

@@ -315,6 +315,12 @@ BUGS						*textobj-user-bugs*
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
 
+0.3.11	2012-01-17T21:02:18+09:00		*textobj-user-changelog-0.3.11*
+	- |textobj#user#plugin()|: Fix the bug that "move-n" and "move-p"
+	  operations for text objects are not correctly defined if
+	  'ignorecase' is enabled.  (Thank h1mesuke for reporting this
+	  problem.  See also: https://github.com/kana/vim-textobj-user/pull/4)
+
 0.3.10	2011-07-20T22:24:42+09:00		*textobj-user-changelog-0.3.10*
 	- Update for Vim 7.3.233 or later.
 	  (Thank cehoffman and thinca for reporting this problem.)

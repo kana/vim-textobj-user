@@ -315,6 +315,12 @@ BUGS						*textobj-user-bugs*
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
 
+0.3.12	2012-01-18T19:34:29+09:00		*textobj-user-changelog-0.3.12*
+	- |textobj#user#plugin()|: Fix the bug that "*sfile*" is not correctly
+	  interpreted in a Unix-like environment on Microsoft Windows such as
+	  Git for Windows.  (Thank sgur for reporting this problem.  See also:
+	  https://github.com/kana/vim-textobj-user/pull/5)
+
 0.3.11	2012-01-17T21:02:18+09:00		*textobj-user-changelog-0.3.11*
 	- |textobj#user#plugin()|: Fix the bug that "move-n" and "move-p"
 	  operations for text objects are not correctly defined if

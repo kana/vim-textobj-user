@@ -509,6 +509,12 @@ endfunction
 
 " Etc  "{{{2
 
+function! textobj#user#_sid()
+  return maparg('<SID>', 'n')
+endfunction
+nnoremap <SID>  <SID>
+
+
 function! s:prepare_movement(previous_mode)
   if a:previous_mode ==# 'v'
     normal! gv

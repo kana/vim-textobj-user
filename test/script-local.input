@@ -1,3 +1,5 @@
+call vspec#hint({'sid': 'textobj#user#_sid()'})
+
 let s:counter = [0]
 function! s:increment()
   let s:counter[0] += 1
@@ -24,6 +26,16 @@ function s:describe__textobj_user_plugin__sfile()  "{{{1
 
   execute 'normal' "vad\<Esc>"
   Should counter[0] == 2
+endfunction
+
+
+
+
+function s:describe__s_normalize_path()  "{{{1
+  It should normalize a backslashed path into a forwardslashed path.
+
+  Should Call('s:normalize_path', '/c/Users/who\vimfiles\plugin\textobj\foo.vim')
+  \ ==# '/c/Users/who/vimfiles/plugin/textobj/foo.vim'
 endfunction
 
 

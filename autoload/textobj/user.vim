@@ -509,6 +509,12 @@ endfunction
 
 " Etc  "{{{2
 
+function! textobj#user#_sid()
+  return maparg('<SID>', 'n')
+endfunction
+nnoremap <SID>  <SID>
+
+
 function! s:prepare_movement(previous_mode)
   if a:previous_mode ==# 'v'
     normal! gv
@@ -538,12 +544,17 @@ function! s:snr_prefix(sfile)
 
   for line in split(result, '\n')
     let _ = matchlist(line, '^\s*\(\d\+\):\s*\(.*\)$')
-    if fnamemodify(a:sfile, ':p') ==# fnamemodify(_[2], ':p')
+    if s:normalize_path(a:sfile) ==# s:normalize_path(_[2])
       return printf("\<SNR>%d_", _[1])
     endif
   endfor
 
   return 's:'
+endfunction
+
+
+function! s:normalize_path(unnormalized_path)
+  return substitute(fnamemodify(a:unnormalized_path, ':p'), '\\', '/', 'g')
 endfunction
 
 

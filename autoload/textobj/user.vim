@@ -553,6 +553,11 @@ function! s:snr_prefix(sfile)
 endfunction
 
 
+function! s:normalize_path(unnormalized_path)
+  return substitute(fnamemodify(a:unnormalized_path, ':p'), '\\', '/', 'g')
+endfunction
+
+
 function! s:wise(default)
   return (exists('v:motion_force') && v:motion_force != ''
   \       ? v:motion_force

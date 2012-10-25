@@ -216,7 +216,7 @@ textobj#user#plugin({plugin}, {obj-specs})
 		<Plug>(textobj-foo-...) will not be defined.
 
 		(4) :TextobjFooDefaultKeyMappings will be executed unless
-		{specs} contains the key "*no-default-key-mappings" or the
+		{specs} contains the key "*no-default-key-mappings*" or the
 		variable g:textobj_foo_no_default_key_mappings is defined.
 
 	{plugin} is the name of a plugin.  It must be a string which consits

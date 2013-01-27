@@ -178,6 +178,8 @@ function! textobj#user#define(pat0, pat1, pat2, guideline)  "{{{2
         throw 'Unknown function name: ' . string(function_name)
       endif
     endfor
+
+    unlet _lhss   " to avoid E706.
   endfor
 endfunction
 

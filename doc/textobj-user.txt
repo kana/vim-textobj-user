@@ -72,6 +72,8 @@ FUNCTIONS					*textobj-user-functions*
 
 						*textobj#user#move()*
 textobj#user#move({pattern}, {flags}, {previous-mode})
+	Note: This function is obsolete.  It will be removed in sometime.
+
 	Move the cursor to the appropriate object defined by {pattern}.
 
 	{flags} is a string, which can contain the following character flags:
@@ -94,6 +96,8 @@ textobj#user#move({pattern}, {flags}, {previous-mode})
 
 						*textobj#user#select()*
 textobj#user#select({pattern}, {flags}, {prevous-mode})
+	Note: This function is obsolete.  It will be removed in sometime.
+
 	Select the appropriate object defined by {pattern}.
 	If the cursor is already in the range of an object, select it.
 	If the cursor is not in the range of an object, select the nearest
@@ -111,6 +115,8 @@ textobj#user#select({pattern}, {flags}, {prevous-mode})
 
 						*textobj#user#select_pair()*
 textobj#user#select_pair({pattern1}, {pattern2}, {flags}, {previous-mode})
+	Note: This function is obsolete.  It will be removed in sometime.
+
 	Select the appropriate object which starts with {pattern1} and ends
 	with {pattern2}.
 
@@ -131,6 +137,9 @@ textobj#user#select_pair({pattern1}, {pattern2}, {flags}, {previous-mode})
 
 						*textobj#user#define()*
 textobj#user#define({pattern}, {pattern1}, {pattern2}, {guideline})
+	Note: This function is obsolete.  It will be removed in sometime.
+	Use |textobj#user#plugin()| instead.
+
 	Support function to define key mappings for the text object defined by
 	{pattern}, or {pattern1} and {pattern2}.  {guideline} is a dictionary
 	consists of key-value pairs where key is a string to represent the

@@ -1,4 +1,4 @@
-*textobj-user.txt*	Support for user-defined text objects
+*textobj-user.txt*	Create your own text objects
 
 Version @@VERSION@@
 Script ID: 2100
@@ -27,8 +27,8 @@ License: So-called MIT/X license  {{{
 CONTENTS					*textobj-user-contents*
 
 Introduction		|textobj-user-introduction|
-Interface		|textobj-user-interface|
-  Functions		  |textobj-user-functions|
+Reference		|textobj-user-reference|
+Obsolete API		|textobj-user-obsolete-api|
 Bugs			|textobj-user-bugs|
 Changelog		|textobj-user-changelog|
 
@@ -38,123 +38,35 @@ Changelog		|textobj-user-changelog|
 ==============================================================================
 INTRODUCTION					*textobj-user-introduction*
 
-*textobj-user* is a Vim plugin to SUPPORT writing user-defined text objects,
-especially, simple text objects which can be defined by regular expression.
+*textobj-user* is a Vim plugin to create your own text objects.
+It is hard to create text objects, because there are many pitfalls to deal
+with.  This plugin hides such details and provides a declarative way to define
+text objects.  You can use regular expressions to define text objects if they
+are simple enough, or functions to define complex ones.
 
-Note that this plugin only provides functions to support writing user-defined
-text objects, and this plugin does not provide any useful text objects.  That
-is your work.
+Note that this plugin is just a library to create text objects, so that it
+does not provide useful text objects.  That is your work.
+
+There are many text objects written with textobj-user.  If you want to find
+useful ones, or to know how they are implemented, see the following page:
+https://github.com/kana/vim-textobj-user/wiki
 
 
 Requirements:
 - Vim 7.0 or later
 
 Latest version:
-http://github.com/kana/vim-textobj-user
+https://github.com/kana/vim-textobj-user
 
 Document in HTML format:
-http://kana.github.com/config/vim/textobj-user.html
+http://vim-doc.heroku.com/view?https://raw.github.com/kana/vim-textobj-user/master/doc/textobj-user.txt
 
 
 
 
 ==============================================================================
-INTERFACE					*textobj-user-interface*
+REFERENCE					*textobj-user-reference*
 
-------------------------------------------------------------------------------
-FUNCTIONS					*textobj-user-function*
-
-						*textobj#user#move()*
-textobj#user#move({pattern}, {flags}, {previous-mode})
-	Move the cursor to the appropriate object defined by {pattern}.
-
-	{flags} is a string, which can contain the following character flags:
-		char	meaning ~
-		----	------- ~
-		'b'     search backward instead of forward.
-		'e'     move to the end of the match.
-
-	{previous-mode} is a string representing the "previous" mode,
-	that is, which mode of mapping causes the calling of this function.
-	For example, if this function is called via a mapping for
-	Operator-pending mode, {previous-mode} must be 'o'.
-		char	meaning ~
-		----	------- ~
-		'n'     Normal mode
-		'o'     Operator-pending mode
-		'v'     Visual mode
-
-	Return value is same as |searchpos()|.
-
-						*textobj#user#select()*
-textobj#user#select({pattern}, {flags}, {prevous-mode})
-	Select the appropriate object defined by {pattern}.
-	If the cursor is already in the range of an object, select it.
-	If the cursor is not in the range of an object, select the nearest
-	object after the cursor.
-
-	{flags} is a string, which can contain the following character flags:
-		char	meaning ~
-		----	------- ~
-		'b'     select the nearest object BEFORE the cursor if the
-		        cursor is not in the range of an object.
-
-	For the detail of {previous-mode}, see |textobj#user#move()|.
-
-	Return value is not defined.
-
-						*textobj#user#select_pair()*
-textobj#user#select_pair({pattern1}, {pattern2}, {flags}, {previous-mode})
-	Select the appropriate object which starts with {pattern1} and ends
-	with {pattern2}.
-
-	{flags} is a string, which can contain the following character flags:
-		char	meaning ~
-		----	------- ~
-		'a'     select the range including {pattern1} and {pattern2},
-			like |at|.
-		'i'     select the range excluding {pattern1} and {pattern2},
-			like |it|.  This is the default behavior unless 'a' is
-			explicitly specified.  If the cursor is not in a text
-			between {pattern1} and {pattern2}, this function does
-			nothing.
-
-	For the detail of {previous-mode}, see |textobj#user#move()|.
-
-	Return value is not defined.
-
-						*textobj#user#define()*
-textobj#user#define({pattern}, {pattern1}, {pattern2}, {guideline})
-	Support function to define key mappings for the text object defined by
-	{pattern}, or {pattern1} and {pattern2}.  {guideline} is a dictionary
-	consists of key-value pairs where key is a string to represent the
-	name of function and value is a list of strings (each string
-	represents {lhs} for corresponding key).
-
-	function name		meaning ~
-	-------------		------- ~
-	'move-to-next'		textobj#user#move({pattern}, '')
-	'move-to-prev'		textobj#user#move({pattern}, 'b')
-	'move-to-next-end'	textobj#user#move({pattern}, 'e')
-	'move-to-prev-end'	textobj#user#move({pattern}, 'be')
-	'select'		synonym for 'select-next'
-	'select-next'		textobj#user#select({pattern}, '',
-				                    {previous-mode})
-	'select-prev'		textobj#user#select({pattern}, 'b',
-				                    {previous-mode})
-	'select-pair-all'	textobj#user#select_pair({pattern1},
-				                         {pattern2},
-				                         'a', {previous-mode})
-	'select-pair-inner'	textobj#user#select_pair({pattern1},
-				                         {pattern2},
-				                         'i', {previous-mode})
-
-	Example: >
-		call textobj#user#define('foo', '', '',
-		                 \ {'move-to-next': 'gj',
-		                 \  'move-to-prev': 'gk',
-		                 \  'select': ['ig', 'ag']})
-<
 						*textobj#user#plugin()*
 textobj#user#plugin({plugin}, {obj-specs})
 	Define key mappings and a command to support writing a plugin which
@@ -294,6 +206,113 @@ textobj#user#plugin({plugin}, {obj-specs})
 		Value must be expand('<sfile>').  This value is used to
 		calculate <SNR> prefix for script-local functions which are
 		specified "*{spec}-function*".
+
+
+
+
+==============================================================================
+OBSOLETE API					*textobj-user-obsolete-api*
+
+						*textobj#user#move()*
+textobj#user#move({pattern}, {flags}, {previous-mode})
+	Note: This function is obsolete.  It will be removed in sometime.
+
+	Move the cursor to the appropriate object defined by {pattern}.
+
+	{flags} is a string, which can contain the following character flags:
+		char	meaning ~
+		----	------- ~
+		'b'     search backward instead of forward.
+		'e'     move to the end of the match.
+
+	{previous-mode} is a string representing the "previous" mode,
+	that is, which mode of mapping causes the calling of this function.
+	For example, if this function is called via a mapping for
+	Operator-pending mode, {previous-mode} must be 'o'.
+		char	meaning ~
+		----	------- ~
+		'n'     Normal mode
+		'o'     Operator-pending mode
+		'v'     Visual mode
+
+	Return value is same as |searchpos()|.
+
+						*textobj#user#select()*
+textobj#user#select({pattern}, {flags}, {prevous-mode})
+	Note: This function is obsolete.  It will be removed in sometime.
+
+	Select the appropriate object defined by {pattern}.
+	If the cursor is already in the range of an object, select it.
+	If the cursor is not in the range of an object, select the nearest
+	object after the cursor.
+
+	{flags} is a string, which can contain the following character flags:
+		char	meaning ~
+		----	------- ~
+		'b'     select the nearest object BEFORE the cursor if the
+		        cursor is not in the range of an object.
+
+	For the detail of {previous-mode}, see |textobj#user#move()|.
+
+	Return value is not defined.
+
+						*textobj#user#select_pair()*
+textobj#user#select_pair({pattern1}, {pattern2}, {flags}, {previous-mode})
+	Note: This function is obsolete.  It will be removed in sometime.
+
+	Select the appropriate object which starts with {pattern1} and ends
+	with {pattern2}.
+
+	{flags} is a string, which can contain the following character flags:
+		char	meaning ~
+		----	------- ~
+		'a'     select the range including {pattern1} and {pattern2},
+			like |at|.
+		'i'     select the range excluding {pattern1} and {pattern2},
+			like |it|.  This is the default behavior unless 'a' is
+			explicitly specified.  If the cursor is not in a text
+			between {pattern1} and {pattern2}, this function does
+			nothing.
+
+	For the detail of {previous-mode}, see |textobj#user#move()|.
+
+	Return value is not defined.
+
+						*textobj#user#define()*
+textobj#user#define({pattern}, {pattern1}, {pattern2}, {guideline})
+	Note: This function is obsolete.  It will be removed in sometime.
+	Use |textobj#user#plugin()| instead.
+
+	Support function to define key mappings for the text object defined by
+	{pattern}, or {pattern1} and {pattern2}.  {guideline} is a dictionary
+	consists of key-value pairs where key is a string to represent the
+	name of function and value is a list of strings (each string
+	represents {lhs} for corresponding key).
+
+	function name		meaning ~
+	-------------		------- ~
+	'move-to-next'		textobj#user#move({pattern}, '')
+	'move-to-prev'		textobj#user#move({pattern}, 'b')
+	'move-to-next-end'	textobj#user#move({pattern}, 'e')
+	'move-to-prev-end'	textobj#user#move({pattern}, 'be')
+	'select'		synonym for 'select-next'
+	'select-next'		textobj#user#select({pattern}, '',
+				                    {previous-mode})
+	'select-prev'		textobj#user#select({pattern}, 'b',
+				                    {previous-mode})
+	'select-pair-all'	textobj#user#select_pair({pattern1},
+				                         {pattern2},
+				                         'a', {previous-mode})
+	'select-pair-inner'	textobj#user#select_pair({pattern1},
+				                         {pattern2},
+				                         'i', {previous-mode})
+
+	Example: >
+		call textobj#user#define('foo', '', '',
+		                 \ {'move-to-next': 'gj',
+		                 \  'move-to-prev': 'gk',
+		                 \  'select': ['ig', 'ag']})
+<
 
 
 

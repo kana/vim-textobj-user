@@ -68,7 +68,7 @@ http://vim-doc.heroku.com/view?https://raw.github.com/kana/vim-textobj-user/mast
 INTERFACE					*textobj-user-interface*
 
 ------------------------------------------------------------------------------
-FUNCTIONS					*textobj-user-function*
+FUNCTIONS					*textobj-user-functions*
 
 						*textobj#user#move()*
 textobj#user#move({pattern}, {flags}, {previous-mode})

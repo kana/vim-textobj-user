@@ -50,10 +50,10 @@ Requirements:
 - Vim 7.0 or later
 
 Latest version:
-http://github.com/kana/vim-textobj-user
+https://github.com/kana/vim-textobj-user
 
 Document in HTML format:
-http://kana.github.com/config/vim/textobj-user.html
+http://vim-doc.heroku.com/view?https://raw.github.com/kana/vim-textobj-user/master/doc/textobj-user.txt
 
 
 

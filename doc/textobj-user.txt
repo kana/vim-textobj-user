@@ -1,4 +1,4 @@
-*textobj-user.txt*	Support for user-defined text objects
+*textobj-user.txt*	Create your own text objects
 
 Version @@VERSION@@
 Script ID: 2100

@@ -38,12 +38,18 @@ Changelog		|textobj-user-changelog|
 ==============================================================================
 INTRODUCTION					*textobj-user-introduction*
 
-*textobj-user* is a Vim plugin to SUPPORT writing user-defined text objects,
-especially, simple text objects which can be defined by regular expression.
+*textobj-user* is a Vim plugin to create your own text objects.
+It is hard to create text objects, because there are many pitfalls to deal
+with.  This plugin hides such details and provides a declarative way to define
+text objects.  You can use regular expressions to define text objects if they
+are simple enough, or functions to define complex ones.
 
-Note that this plugin only provides functions to support writing user-defined
-text objects, and this plugin does not provide any useful text objects.  That
-is your work.
+Note that this plugin is just a library to create text objects, so that it
+does not provide useful text objects.  That is your work.
+
+There are many text objects written with textobj-user.  If you want to find
+useful ones, or to know how they are implemented, see the following page:
+https://github.com/kana/vim-textobj-user/wiki
 
 
 Requirements:

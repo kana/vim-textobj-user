@@ -113,3 +113,95 @@ describe 'textobj#user#select_pair with different patterns'
     endfor
   end
 end
+
+
+
+
+describe 'textobj#user#select_pair with equivalent patterns'
+  before
+    new
+    let b:test = function('Test')
+  end
+
+  after
+    quit!
+  end
+
+  it 'selects a proper region if the cursor is on pattern1'
+    " (a-1) ___PATTERN1___PATTERN2___pattern1___pattern2___
+    "          aaaaaaaaiiiaaaaaaaa
+    "          ^
+    " (a-2) ___PATTERN1___PATTERN2___pattern1___pattern2___
+    "          aaaaaaaaiiiaaaaaaaa
+    "             ^
+    " (a-3) ___PATTERN1___PATTERN2___pattern1___pattern2___
+    "          aaaaaaaaiiiaaaaaaaa
+    "                 ^
+    for locate_command in ['fP', '2fT', 'f1']
+      call b:test(
+      \   '___PATTERN1___PATTERN2___pattern1___pattern2___',
+      \   locate_command,
+      \   '\cPATTERN\d',
+      \   '\cPATTERN\d',
+      \   [
+      \     ['a', 'o', [4, 22], 'PATTERN1___PATTERN2'],
+      \     ['a', 'v', [4, 22], 'PATTERN1___PATTERN2'],
+      \     ['i', 'o', [12, 14], '___'],
+      \     ['i', 'v', [12, 14], '___'],
+      \   ]
+      \ )
+    endfor
+  end
+
+  it 'selects a proper region if the cursor is between pattern1 and pattern2'
+    " (b-1) ___PATTERN1___PATTERN2___pattern1___pattern2___
+    "          aaaaaaaaiiiaaaaaaaa
+    "                  ^
+    " (b-2) ___PATTERN1___PATTERN2___pattern1___pattern2___
+    "          aaaaaaaaiiiaaaaaaaa
+    "                   ^
+    " (b-3) ___PATTERN1___PATTERN2___pattern1___pattern2___
+    "          aaaaaaaaiiiaaaaaaaa
+    "                    ^
+    for locate_command in ['f11f_', 'f12f_', 'f13f_']
+      call b:test(
+      \   '___PATTERN1___PATTERN2___pattern1___pattern2___',
+      \   locate_command,
+      \   '\cPATTERN\d',
+      \   '\cPATTERN\d',
+      \   [
+      \     ['a', 'o', [4, 22], 'PATTERN1___PATTERN2'],
+      \     ['a', 'v', [4, 22], 'PATTERN1___PATTERN2'],
+      \     ['i', 'o', [12, 14], '___'],
+      \     ['i', 'v', [12, 14], '___'],
+      \   ]
+      \ )
+    endfor
+  end
+
+  it 'selects a proper region if the cursor is on pattern2'
+    " (c-1) ___PATTERN1___PATTERN2___pattern1___pattern2___
+    "          aaaaaaaaiiiaaaaaaaa
+    "                     ^
+    " (c-2) ___PATTERN1___PATTERN2___pattern1___pattern2___
+    "          aaaaaaaaiiiaaaaaaaa
+    "                        ^
+    " (c-3) ___PATTERN1___PATTERN2___pattern1___pattern2___
+    "          aaaaaaaaiiiaaaaaaaa
+    "                            ^
+    for locate_command in ['2fP', '2fP2fT', '2fPf2']
+      call b:test(
+      \   '___PATTERN1___PATTERN2___pattern1___pattern2___',
+      \   locate_command,
+      \   '\cPATTERN\d',
+      \   '\cPATTERN\d',
+      \   [
+      \     ['a', 'o', [4, 22], 'PATTERN1___PATTERN2'],
+      \     ['a', 'v', [4, 22], 'PATTERN1___PATTERN2'],
+      \     ['i', 'o', [12, 14], '___'],
+      \     ['i', 'v', [12, 14], '___'],
+      \   ]
+      \ )
+    endfor
+  end
+end

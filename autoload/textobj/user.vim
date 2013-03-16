@@ -41,7 +41,7 @@ endfunction
 " FIXME: In a case of a:pattern matches with one character.
 function! textobj#user#select(pattern, flags, previous_mode)
   call s:prepare_selection(a:previous_mode)
-  let ORIG_POS = s:gpos_to_spos(getpos('.'))
+  let ORIG_POS = s:spos_from_gpos(getpos('.'))
 
   let posf_tail = searchpos(a:pattern, 'ceW')
   let posf_head = searchpos(a:pattern, 'bW')
@@ -84,7 +84,7 @@ endfunction
 " BUGS: With o_CTRL-V, this may not work properly.
 function! textobj#user#select_pair(pattern1, pattern2, flags, previous_mode)
   call s:prepare_selection(a:previous_mode)
-  let ORIG_POS = s:gpos_to_spos(getpos('.'))
+  let ORIG_POS = s:spos_from_gpos(getpos('.'))
 
   " adjust the cursor to the head of a:pattern2 if it's already in the range.
   let pos2c_tail = searchpos(a:pattern2, 'ceW')
@@ -219,7 +219,7 @@ endfunction
 "   gpos        [bufnum, lnum, col, off] - a value returned by getpos()
 "   spos        [lnum, col] - a value returned by searchpos()
 "   pos         same as spos
-function! s:gpos_to_spos(gpos)
+function! s:spos_from_gpos(gpos)
   return a:gpos[1:2]
 endfunction
 
@@ -489,7 +489,7 @@ endfunction
 
 " *select-function* wrapper  "{{{3
 function! s:select_function_wrapper(function_name, previous_mode)
-  let ORIG_POS = s:gpos_to_spos(getpos('.'))
+  let ORIG_POS = s:spos_from_gpos(getpos('.'))
   call s:prepare_selection(a:previous_mode)
 
   let _ = function(a:function_name)()

@@ -1,9 +1,9 @@
 *textobj-user.txt*	Create your own text objects
 
-Version @@VERSION@@
+Version 0.3.13
 Script ID: 2100
-Copyright (C) 2007-2012 Kana Natsuno <http://whileimautomaton.net/>
-License: So-called MIT/X license  {{{
+Copyright (C) 2007-2013 Kana Natsuno <http://whileimautomaton.net/>
+License: MIT license  {{{
     Permission is hereby granted, free of charge, to any person obtaining
     a copy of this software and associated documentation files (the
     "Software"), to deal in the Software without restriction, including
@@ -27,9 +27,10 @@ License: So-called MIT/X license  {{{
 CONTENTS					*textobj-user-contents*
 
 Introduction		|textobj-user-introduction|
+Philosophy		|textobj-user-philosophy|
 Reference		|textobj-user-reference|
 Obsolete API		|textobj-user-obsolete-api|
-Bugs			|textobj-user-bugs|
+Known issues		|textobj-user-known-issues|
 Changelog		|textobj-user-changelog|
 
 
@@ -38,14 +39,75 @@ Changelog		|textobj-user-changelog|
 ==============================================================================
 INTRODUCTION					*textobj-user-introduction*
 
-*textobj-user* is a Vim plugin to create your own text objects.
+*textobj-user* is a Vim plugin to create your own text objects without pain.
 It is hard to create text objects, because there are many pitfalls to deal
 with.  This plugin hides such details and provides a declarative way to define
-text objects.  You can use regular expressions to define text objects if they
-are simple enough, or functions to define complex ones.
+text objects.  You can use regular expressions to define simple text objects,
+or use functions to define complex ones.  For example...
 
-Note that this plugin is just a library to create text objects, so that it
-does not provide useful text objects.  That is your work.
+						*textobj-user-example-simple*
+(a) Define "ad"/"id" to select a date such as "2013-03-16", and
+    define "at"/"it" to select a time such as "22:04:21":
+>
+	call textobj#user#plugin('datetime', {
+	\   'date': {
+	\     'pattern': '\<\d\d\d\d-\d\d-\d\d\>',
+	\     'select': ['ad', 'id'],
+	\   },
+	\   'time': {
+	\     'pattern': '\<\d\d:\d\d:\d\d\>',
+	\     'select': ['at', 'it'],
+	\   },
+	\ })
+<
+						*textobj-user-example-between*
+(b) Define "aP" to select a PHP code with "<?php" and "?>", and
+    define "iP" to select a PHP code without "<?php" and "?>":
+>
+	call textobj#user#plugin('php', {
+	\   'code': {
+	\     'pattern': ['<?php\>', '?>'],
+	\     'select-a': 'aP',
+	\     'select-i': 'iP',
+	\   },
+	\ })
+<
+						*textobj-user-example-complex*
+(c) Define "al" to select the current line, and
+    define "il" to select the current line without indentation:
+>
+	call textobj#user#plugin('line', {
+	\   '-': {
+	\     'select-a-function': 'CurrentLineA',
+	\     'select-a': 'aP',
+	\     'select-i-function': 'CurrentLineI',
+	\     'select-i': 'iP',
+	\   },
+	\ })
+
+	function! CurrentLineA()
+	  normal! 0
+	  let head_pos = getpos('.')
+	  normal! $
+	  let tail_pos = getpos('.')
+	  return ['v', head_pos, tail_pos]
+	endfunction
+
+	function! CurrentLineI()
+	  normal! ^
+	  let head_pos = getpos('.')
+	  normal! g_
+	  let tail_pos = getpos('.')
+	  let non_blank_char_exists_p = getline('.')[head_pos[2] - 1] !~# '\s'
+	  return
+	  \ non_blank_char_exists_p
+	  \ ? ['v', head_pos, tail_pos]
+	  \ : 0
+	endfunction
+<
+
+You can define your own text objects like the above examples.
+See also |textobj-user-reference| for more details.
 
 There are many text objects written with textobj-user.  If you want to find
 useful ones, or to know how they are implemented, see the following page:
@@ -65,147 +127,185 @@ http://vim-doc.heroku.com/view?https://raw.github.com/kana/vim-textobj-user/mast
 
 
 ==============================================================================
+PHILOSOPHY					*textobj-user-philosophy*
+
+Suppose that you define custom text objects.  Why do you define them?
+You must believe that they are useful and they boost your productivity.
+Such text objects are also useful for other users.
+If so, why don't you share them as a plugin?
+
+This is the reason why textobj-user provides just one function
+|textobj#user#plugin()|.  It defines not only key mappings like aX/iX for
+custom text objects, but also everything that is necessary to share as
+a plugin.  For example, one might prefer aY/iY to aX/iX for custom text
+objects.  So that it's necessary to provides a way for such cusotmization,
+but it's somewhat tedious to define such stuffs by hand.
+
+
+
+
+==============================================================================
 REFERENCE					*textobj-user-reference*
 
 						*textobj#user#plugin()*
-textobj#user#plugin({plugin}, {obj-specs})
-	Define key mappings and a command to support writing a plugin which
-	provides various user-defined text objects.
-	
-	Example: If textobj#user#plugin() is called like the following: >
+textobj#user#plugin({plugin-name}, {specs})
+	Define custom text objects according to {specs}, and
+	define also utilities to easily share custom text objects as a plugin
+	which name is {plugin-name}.
 
-		call textobj#user#plugin('foo', {
-		\   'cdata': {
-		\     '*pattern*': ['<!\[CDATA\[', '\]\]>'],
-		\     'select-a': 'aC',
-		\     'select-i': 'iC',
-		\   },
+	{plugin-name} is a string which consists of English alphabets.
+	This name is used various key mappings, Ex commands, and variables.
+
+	{specs} is a |Dictionary| for definitions of custom text objects.
+	See also |textobj-user-specs| for details.
+
+	For example,
+>
+		call textobj#user#plugin('datetime', {
 		\   'date': {
-		\     '*pattern*': '\<\d\{4}-\d\{2}-\d\{2}\>',
+		\     'pattern': '\<\d\d\d\d-\d\d-\d\d\>',
 		\     'select': ['ad', 'id'],
 		\   },
-		\   'helptag': {
-		\     '*pattern*': '\*[^*]\+\*',
-		\     'move-n': ',j',
-		\     'move-p': ',k',
-		\     'move-N': ',J',
-		\     'move-P': ',K',
-		\   },
-		\   '-': {
-		\     '*select-function*': 'SelectFoo',
-		\     'select': ['ax', 'ix'],
+		\   'time': {
+		\     'pattern': '\<\d\d:\d\d:\d\d\>',
+		\     'select': ['at', 'it'],
 		\   },
 		\ })
 <
-		(1) New command :TextobjFooDefaultKeyMappings will be defined.
-		This command defines the following key mappings as the default
-		ones for the new text objects (this command doesn't override
-		existing {lhs}s unless "!" is given): >
+	many stuffs are defined with the above definition:
 
-			omap aC  <Plug>(textobj-foo-cdata-a)
-			vmap aC  <Plug>(textobj-foo-cdata-a)
-			omap iC  <Plug>(textobj-foo-cdata-i)
-			vmap iC  <Plug>(textobj-foo-cdata-i)
-			omap ad  <Plug>(textobj-foo-date)
-			vmap ad  <Plug>(textobj-foo-date)
-			omap id  <Plug>(textobj-foo-date)
-			vmap id  <Plug>(textobj-foo-date)
-			omap ax  <Plug>(textobj-foo)
-			vmap ax  <Plug>(textobj-foo)
-			omap ix  <Plug>(textobj-foo)
-			vmap ix  <Plug>(textobj-foo)
-			map ,j  <Plug>(textobj-foo-helptag-n)
-			map ,k  <Plug>(textobj-foo-helptag-p)
-			map ,J  <Plug>(textobj-foo-helptag-N)
-			map ,K  <Plug>(textobj-foo-helptag-P)
+					  *:Textobj{Plugin}DefaultKeyMappings*
+	(a) An Ex command :TextobjDatetimeDefaultKeyMappings is defined.
+	The Ex command defines default key mappings for custom text objects,
+	but it doesn't override existing key mappings unless "!" is given.
+
+	In this example, the Ex command maps "ad", "id", "at" and "it" to
+	custom text objects in Operator-pending mode and Visual mode.  ({lhs}
+	is also mapped in Select mode if it starts with a non-printable
+	character such as <C-d>)
+
+			       *<Plug>(textobj-{plugin}-{object}-{operation})*
+	(b) Interface key mappings such as <Plug>(textobj-datetime-date-a) are
+	defined in Operator-pending mode, Visual mode and Select mode.  These
+	key mappings are defined for extra customization for users.
+
+	For example, one might prefer "aT" and "iT" to select a time, because
+	|at| and |it| are bound to the extremely useful text objects by
+	default, and it is usually a bad idea to override them.  In this case,
+	interface key mappings are used as follows:
+>
+		xmap aT  <Plug>(textobj-datetime-time-a)
+		omap aT  <Plug>(textobj-datetime-time-a)
+		xmap iT  <Plug>(textobj-datetime-time-i)
+		omap iT  <Plug>(textobj-datetime-time-i)
 <
-		(2) New variable g:__textobj_foo will be defined.  This is
-		a dictionary which contains various functions and values.
+				*g:textobj_{plugin}_no_default_key_mappings*
+	(c) Finally :TextobjDatetimeDefaultKeyMappings is executed by default
+	to define default key mappings -- "ad", "id", "at" and "it".
 
-		(3) Key mappings <Plug>(textobj-foo-...) which execute
-		appropriate actions will be defined if "*pattern*" or
-		"*{spec}-function*" is given for a {spec}.  Otherwise,
-		<Plug>(textobj-foo-...) will not be defined.
+	As described in (b), sometimes users do not want to use default key
+	mappings such as "at" and "at".  If
+	g:textobj_datetime_no_default_key_mappings is set to true, default key
+	mappings will not be defined.
 
-		(4) :TextobjFooDefaultKeyMappings will be executed unless
-		{specs} contains the key "*no-default-key-mappings" or the
-		variable g:textobj_foo_no_default_key_mappings is defined.
+	For backward compatibility, if {specs} contains a key
+	"*no-default-key-mappings*", default key mappings will not be defined.
+	But this feature will be removed from furture version.
 
-	{plugin} is the name of a plugin.  It must be a string which consits
-	of only lowercase alphabets.
 
-	{obj-specs} is a dictionary (and given value is cached by this
-	plugin, so you have to pass copied one if necessary).  In this
-	dictionary, each key/value pair expresses one text object:
-	- each key is a string of the name of the text object, and
-	- each value (called as "specs") is a dictionary which denotes some
-	  details of the text object.
+							  *textobj-user-specs*
+Specification for a text object ~
 
-	The following specs are available:
+|textobj#user#plugin()| takes {specs} for custom text objects.  {specs} is
+a |Dictionary|, and it is treated as a sequence of key-value pairs, where key
+is the name of a text object and value is the specification of a text object.
 
-	"move-n"	{lhs} or [{lhs}, ...]
-		A string which is a key sequence to move the cursor to the
-		next text object.  If the value is a list of strings, each
-		string is mapped to move the cursor.
+The specification of a text object consists of various properties.  Properties
+are expressed as a single dictionary.  Each key is the name of a property.
+The following properties are available:
 
-	"move-p"	{lhs} or [{lhs}, ...]
-	"move-N"	{lhs} or [{lhs}, ...]
-	"move-P"	{lhs} or [{lhs}, ...]
-		Like "move-n", but each string is treated as a key sequence to
-		move the cursor to the previous text object, the end of the
-		next text object, or the end of the previous text object.
+"move-n"			{lhs} or [{lhs}, ...]
+	The value must be a string or a list of strings.  Each string is
+	treated as a {lhs} of a default key mapping to move the cursor to the
+	next text object.
 
-	"select"	{lhs} or [{lhs}, ...]
-		Like "move-n", but each string is treated as a key sequence to
-		select the text object.
+	A target text object is determined by
+	- the "pattern" property with a single regular expression, or
+	- the "move-n-function" property.
 
-	"select-a"	{lhs} or [{lhs}, ...]
-	"select-i"	{lhs} or [{lhs}, ...]
-		Like "select", but each string is treated as a key sequence
-		to select "a" text object or "inner" text object.
+"move-p"			{lhs} or [{lhs}, ...]
+"move-N"			{lhs} or [{lhs}, ...]
+"move-P"			{lhs} or [{lhs}, ...]
+	Like "move-n", but {lhs} is used as a default key mapping to move the
+	cursor to
+	- the previous text object,
+	- the end of the next text object, or
+	- the end of the previous text object.
 
-	"*pattern*"	{regexp} or [{regexp}, {regexp}]
-		A regular expression which matches to a text object.  If the
-		value is a list of two regular expressions, it denotes that
-		the text object starts with the first regular expression and
-		ends with the second regular expression.
+"select"			{lhs} or [{lhs}, ...]
+	Like "move-n", but {lhs} is used as a default key mapping to select
+	the text object under the cursor.  If there is no text object under
+	the cursor, the next text object is selected.
 
-	"*no-default-key-mappings*"	anything
-		If this key exists, :Textobj{Plugin}DefaultKeyMappings will
-		not be executed when textobj#user#plugin() is called.  The
-		corresponding value doesn't matter.
+	A target text object is determined by
+	- the "pattern" property with a single regular expression, or
+	- the "select-function" property.
 
-	"*{spec}-function*"	{fname}
-		If this key exists, use the function named {fname} instead of
-		the default algorithm based on regular expression to select
-		a text for {spec}.
+"select-a"			{lhs} or [{lhs}, ...]
+"select-i"			{lhs} or [{lhs}, ...]
+	Like "select", but {lhs} is used as a default key mapping to select
+	"a" text object or "inner" text object, like |ab|, |ip| and other
+	built-in text objects.
 
-		The function must take no argument and it must return a list
-		to denote the area to be selected or 0 to denote that there is
-		nothing to select.  The detail of a list is as follows:
-			[motion_type, start_position, end_position]
-		- "motion_type" denotes the default type of motion.  Valid
-		  values are "v", "V" or "\<C-v>".  The meaning of the values
-		  are characterwise, linewise or blockwise.
-		- "start_position" denotes the start position of the area to
-		  be selected.  The detail of this value is the same as
-		  |getpos()|.
-		- "end_position" is like "start_position", but it denotes the
-		  end position of the area to be selected.
+	A target text object is determined by
+	- the "pattern" property with a pair of regular expressions,
+	- the "select-function-a" property, or
+	- the "select-function-i" property.
 
-		Example definition: >
-			funcion! SelectSomething()
-			  if SomethinWrong()
-			    return 0
-			  endif
+"*pattern*"			{regexp} or [{regexp}, {regexp}]
+	A single regular expression or a list of two regular expressions to
+	determine a target text object.
 
-			  return ['v', getpos("'["), getpos("']")]
-			endfunction
-<
-	"*sfile*"	{string}
-		Value must be expand('<sfile>').  This value is used to
-		calculate <SNR> prefix for script-local functions which are
-		specified "*{spec}-function*".
+	With a single regular expression:
+		A region matched to the regular expression is treated as
+		a target text object.
+
+	With a pair of regular expressions:
+		A region between two parts is treated as a target text object,
+		where the 1st part is matched to the 1st regular expression
+		and the 2nd part is matched to the 2nd regular expression.
+
+"*{property}-function*"		{fname}
+	If this property is defined, the function named {fname} instead of the
+	"pattern" property is used to determine a target text object for
+	a "{property}" operation.
+
+	The function...
+	- Must take no argument, and
+	- Must return a list to denote the region occupied by a target text
+	  object, or must return 0 to denote that there is no text object.
+
+	The format of a list a list to denote the region is as follows:
+
+		[region_type, start_position, end_position]
+
+	- "region_type" is a string to denote the type of a region.
+		Valid value     Meaning     ~
+		--------------------------- ~
+		"v"             Characterwise
+		"V"             Linewise
+		"\<C-v>"        Blockwise
+	- "start_position" denotes the start position of a region.
+	  The detail of this value is the same as |getpos()|.
+	- "end_position" is like "start_position", but it denotes the
+	  end position of a region.
+
+	See |textobj-user-example-complex| for an example.
+
+"*sfile*"			{string}
+	Value must be expand('<sfile>').  This value is used to
+	calculate <SNR> prefix for script-local functions which are
+	given to "{property}-function".
 
 
 
@@ -318,21 +418,31 @@ textobj#user#define({pattern}, {pattern1}, {pattern2}, {guideline})
 
 
 ==============================================================================
-BUGS						*textobj-user-bugs*
+KNOWN ISSUES					*textobj-user-known-issues*
 
-- textobj#user#select() and textobj#user#select_pair() override the current
-  {Visual}, unlike built-in text objects such as iw/aw, is/as, and so forth.
+- Count is not supported to select a text object.
 
-- textobj#user#select() and textobj#user#select_pair() cannot be used with
-  [count].
+- Unlike built-in text objects such as |aw|, |ip| and others,
+  visually selected region is not extended by repeating custom text objects.
 
-- textobj#user#select_pair() with |o_CTRL-V| may not work properly.
+- Custom text objects with |o_CTRL-V| may not work properly.
+
+- See also: https://github.com/kana/vim-textobj-user/issues
 
 
 
 
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
+
+0.3.13	2013-03-16T22:48:38+09:00		*textobj-user-changelog-0.3.13*
+	- Improve the document:
+	  - Add examples for new users.  See |textobj-user-introduction|.
+	  - Add notes on |textobj-user-philosophy|.
+	  - Refine the description on |textobj#user#plugin()|.
+	  - Tidy up |textobj-user-known-issues|.
+	  - Make "*no-default-key-mappings*" obsolete.
+	    It will be removed from future version.
 
 0.3.12	2012-01-18T19:34:29+09:00		*textobj-user-changelog-0.3.12*
 	- |textobj#user#plugin()|: Fix the bug that "*sfile*" is not correctly

@@ -320,7 +320,20 @@ function s:plugin.new(plugin_name, obj_specs)
 endfunction
 
 function s:plugin.normalize()
+  call self.normalize_property_names()
   call self.normalize_property_values()
+endfunction
+
+function s:plugin.normalize_property_names()
+  for spec in values(self.obj_specs)
+    for old_prop_name in keys(spec)
+      if old_prop_name =~ '^\*.*\*$'
+        let new_prop_name = substitute(old_prop_name, '^\*\(.*\)\*$', '\1', '')
+        let spec[new_prop_name] = spec[old_prop_name]
+        unlet spec[old_prop_name]
+      endif
+    endfor
+  endfor
 endfunction
 
 function s:plugin.normalize_property_values()

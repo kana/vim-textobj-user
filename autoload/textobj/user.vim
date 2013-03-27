@@ -407,10 +407,10 @@ function! s:plugin.define_interface_key_mappings()  "{{{3
       let lhs = '<silent> ' . self.interface_mapping_name(obj_name, spec_name)
 
       " rhs
-      let _ = '*' . spec_name . '-function*'
+      let _ = spec_name . '-function'
       if has_key(specs, _)
         let rhs = printf(RHS_FUNCTION, obj_name, _)
-      elseif has_key(specs, '*pattern*')
+      elseif has_key(specs, 'pattern')
         if spec_name =~# '^move-[npNP]$'
           let flags = ''
           let flags .= (spec_name =~# '[pP]$' ? 'b' : '')

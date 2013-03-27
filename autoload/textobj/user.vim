@@ -353,7 +353,7 @@ function s:plugin.normalize_property_values()
             \                                 s:snr_prefix(specs['sfile']),
             \                                 '')
           else
-            echoerr 'Script-local function is given without sfile:'
+            echoerr '"sfile" must be given to use a script-local function:'
             \       string(spec_name) '/' string(spec_info)
           endif
         else

@@ -424,9 +424,6 @@ function! s:plugin.define_interface_key_mappings()  "{{{3
           let flags .= (spec_name =~# 'a$' ? 'a' : '')
           let flags .= (spec_name =~# 'i$' ? 'i' : '')
           let impl_fname = 'select_pair'
-        else
-          echoerr 'Unknown spec:' string(spec_name)
-          continue
         endif
         let rhs = printf(RHS_PATTERN, impl_fname, obj_name, flags)
       else

@@ -382,7 +382,9 @@ function! s:plugin.define_default_key_mappings(banged_p)  "{{{3
           call s:objmap(a:banged_p, lhs, rhs)
         endfor
       else
-        throw 'Unknown command: ' . string(spec_name)
+        throw printf('Unknown property: %s given to %s',
+        \            string(spec_name),
+        \            string(obj_name))
       endif
 
       unlet spec_info  " to avoid E706.

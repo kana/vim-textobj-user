@@ -619,6 +619,22 @@ function! s:is_ui_property_name(name)
   return 0 <= index(s:ui_property_names, a:name)
 endfunction
 
+let s:non_ui_property_names = [
+\   'move-N-function',
+\   'move-P-function',
+\   'move-n-function',
+\   'move-p-function',
+\   'pattern',
+\   'select-a-function',
+\   'select-function',
+\   'select-i-function',
+\   'sfile',
+\ ]
+
+function! s:is_non_ui_property_name(name)
+  return 0 <= index(s:non_ui_property_names, a:name)
+endfunction
+
 
 
 

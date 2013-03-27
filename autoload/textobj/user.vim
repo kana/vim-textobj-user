@@ -345,15 +345,15 @@ function s:plugin.normalize_property_values()
         endif
       endif
 
-      if spec_name =~# '^\*.*-function\*$'
+      if spec_name =~# '-function$'
         if spec_info =~# '^s:'
-          if has_key(specs, '*sfile*')
+          if has_key(specs, 'sfile')
             let specs[spec_name] = substitute(spec_info,
             \                                 '^s:',
-            \                                 s:snr_prefix(specs['*sfile*']),
+            \                                 s:snr_prefix(specs['sfile']),
             \                                 '')
           else
-            echoerr 'Script-local function is given without *sfile*:'
+            echoerr 'Script-local function is given without sfile:'
             \       string(spec_name) '/' string(spec_info)
           endif
         else

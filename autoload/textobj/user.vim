@@ -605,6 +605,21 @@ function! s:proper_visual_mode(lhs)
 endfunction
 
 
+let s:ui_property_names = [
+\   'move-N',
+\   'move-P',
+\   'move-n',
+\   'move-p',
+\   'select',
+\   'select-a',
+\   'select-i',
+\ ]
+
+function! s:is_ui_property_name(name)
+  return 0 <= index(s:ui_property_names, a:name)
+endfunction
+
+
 
 
 

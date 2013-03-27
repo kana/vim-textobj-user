@@ -339,7 +339,7 @@ endfunction
 function s:plugin.normalize_property_values()
   for [obj_name, specs] in items(self.obj_specs)
     for [spec_name, spec_info] in items(specs)
-      if spec_name =~# '^\(move-[npNP]\|select\(\|-[ai]\)\)$'
+      if s:is_ui_property_name(spec_name)
         if type(spec_info) == type('')
           let specs[spec_name] = [spec_info]
         endif
@@ -400,7 +400,7 @@ function! s:plugin.define_interface_key_mappings()  "{{{3
   \                  . ')<Return>'
 
   for [obj_name, specs] in items(self.obj_specs)
-    for spec_name in filter(keys(specs), 'v:val[0] != "*" && v:val[-1] != "*"')
+    for spec_name in filter(keys(specs), 's:is_ui_property_name(v:val)')
       " lhs
       let lhs = '<silent> ' . self.interface_mapping_name(obj_name, spec_name)
 

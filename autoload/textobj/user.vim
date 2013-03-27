@@ -454,20 +454,20 @@ function! s:plugin.interface_mapping_name(obj_name, spec_name)  "{{{3
 endfunction
 
 
-" *pattern* implementations  "{{{3
+" "pattern" implementations  "{{{3
 function! s:plugin.move(obj_name, flags, previous_mode)
   let specs = self.obj_specs[a:obj_name]
-  call textobj#user#move(specs['*pattern*'], a:flags, a:previous_mode)
+  call textobj#user#move(specs['pattern'], a:flags, a:previous_mode)
 endfunction
 
 function! s:plugin.select(obj_name, flags, previous_mode)
   let specs = self.obj_specs[a:obj_name]
-  call textobj#user#select(specs['*pattern*'], a:flags, a:previous_mode)
+  call textobj#user#select(specs['pattern'], a:flags, a:previous_mode)
 endfunction
 
 function! s:plugin.select_pair(obj_name, flags, previous_mode)
   let specs = self.obj_specs[a:obj_name]
-  call textobj#user#select_pair(specs['*pattern*'][0], specs['*pattern*'][1],
+  call textobj#user#select_pair(specs['pattern'][0], specs['pattern'][1],
   \                             a:flags, a:previous_mode)
 endfunction
 

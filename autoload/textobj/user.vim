@@ -503,7 +503,7 @@ function! s:objmap(forced_p, lhs, rhs)
 endfunction
 
 
-" *select-function* wrapper  "{{{3
+" "select-function" wrapper  "{{{3
 function! s:select_function_wrapper(function_name, previous_mode)
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
   call s:prepare_selection(a:previous_mode)

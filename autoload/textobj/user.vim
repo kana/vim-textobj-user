@@ -371,7 +371,7 @@ function! s:plugin.define_default_key_mappings(banged_p)  "{{{3
   for [obj_name, specs] in items(self.obj_specs)
     for [spec_name, spec_info] in items(specs)
       let rhs = self.interface_mapping_name(obj_name, spec_name)
-      if spec_name =~# '^\*.*\*$'
+      if s:is_non_ui_property_name(spec_name)
         " ignore
       elseif spec_name =~# '^move-[npNP]$'
         for lhs in spec_info

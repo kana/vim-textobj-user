@@ -1,6 +1,6 @@
 *textobj-user.txt*	Create your own text objects
 
-Version 0.3.13
+Version 0.4.0
 Script ID: 2100
 Copyright (C) 2007-2013 Kana Natsuno <http://whileimautomaton.net/>
 License: MIT license  {{{
@@ -454,6 +454,13 @@ KNOWN ISSUES					*textobj-user-known-issues*
 
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
+
+0.4.0	2013-03-29T18:28:46+09:00		*textobj-user-changelog-0.4.0*
+	- Unify the style of property names to define text objects with
+	  |textobj#user#plugin()|.  Several properties are renamed for this
+	  change.  See |textobj-user-obsolete-properties| for the details.
+	  Old properties are still available, so that this version is backward
+	  compatible with existing plugins based on textobj-user.
 
 0.3.13	2013-03-16T22:48:38+09:00		*textobj-user-changelog-0.3.13*
 	- Improve the document:

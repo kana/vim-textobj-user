@@ -259,8 +259,8 @@ The following properties are available:
 
 	A target text object is determined by
 	- the "pattern" property with a pair of regular expressions,
-	- the "select-function-a" property, or
-	- the "select-function-i" property.
+	- the "select-a-function" property, or
+	- the "select-i-function" property.
 
 "*pattern*"			{regexp} or [{regexp}, {regexp}]
 	A single regular expression or a list of two regular expressions to

@@ -320,23 +320,40 @@ function s:plugin.new(plugin_name, obj_specs)
 endfunction
 
 function s:plugin.normalize()
+  call self.normalize_property_names()
+  call self.normalize_property_values()
+endfunction
+
+function s:plugin.normalize_property_names()
+  for spec in values(self.obj_specs)
+    for old_prop_name in keys(spec)
+      if old_prop_name =~ '^\*.*\*$'
+        let new_prop_name = substitute(old_prop_name, '^\*\(.*\)\*$', '\1', '')
+        let spec[new_prop_name] = spec[old_prop_name]
+        unlet spec[old_prop_name]
+      endif
+    endfor
+  endfor
+endfunction
+
+function s:plugin.normalize_property_values()
   for [obj_name, specs] in items(self.obj_specs)
     for [spec_name, spec_info] in items(specs)
-      if spec_name =~# '^\(move-[npNP]\|select\(\|-[ai]\)\)$'
+      if s:is_ui_property_name(spec_name)
         if type(spec_info) == type('')
           let specs[spec_name] = [spec_info]
         endif
       endif
 
-      if spec_name =~# '^\*.*-function\*$'
+      if spec_name =~# '-function$'
         if spec_info =~# '^s:'
-          if has_key(specs, '*sfile*')
+          if has_key(specs, 'sfile')
             let specs[spec_name] = substitute(spec_info,
             \                                 '^s:',
-            \                                 s:snr_prefix(specs['*sfile*']),
+            \                                 s:snr_prefix(specs['sfile']),
             \                                 '')
           else
-            echoerr 'Script-local function is given without *sfile*:'
+            echoerr '"sfile" must be given to use a script-local function:'
             \       string(spec_name) '/' string(spec_info)
           endif
         else
@@ -354,7 +371,7 @@ function! s:plugin.define_default_key_mappings(banged_p)  "{{{3
   for [obj_name, specs] in items(self.obj_specs)
     for [spec_name, spec_info] in items(specs)
       let rhs = self.interface_mapping_name(obj_name, spec_name)
-      if spec_name =~# '^\*.*\*$'
+      if s:is_non_ui_property_name(spec_name)
         " ignore
       elseif spec_name =~# '^move-[npNP]$'
         for lhs in spec_info
@@ -365,7 +382,9 @@ function! s:plugin.define_default_key_mappings(banged_p)  "{{{3
           call s:objmap(a:banged_p, lhs, rhs)
         endfor
       else
-        throw 'Unknown command: ' . string(spec_name)
+        throw printf('Unknown property: %s given to %s',
+        \            string(spec_name),
+        \            string(obj_name))
       endif
 
       unlet spec_info  " to avoid E706.
@@ -383,15 +402,15 @@ function! s:plugin.define_interface_key_mappings()  "{{{3
   \                  . ')<Return>'
 
   for [obj_name, specs] in items(self.obj_specs)
-    for spec_name in filter(keys(specs), 'v:val[0] != "*" && v:val[-1] != "*"')
+    for spec_name in filter(keys(specs), 's:is_ui_property_name(v:val)')
       " lhs
       let lhs = '<silent> ' . self.interface_mapping_name(obj_name, spec_name)
 
       " rhs
-      let _ = '*' . spec_name . '-function*'
+      let _ = spec_name . '-function'
       if has_key(specs, _)
         let rhs = printf(RHS_FUNCTION, obj_name, _)
-      elseif has_key(specs, '*pattern*')
+      elseif has_key(specs, 'pattern')
         if spec_name =~# '^move-[npNP]$'
           let flags = ''
           let flags .= (spec_name =~# '[pP]$' ? 'b' : '')
@@ -405,9 +424,6 @@ function! s:plugin.define_interface_key_mappings()  "{{{3
           let flags .= (spec_name =~# 'a$' ? 'a' : '')
           let flags .= (spec_name =~# 'i$' ? 'i' : '')
           let impl_fname = 'select_pair'
-        else
-          echoerr 'Unknown spec:' string(spec_name)
-          continue
         endif
         let rhs = printf(RHS_PATTERN, impl_fname, obj_name, flags)
       else
@@ -438,20 +454,20 @@ function! s:plugin.interface_mapping_name(obj_name, spec_name)  "{{{3
 endfunction
 
 
-" *pattern* implementations  "{{{3
+" "pattern" implementations  "{{{3
 function! s:plugin.move(obj_name, flags, previous_mode)
   let specs = self.obj_specs[a:obj_name]
-  call textobj#user#move(specs['*pattern*'], a:flags, a:previous_mode)
+  call textobj#user#move(specs['pattern'], a:flags, a:previous_mode)
 endfunction
 
 function! s:plugin.select(obj_name, flags, previous_mode)
   let specs = self.obj_specs[a:obj_name]
-  call textobj#user#select(specs['*pattern*'], a:flags, a:previous_mode)
+  call textobj#user#select(specs['pattern'], a:flags, a:previous_mode)
 endfunction
 
 function! s:plugin.select_pair(obj_name, flags, previous_mode)
   let specs = self.obj_specs[a:obj_name]
-  call textobj#user#select_pair(specs['*pattern*'][0], specs['*pattern*'][1],
+  call textobj#user#select_pair(specs['pattern'][0], specs['pattern'][1],
   \                             a:flags, a:previous_mode)
 endfunction
 
@@ -487,7 +503,7 @@ function! s:objmap(forced_p, lhs, rhs)
 endfunction
 
 
-" *select-function* wrapper  "{{{3
+" "select-function" wrapper  "{{{3
 function! s:select_function_wrapper(function_name, previous_mode)
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
   call s:prepare_selection(a:previous_mode)
@@ -585,6 +601,37 @@ function! s:proper_visual_mode(lhs)
   \                   '\=eval("\"\\" . submatch(1) . "\"")',
   \                   '')
   return s2 =~# '^\p' ? 'x' : 'v'
+endfunction
+
+
+let s:ui_property_names = [
+\   'move-N',
+\   'move-P',
+\   'move-n',
+\   'move-p',
+\   'select',
+\   'select-a',
+\   'select-i',
+\ ]
+
+function! s:is_ui_property_name(name)
+  return 0 <= index(s:ui_property_names, a:name)
+endfunction
+
+let s:non_ui_property_names = [
+\   'move-N-function',
+\   'move-P-function',
+\   'move-n-function',
+\   'move-p-function',
+\   'pattern',
+\   'select-a-function',
+\   'select-function',
+\   'select-i-function',
+\   'sfile',
+\ ]
+
+function! s:is_non_ui_property_name(name)
+  return 0 <= index(s:non_ui_property_names, a:name)
 endfunction
 
 

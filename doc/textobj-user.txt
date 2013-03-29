@@ -262,7 +262,7 @@ The following properties are available:
 	- the "select-a-function" property, or
 	- the "select-i-function" property.
 
-"*pattern*"			{regexp} or [{regexp}, {regexp}]
+"pattern"			{regexp} or [{regexp}, {regexp}]
 	A single regular expression or a list of two regular expressions to
 	determine a target text object.
 
@@ -275,7 +275,7 @@ The following properties are available:
 		where the 1st part is matched to the 1st regular expression
 		and the 2nd part is matched to the 2nd regular expression.
 
-"*{property}-function*"		{fname}
+"{property}-function"		{fname}
 	If this property is defined, the function named {fname} instead of the
 	"pattern" property is used to determine a target text object for
 	a "{property}" operation.
@@ -302,10 +302,30 @@ The following properties are available:
 
 	See |textobj-user-example-complex| for an example.
 
-"*sfile*"			{string}
+"sfile"				{string}
 	Value must be expand('<sfile>').  This value is used to
 	calculate <SNR> prefix for script-local functions which are
 	given to "{property}-function".
+
+
+					    *textobj-user-obsolete-properties*
+Obsolete properties ~
+
+The following properties are now obsolete.  They are still available, but they
+will be removed from future versions.  It is highly recommended to use new
+properties instead.
+
+	Old property name               New property name     ~
+	----------------------------------------------------- ~
+	"*pattern*"                     "pattern"
+	"*{property}-function*"         "{property}-function"
+	"*sfile*"                       "sfile"
+	"*no-default-key-mappings*"     Unavailable
+
+Note that "*no-default-key-mappings*" is still available, but it will no
+longer be supported.  Because it seems not to be used by anyone, and its
+interface is confusing and not useful.
+Use |g:textobj_{plugin}_no_default_key_mappings| instead.
 
 
 

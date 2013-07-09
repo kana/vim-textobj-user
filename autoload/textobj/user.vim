@@ -61,10 +61,7 @@ function! textobj#user#select(pattern, flags, previous_mode)
   endif
 
   if s:range_validp(pos_head, pos_tail)
-    execute 'normal!' s:wise('v')
-    call cursor(pos_head)
-    normal! o
-    call cursor(pos_tail)
+    call s:range_select(pos_head, pos_tail, 'v')
     return [pos_head, pos_tail]
   else
     return s:cancel_selection(a:previous_mode, ORIG_POS)
@@ -117,7 +114,7 @@ function! textobj#user#select_pair(pattern1, pattern2, flags, previous_mode)
     if s:range_no_text_without_edgesp(pos1p_tail, pos2p_head)
       return s:cancel_selection(a:previous_mode, ORIG_POS)
     endif
-    call s:range_select(pos1p_tail, pos2p_head)
+    call s:range_select(pos1p_tail, pos2p_head, 'v')
 
     " adjust the range.
     let whichwrap_orig = &whichwrap
@@ -125,7 +122,7 @@ function! textobj#user#select_pair(pattern1, pattern2, flags, previous_mode)
     execute "normal! \<Left>o\<Right>"
     let &whichwrap = whichwrap_orig
   else
-    call s:range_select(pos1p_head, pos2p_tail)
+    call s:range_select(pos1p_head, pos2p_tail, 'v')
   endif
   return
 endfunction
@@ -264,11 +261,14 @@ function! s:range_validp(range_head, range_tail)
 endfunction
 
 
-function! s:range_select(range_head, range_tail)
-  execute 'normal!' s:wise('v')
+function! s:range_select(range_head, range_tail, fallback_wise)
+  execute 'normal!' s:wise(a:fallback_wise)
   call cursor(a:range_head)
   normal! o
   call cursor(a:range_tail)
+  if &selection ==# 'exclusive'
+    normal! l
+  endif
 endfunction
 
 
@@ -513,10 +513,11 @@ function! s:select_function_wrapper(function_name, previous_mode)
     call s:cancel_selection(a:previous_mode, ORIG_POS)
   else
     let [motion_type, start_position, end_position] = _
-    execute 'normal!' s:wise(motion_type)
-    call setpos('.', start_position)
-    normal! o
-    call setpos('.', end_position)
+    call s:range_select(
+    \   s:gpos_to_spos(start_position),
+    \   s:gpos_to_spos(end_position),
+    \   motion_type
+    \ )
   endif
 endfunction
 

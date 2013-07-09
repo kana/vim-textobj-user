@@ -510,10 +510,11 @@ function! s:select_function_wrapper(function_name, previous_mode)
     call s:cancel_selection(a:previous_mode, ORIG_POS)
   else
     let [motion_type, start_position, end_position] = _
-    execute 'normal!' s:wise(motion_type)
-    call setpos('.', start_position)
-    normal! o
-    call setpos('.', end_position)
+    call s:range_select(
+    \   s:gpos_to_spos(start_position),
+    \   s:gpos_to_spos(end_position),
+    \   motion_type
+    \ )
   endif
 endfunction
 

@@ -117,7 +117,7 @@ function! textobj#user#select_pair(pattern1, pattern2, flags, previous_mode)
     if s:range_no_text_without_edgesp(pos1p_tail, pos2p_head)
       return s:cancel_selection(a:previous_mode, ORIG_POS)
     endif
-    call s:range_select(pos1p_tail, pos2p_head)
+    call s:range_select(pos1p_tail, pos2p_head, 'v')
 
     " adjust the range.
     let whichwrap_orig = &whichwrap
@@ -125,7 +125,7 @@ function! textobj#user#select_pair(pattern1, pattern2, flags, previous_mode)
     execute "normal! \<Left>o\<Right>"
     let &whichwrap = whichwrap_orig
   else
-    call s:range_select(pos1p_head, pos2p_tail)
+    call s:range_select(pos1p_head, pos2p_tail, 'v')
   endif
   return
 endfunction
@@ -264,8 +264,8 @@ function! s:range_validp(range_head, range_tail)
 endfunction
 
 
-function! s:range_select(range_head, range_tail)
-  execute 'normal!' s:wise('v')
+function! s:range_select(range_head, range_tail, fallback_wise)
+  execute 'normal!' s:wise(a:fallback_wise)
   call cursor(a:range_head)
   normal! o
   call cursor(a:range_tail)

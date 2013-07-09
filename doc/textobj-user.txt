@@ -1,6 +1,6 @@
 *textobj-user.txt*	Create your own text objects
 
-Version 0.4.0
+Version 0.4.1
 Script ID: 2100
 Copyright (C) 2007-2013 Kana Natsuno <http://whileimautomaton.net/>
 License: MIT license  {{{
@@ -79,9 +79,9 @@ or use functions to define complex ones.  For example...
 	call textobj#user#plugin('line', {
 	\   '-': {
 	\     'select-a-function': 'CurrentLineA',
-	\     'select-a': 'aP',
+	\     'select-a': 'al',
 	\     'select-i-function': 'CurrentLineI',
-	\     'select-i': 'iP',
+	\     'select-i': 'il',
 	\   },
 	\ })
 
@@ -447,6 +447,9 @@ KNOWN ISSUES					*textobj-user-known-issues*
 
 - Custom text objects with |o_CTRL-V| may not work properly.
 
+- In Vim older than 7.3.918, |.| fails to correctly repeat the last operation
+  with a custom text object.
+
 - See also: https://github.com/kana/vim-textobj-user/issues
 
 
@@ -454,6 +457,10 @@ KNOWN ISSUES					*textobj-user-known-issues*
 
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
+
+0.4.1	2013-07-09T21:23:56+09:00		*textobj-user-changelog-0.4.1*
+	- Fix custom text objects to correctly work even if 'selection' is set
+	  to "exclusive".
 
 0.4.0	2013-03-29T18:28:46+09:00		*textobj-user-changelog-0.4.0*
 	- Unify the style of property names to define text objects with

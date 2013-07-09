@@ -61,10 +61,7 @@ function! textobj#user#select(pattern, flags, previous_mode)
   endif
 
   if s:range_validp(pos_head, pos_tail)
-    execute 'normal!' s:wise('v')
-    call cursor(pos_head)
-    normal! o
-    call cursor(pos_tail)
+    call s:range_select(pos_head, pos_tail, 'v')
     return [pos_head, pos_tail]
   else
     return s:cancel_selection(a:previous_mode, ORIG_POS)

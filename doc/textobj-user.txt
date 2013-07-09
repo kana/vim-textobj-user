@@ -455,6 +455,10 @@ KNOWN ISSUES					*textobj-user-known-issues*
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
 
+0.4.1	2013-07-09T21:23:56+09:00		*textobj-user-changelog-0.4.1*
+	- Fix custom text objects to correctly work even if 'selection' is set
+	  to "exclusive".
+
 0.4.0	2013-03-29T18:28:46+09:00		*textobj-user-changelog-0.4.0*
 	- Unify the style of property names to define text objects with
 	  |textobj#user#plugin()|.  Several properties are renamed for this

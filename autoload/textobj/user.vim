@@ -266,6 +266,9 @@ function! s:range_select(range_head, range_tail, fallback_wise)
   call cursor(a:range_head)
   normal! o
   call cursor(a:range_tail)
+  if &selection ==# 'exclusive'
+    normal! l
+  endif
 endfunction
 
 

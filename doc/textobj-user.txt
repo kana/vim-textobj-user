@@ -79,9 +79,9 @@ or use functions to define complex ones.  For example...
 	call textobj#user#plugin('line', {
 	\   '-': {
 	\     'select-a-function': 'CurrentLineA',
-	\     'select-a': 'aP',
+	\     'select-a': 'al',
 	\     'select-i-function': 'CurrentLineI',
-	\     'select-i': 'iP',
+	\     'select-i': 'il',
 	\   },
 	\ })
 

@@ -447,6 +447,9 @@ KNOWN ISSUES					*textobj-user-known-issues*
 
 - Custom text objects with |o_CTRL-V| may not work properly.
 
+- In Vim older than 7.3.918, |.| fails to correctly repeat the last operation
+  with a custom text object.
+
 - See also: https://github.com/kana/vim-textobj-user/issues
 
 

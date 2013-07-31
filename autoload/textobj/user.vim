@@ -25,9 +25,10 @@
 " simple  "{{{2
 
 function! textobj#user#move(pattern, flags, previous_mode)
+  let i = v:count1
+
   call s:prepare_movement(a:previous_mode)
 
-  let i = v:count1
   while 0 < i
     let result = searchpos(a:pattern, a:flags.'W')
     let i = i - 1
@@ -613,14 +614,14 @@ nnoremap <SID>  <SID>
 
 
 function! s:prepare_movement(previous_mode)
-  if a:previous_mode ==# 'v'
+  if a:previous_mode ==# 'v' || a:previous_mode ==# 'x'
     normal! gv
   endif
 endfunction
 
 
 function! s:cancel_selection(previous_mode, orig_pos)
-  if a:previous_mode ==# 'v'
+  if a:previous_mode ==# 'v' || a:previous_mode ==# 'x'
     normal! gv
   else  " if a:previous_mode ==# 'o'
     call cursor(a:orig_pos)

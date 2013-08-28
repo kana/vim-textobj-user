@@ -398,7 +398,8 @@ function! s:plugin.define_interface_key_mappings()  "{{{3
   \                 . '("%s", "%s", "<mode>")<Return>'
   let RHS_FUNCTION = ':<C-u>call <SID>select_function_wrapper('
   \                  .   'g:__textobj_' . self.name . '.obj_specs["%s"]["%s"],'
-  \                  .   '"<mode>"'
+  \                  .   '"<mode>",'
+  \                  .   'v:count1'
   \                  . ')<Return>'
 
   for [obj_name, specs] in items(self.obj_specs)
@@ -504,7 +505,7 @@ endfunction
 
 
 " "select-function" wrapper  "{{{3
-function! s:select_function_wrapper(function_name, previous_mode)
+function! s:select_function_wrapper(function_name, previous_mode, count)
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
   call s:prepare_selection(a:previous_mode)
 
@@ -513,6 +514,22 @@ function! s:select_function_wrapper(function_name, previous_mode)
     call s:cancel_selection(a:previous_mode, ORIG_POS)
   else
     let [motion_type, start_position, end_position] = _
+    let l:count = a:count - 1
+
+    while l:count > 0
+      call setpos(".", end_position)
+      normal! "1 "
+
+      let _ = function(a:function_name)()
+      if _ is 0
+        break
+      endif
+
+      let [_motion_type, _start_position, end_position] = _
+
+      let l:count -= 1
+    endwhile
+
     call s:range_select(
     \   s:gpos_to_spos(start_position),
     \   s:gpos_to_spos(end_position),

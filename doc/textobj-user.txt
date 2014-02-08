@@ -1,8 +1,8 @@
 *textobj-user.txt*	Create your own text objects
 
-Version 0.4.1
+Version 0.4.2
 Script ID: 2100
-Copyright (C) 2007-2013 Kana Natsuno <http://whileimautomaton.net/>
+Copyright (C) 2007-2014 Kana Natsuno <http://whileimautomaton.net/>
 License: MIT license  {{{
     Permission is hereby granted, free of charge, to any person obtaining
     a copy of this software and associated documentation files (the
@@ -440,10 +440,17 @@ textobj#user#define({pattern}, {pattern1}, {pattern2}, {guideline})
 ==============================================================================
 KNOWN ISSUES					*textobj-user-known-issues*
 
-- Count is not supported to select a text object.
+- Count is not supported by vim-textobj-user.  Because the meaning of a count
+  depends on each custom text object.  If you want to support count for your
+  custom text object, define it with "{property}-function" and use |v:count|
+  and/or |v:count1| to get an actual count.
 
-- Unlike built-in text objects such as |aw|, |ip| and others,
-  visually selected region is not extended by repeating custom text objects.
+- For built-in text objects such as |aw|, |ip| and others, visually selected
+  region is extended by repeating a text object like "vawawaw...".  Such
+  extending is not supported by vim-textobj-user.  Because it's not trivial
+  to support for all of custom text objects.  While some text objects like
+  |aw| simply extends the current selection, other text objects like |ab|
+  might override the current selection depending on a context.
 
 - Custom text objects with |o_CTRL-V| may not work properly.
 
@@ -457,6 +464,11 @@ KNOWN ISSUES					*textobj-user-known-issues*
 
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
+
+0.4.2	2014-02-08T22:57:19+09:00		*textobj-user-changelog-0.4.2*
+	- Fix to support "move-n-function", "move-p-function", and so on.
+	  The document states that these functions are available, but they
+	  were not actually implemented.
 
 0.4.1	2013-07-09T21:23:56+09:00		*textobj-user-changelog-0.4.1*
 	- Fix custom text objects to correctly work even if 'selection' is set

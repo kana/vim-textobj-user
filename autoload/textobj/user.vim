@@ -394,8 +394,12 @@ endfunction
 
 
 function! s:plugin.define_interface_key_mappings()  "{{{3
-  let RHS_PATTERN = ':<C-u>call g:__textobj_' . self.name . '.%s'
-  \                 . '("%s", "%s", "<mode>")<Return>'
+  let RHS_PATTERN =
+  \   ':<C-u>call g:__textobj_' . self.name . '.%s('
+  \ .   '"%s",'
+  \ .   '"%s",'
+  \ .   '"<mode>"'
+  \ . ')<Return>'
   let RHS_SELECT_FUNCTION =
   \   ':<C-u>call <SID>select_function_wrapper('
   \ .   'g:__textobj_' . self.name . '.obj_specs["%s"]["%s"],'

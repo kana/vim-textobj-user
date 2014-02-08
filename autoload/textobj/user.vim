@@ -396,10 +396,11 @@ endfunction
 function! s:plugin.define_interface_key_mappings()  "{{{3
   let RHS_PATTERN = ':<C-u>call g:__textobj_' . self.name . '.%s'
   \                 . '("%s", "%s", "<mode>")<Return>'
-  let RHS_FUNCTION = ':<C-u>call <SID>select_function_wrapper('
-  \                  .   'g:__textobj_' . self.name . '.obj_specs["%s"]["%s"],'
-  \                  .   '"<mode>"'
-  \                  . ')<Return>'
+  let RHS_SELECT_FUNCTION =
+  \   ':<C-u>call <SID>select_function_wrapper('
+  \ .   'g:__textobj_' . self.name . '.obj_specs["%s"]["%s"],'
+  \ .   '"<mode>"'
+  \ . ')<Return>'
 
   for [obj_name, specs] in items(self.obj_specs)
     for spec_name in filter(keys(specs), 's:is_ui_property_name(v:val)')
@@ -409,7 +410,7 @@ function! s:plugin.define_interface_key_mappings()  "{{{3
       " rhs
       let _ = spec_name . '-function'
       if has_key(specs, _)
-        let rhs = printf(RHS_FUNCTION, obj_name, _)
+        let rhs = printf(RHS_SELECT_FUNCTION, obj_name, _)
       elseif has_key(specs, 'pattern')
         if spec_name =~# '^move-[npNP]$'
           let flags = ''

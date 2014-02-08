@@ -394,12 +394,22 @@ endfunction
 
 
 function! s:plugin.define_interface_key_mappings()  "{{{3
-  let RHS_PATTERN = ':<C-u>call g:__textobj_' . self.name . '.%s'
-  \                 . '("%s", "%s", "<mode>")<Return>'
-  let RHS_FUNCTION = ':<C-u>call <SID>select_function_wrapper('
-  \                  .   'g:__textobj_' . self.name . '.obj_specs["%s"]["%s"],'
-  \                  .   '"<mode>"'
-  \                  . ')<Return>'
+  let RHS_PATTERN =
+  \   ':<C-u>call g:__textobj_' . self.name . '.%s('
+  \ .   '"%s",'
+  \ .   '"%s",'
+  \ .   '"<mode>"'
+  \ . ')<Return>'
+  let RHS_SELECT_FUNCTION =
+  \   ':<C-u>call <SID>select_function_wrapper('
+  \ .   'g:__textobj_' . self.name . '.obj_specs["%s"]["%s"],'
+  \ .   '"<mode>"'
+  \ . ')<Return>'
+  let RHS_MOVE_FUNCTION =
+  \   ':<C-u>call <SID>move_function_wrapper('
+  \ .   'g:__textobj_' . self.name . '.obj_specs["%s"]["%s"],'
+  \ .   '"%s"'
+  \ . ')<Return>'
 
   for [obj_name, specs] in items(self.obj_specs)
     for spec_name in filter(keys(specs), 's:is_ui_property_name(v:val)')
@@ -409,7 +419,11 @@ function! s:plugin.define_interface_key_mappings()  "{{{3
       " rhs
       let _ = spec_name . '-function'
       if has_key(specs, _)
-        let rhs = printf(RHS_FUNCTION, obj_name, _)
+        if spec_name =~# '^select'
+          let rhs = printf(RHS_SELECT_FUNCTION, obj_name, _)
+        else
+          let rhs = printf(RHS_MOVE_FUNCTION, obj_name, _, spec_name)
+        endif
       elseif has_key(specs, 'pattern')
         if spec_name =~# '^move-[npNP]$'
           let flags = ''
@@ -518,6 +532,24 @@ function! s:select_function_wrapper(function_name, previous_mode)
     \   s:gpos_to_spos(end_position),
     \   motion_type
     \ )
+  endif
+endfunction
+
+
+
+
+" "move-function" wrapper  "{{{3
+function! s:move_function_wrapper(function_name, spec_name)
+  let ORIG_POS = s:gpos_to_spos(getpos('.'))
+
+  let _ = function(a:function_name)()
+  if _ is 0
+    call cursor(ORIG_POS)
+  else
+    " FIXME: Support motion_type.  But unlike selecting a text object, the
+    " motion_type must be known before calling a user-given function.
+    let [motion_type, start_position, end_position] = _
+    call setpos('.', a:spec_name =~# '[np]$' ? start_position : end_position)
   endif
 endfunction
 

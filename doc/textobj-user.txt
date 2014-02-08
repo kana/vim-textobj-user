@@ -445,8 +445,12 @@ KNOWN ISSUES					*textobj-user-known-issues*
   custom text object, define it with "{property}-function" and use |v:count|
   and/or |v:count1| to get an actual count.
 
-- Unlike built-in text objects such as |aw|, |ip| and others,
-  visually selected region is not extended by repeating custom text objects.
+- For built-in text objects such as |aw|, |ip| and others, visually selected
+  region is extended by repeating a text object like "vawawaw...".  Such
+  extending is not supported by vim-textobj-user.  Because it's not trivial
+  to support for all of custom text objects.  While some text objects like
+  |aw| simply extends the current selection, other text objects like |ab|
+  might override the current selection depending on a context.
 
 - Custom text objects with |o_CTRL-V| may not work properly.
 

@@ -440,7 +440,10 @@ textobj#user#define({pattern}, {pattern1}, {pattern2}, {guideline})
 ==============================================================================
 KNOWN ISSUES					*textobj-user-known-issues*
 
-- Count is not supported to select a text object.
+- Count is not supported by vim-textobj-user.  Because the meaning of a count
+  depends on each custom text object.  If you want to support count for your
+  custom text object, define it with "{property}-function" and use |v:count|
+  and/or |v:count1| to get an actual count.
 
 - Unlike built-in text objects such as |aw|, |ip| and others,
   visually selected region is not extended by repeating custom text objects.

@@ -181,6 +181,32 @@ endfunction
 
 
 
+function! textobj#user#mapping(plugin, obj_specs)
+  if !exists('g:__textobj_' . a:plugin)
+    throw 'Unknown plugin name: ' . string(a:plugin)
+  endif
+
+  " normalize the entries.  We only allow move- and select- specs.
+  for [obj_name, specs] in items(a:obj_specs)
+    for [spec_name, spec_info] in items(specs)
+      if spec_name =~# '^\(move-[npNP]\|select\(\|-[ai]\)\)$'
+        if type(spec_info) == type('')
+          let specs[spec_name] = [spec_info]
+        endif
+      else
+        throw 'Unknown spec name: ' . string(spec_name)
+      endif
+
+      unlet spec_info  " to avoid E706.
+    endfor
+  endfor
+
+  call g:__textobj_{a:plugin}.define_key_mappings(1, a:obj_specs)
+endfunction
+
+
+
+
 function! textobj#user#plugin(plugin_name, obj_specs)  "{{{2
   if a:plugin_name =~# '\L'
     throw '{plugin} contains non-lowercase alphabet: ' . string(a:plugin_name)
@@ -368,7 +394,12 @@ endfunction
 
 
 function! s:plugin.define_default_key_mappings(banged_p)  "{{{3
-  for [obj_name, specs] in items(self.obj_specs)
+  call self.define_key_mappings(a:banged_p, self.obj_specs)
+endfunction
+
+
+function! s:plugin.define_key_mappings(banged_p, obj_specs)  "{{{3
+  for [obj_name, specs] in items(a:obj_specs)
     for [spec_name, spec_info] in items(specs)
       let rhs = self.interface_mapping_name(obj_name, spec_name)
       if s:is_non_ui_property_name(spec_name)

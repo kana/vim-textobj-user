@@ -434,6 +434,34 @@ textobj#user#define({pattern}, {pattern1}, {pattern2}, {guideline})
 		                 \  'select': ['ig', 'ag']})
 <
 
+						*textobj#user#mapping()*
+textobj#user#mapping({plugin}, {obj-specs})
+	Define key mappings for an existing plugin.
+
+	This is meant to aid in letting users define custom mappings for
+	existing plugins.  It will allow them to reuse the pertinent portions
+	from the plugin's {obj-specs}, and customize them to their needs.
+	This is meant to be called after a textobj-user plugin has been
+	loaded, such as a FileType |autocmd|.
+
+	Example: >
+		call textobj#user#mapping('diff', {
+		\      'hunk': {
+		\        'move-n': '<buffer>]]',
+		\        'move-N': '<buffer>][',
+		\        'move-p': '<buffer>[[',
+		\        'move-P': '<buffer>[]',
+		\      },
+		\    })
+<
+	Return value is not defined.
+
+	{plugin} is the name of a plugin.  It must be a string which consists
+	of only lowercase alphabets.  The plugin must already exist.
+
+	{obj-specs} are defined the same as for |textobj#user#plugin()|,
+	except that only move- and select- specs are allowed.
+
 
 
 

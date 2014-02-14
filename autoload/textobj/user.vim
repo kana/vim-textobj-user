@@ -181,6 +181,41 @@ endfunction
 
 
 
+function! textobj#user#map(plugin_name, obj_specs, ...)  "{{{2
+  if a:0 == 0
+    " It seems to be directly called by user - a:obj_specs are not normalized.
+    call s:normalize(a:obj_specs)
+  endif
+  let banged_p = a:0 == 0 || a:1
+  for [obj_name, specs] in items(a:obj_specs)
+    for [spec_name, spec_info] in items(specs)
+      let rhs = s:interface_mapping_name(a:plugin_name, obj_name, spec_name)
+      if s:is_non_ui_property_name(spec_name)
+        " ignore
+      elseif spec_name =~# '^move-[npNP]$'
+        for lhs in spec_info
+          call s:map(banged_p, lhs, rhs)
+        endfor
+      elseif spec_name =~# '^select\(\|-[ai]\)$'
+        for lhs in spec_info
+          call s:objmap(banged_p, lhs, rhs)
+        endfor
+      else
+        throw printf('Unknown property: %s given to %s',
+        \            string(spec_name),
+        \            string(obj_name))
+      endif
+
+      unlet spec_info  " to avoid E706.
+    endfor
+  endfor
+
+  " TODO: Define failsafe key mappings.
+endfunction
+
+
+
+
 function! textobj#user#plugin(plugin_name, obj_specs)  "{{{2
   if a:plugin_name =~# '\L'
     throw '{plugin} contains non-lowercase alphabet: ' . string(a:plugin_name)
@@ -372,28 +407,7 @@ endfunction
 
 
 function! s:plugin.define_default_key_mappings(banged_p)  "{{{3
-  for [obj_name, specs] in items(self.obj_specs)
-    for [spec_name, spec_info] in items(specs)
-      let rhs = self.interface_mapping_name(obj_name, spec_name)
-      if s:is_non_ui_property_name(spec_name)
-        " ignore
-      elseif spec_name =~# '^move-[npNP]$'
-        for lhs in spec_info
-          call s:map(a:banged_p, lhs, rhs)
-        endfor
-      elseif spec_name =~# '^select\(\|-[ai]\)$'
-        for lhs in spec_info
-          call s:objmap(a:banged_p, lhs, rhs)
-        endfor
-      else
-        throw printf('Unknown property: %s given to %s',
-        \            string(spec_name),
-        \            string(obj_name))
-      endif
-
-      unlet spec_info  " to avoid E706.
-    endfor
-  endfor
+  call textobj#user#map(self.name, self.obj_specs, a:banged_p)
 endfunction
 
 

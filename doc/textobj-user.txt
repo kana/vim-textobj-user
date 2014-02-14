@@ -185,7 +185,7 @@ textobj#user#plugin({plugin-name}, {specs})
 	character such as <C-d>)
 
 			       *<Plug>(textobj-{plugin}-{object}-{operation})*
-	(b) Interface key mappings such as <Plug>(textobj-datetime-date-a) are
+	(b) Interface key mappings such as <Plug>(textobj-datetime-date) are
 	defined in Operator-pending mode, Visual mode and Select mode.  These
 	key mappings are defined for extra customization for users.
 
@@ -194,10 +194,10 @@ textobj#user#plugin({plugin-name}, {specs})
 	default, and it is usually a bad idea to override them.  In this case,
 	interface key mappings are used as follows:
 >
-		xmap aT  <Plug>(textobj-datetime-time-a)
-		omap aT  <Plug>(textobj-datetime-time-a)
-		xmap iT  <Plug>(textobj-datetime-time-i)
-		omap iT  <Plug>(textobj-datetime-time-i)
+		xmap aT  <Plug>(textobj-datetime-time)
+		omap aT  <Plug>(textobj-datetime-time)
+		xmap iT  <Plug>(textobj-datetime-time)
+		omap iT  <Plug>(textobj-datetime-time)
 <
 				*g:textobj_{plugin}_no_default_key_mappings*
 	(c) Finally :TextobjDatetimeDefaultKeyMappings is executed by default

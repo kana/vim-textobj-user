@@ -458,8 +458,13 @@ endfunction
 
 
 function! s:plugin.interface_mapping_name(obj_name, spec_name)  "{{{3
+  return s:interface_mapping_name(self.name, a:obj_name, a:spec_name)
+endfunction
+
+
+function! s:interface_mapping_name(plugin_name, obj_name, spec_name)  "{{{3
   let _ = printf('<Plug>(textobj-%s-%s-%s)',
-  \              self.name,
+  \              a:plugin_name,
   \              a:obj_name,
   \              substitute(a:spec_name, '^\(move\|select\)', '', ''))
   let _ = substitute(_, '-\+', '-', 'g')

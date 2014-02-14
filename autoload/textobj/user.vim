@@ -320,12 +320,16 @@ function s:plugin.new(plugin_name, obj_specs)
 endfunction
 
 function s:plugin.normalize()
-  call self.normalize_property_names()
-  call self.normalize_property_values()
+  call s:normalize(self.obj_specs)
 endfunction
 
-function s:plugin.normalize_property_names()
-  for spec in values(self.obj_specs)
+function s:normalize(obj_specs)
+  call s:normalize_property_names(a:obj_specs)
+  call s:normalize_property_values(a:obj_specs)
+endfunction
+
+function s:normalize_property_names(obj_specs)
+  for spec in values(a:obj_specs)
     for old_prop_name in keys(spec)
       if old_prop_name =~ '^\*.*\*$'
         let new_prop_name = substitute(old_prop_name, '^\*\(.*\)\*$', '\1', '')
@@ -336,8 +340,8 @@ function s:plugin.normalize_property_names()
   endfor
 endfunction
 
-function s:plugin.normalize_property_values()
-  for [obj_name, specs] in items(self.obj_specs)
+function s:normalize_property_values(obj_specs)
+  for [obj_name, specs] in items(a:obj_specs)
     for [spec_name, spec_info] in items(specs)
       if s:is_ui_property_name(spec_name)
         if type(spec_info) == type('')

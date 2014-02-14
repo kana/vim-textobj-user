@@ -518,6 +518,9 @@ KNOWN ISSUES					*textobj-user-known-issues*
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
 
+0.5.0	2014-02-15T00:43:05+09:00		*textobj-user-changelog-0.5.0*
+	- Add |textobj#user#map()| for ease of customization.
+
 0.4.2	2014-02-08T22:57:19+09:00		*textobj-user-changelog-0.4.2*
 	- Fix to support "move-n-function", "move-p-function", and so on.
 	  The document states that these functions are available, but they

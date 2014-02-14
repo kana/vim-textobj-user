@@ -185,7 +185,7 @@ textobj#user#plugin({plugin-name}, {specs})
 	character such as <C-d>)
 
 			       *<Plug>(textobj-{plugin}-{object}-{operation})*
-	(b) Interface key mappings such as <Plug>(textobj-datetime-date-a) are
+	(b) Interface key mappings such as <Plug>(textobj-datetime-date) are
 	defined in Operator-pending mode, Visual mode and Select mode.  These
 	key mappings are defined for extra customization for users.
 
@@ -194,10 +194,10 @@ textobj#user#plugin({plugin-name}, {specs})
 	default, and it is usually a bad idea to override them.  In this case,
 	interface key mappings are used as follows:
 >
-		xmap aT  <Plug>(textobj-datetime-time-a)
-		omap aT  <Plug>(textobj-datetime-time-a)
-		xmap iT  <Plug>(textobj-datetime-time-i)
-		omap iT  <Plug>(textobj-datetime-time-i)
+		xmap aT  <Plug>(textobj-datetime-time)
+		omap aT  <Plug>(textobj-datetime-time)
+		xmap iT  <Plug>(textobj-datetime-time)
+		omap iT  <Plug>(textobj-datetime-time)
 <
 				*g:textobj_{plugin}_no_default_key_mappings*
 	(c) Finally :TextobjDatetimeDefaultKeyMappings is executed by default
@@ -326,6 +326,59 @@ Note that "*no-default-key-mappings*" is still available, but it will no
 longer be supported.  Because it seems not to be used by anyone, and its
 interface is confusing and not useful.
 Use |g:textobj_{plugin}_no_default_key_mappings| instead.
+
+						*textobj#user#map()*
+textobj#user#map({plugin-name}, {specs})
+	Define key mappings to use custom text objects.
+
+	Most text object plugins provide default key mappings to use custom
+	text objects.  But sometimes you want to use other key mappings
+	instead.  It is possible to define such key mappings without
+	textobj#user#map() like:
+>
+		xmap aT  <Plug>(textobj-datetime-time)
+		omap aT  <Plug>(textobj-datetime-time)
+		xmap iT  <Plug>(textobj-datetime-time)
+		omap iT  <Plug>(textobj-datetime-time)
+<
+	But it is a tedious task.  You can define these key mappings in
+	a declarative way with textobj#user#map().  For example:
+>
+		call textobj#user#map('datetime', {
+		\   'time': {
+		\     'select': ['aT', 'iT'],
+		\   }
+		\ })
+<
+	{plugin-name} is the name of a text object plugin.
+
+	{specs} is a |Dictionary| which contains definitions of custom text
+	object.  Unlike |textobj#user#plugin()|, only the following properties
+	are allowed:
+
+		move-n      move-p      move-N      move-P
+		select      select-a    select-i
+
+	See also |textobj-user-specs| for the details.
+
+	For ease of customization, a text object plugin specified by
+	{plugin-name} may be undefined when textobj#user#map() is called.
+	Because:
+
+	- textobj#user#map() is mostly used in |vimrc|.  Text object plugins
+	  are usually located in plugin/*.vim.  And vimrc is loaded before all
+	  of plugin/*.vim.
+	- textobj#user#map() is sometimes used in |filetype-plugin|.
+	  Filetype-specific text object plugins are located in ftplugin/*.vim.
+	  And generally it is not predictable the loading order of these
+	  filetype plugins.
+
+	As a result, textobj#user#map() cannot detect whether {plugin-name} is
+	right or not.  To notice something wrong, an error message will be
+	shown when
+
+	- A key mapping defined by textobj#user#map() is actually used, and
+	- The corresponding text object does not exist at that moment.
 
 
 

@@ -210,7 +210,7 @@ function! textobj#user#map(plugin_name, obj_specs, ...)  "{{{2
     endfor
   endfor
 
-  " TODO: Define failsafe key mappings.
+  call s:define_failsafe_key_mappings(a:plugin_name, a:obj_specs)
 endfunction
 
 
@@ -688,6 +688,30 @@ let s:non_ui_property_names = [
 
 function! s:is_non_ui_property_name(name)
   return 0 <= index(s:non_ui_property_names, a:name)
+endfunction
+
+
+function! s:define_failsafe_key_mappings(plugin_name, obj_specs)
+  for [obj_name, specs] in items(a:obj_specs)
+    for [spec_name, spec_info] in items(specs)
+      if !s:is_non_ui_property_name(spec_name)
+        let lhs = s:interface_mapping_name(a:plugin_name, obj_name, spec_name)
+        if maparg(lhs, 'v') == ''
+          let rhs = printf('<SID>fail(%s)',
+          \                string(substitute(lhs, '<', '<LT>', 'g')))
+          let mapf = spec_name =~# '^move-[npNP]$'
+          \          ? 's:noremap'
+          \          : 's:objnoremap'
+          call {mapf}(0, '<expr>' . lhs, rhs)
+        endif
+      endif
+      unlet spec_info  " to avoid E706.
+    endfor
+  endfor
+endfunction
+
+function! s:fail(interface_key_mapping_lhs)
+  throw printf('Text object %s is not defined', a:interface_key_mapping_lhs)
 endfunction
 
 

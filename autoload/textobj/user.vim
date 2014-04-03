@@ -61,7 +61,7 @@ function! textobj#user#select(pattern, flags, previous_mode)
   endif
 
   if s:range_validp(pos_head, pos_tail)
-    call s:range_select(pos_head, pos_tail, 'v')
+    call s:range_select(pos_head, pos_tail, s:choose_wise(a:flags))
     return [pos_head, pos_tail]
   else
     return s:cancel_selection(a:previous_mode, ORIG_POS)
@@ -631,6 +631,15 @@ endfunction
 
 function! s:normalize_path(unnormalized_path)
   return substitute(fnamemodify(a:unnormalized_path, ':p'), '\\', '/', 'g')
+endfunction
+
+
+function! s:choose_wise(flags)
+  return
+  \ a:flags =~# 'v' ? 'v' :
+  \ a:flags =~# 'V' ? 'V' :
+  \ a:flags =~# "\<C-v>" ? "\<C-v>" :
+  \ 'v'
 endfunction
 
 

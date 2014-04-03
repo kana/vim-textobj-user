@@ -427,10 +427,14 @@ textobj#user#select({pattern}, {flags}, {prevous-mode})
 	object after the cursor.
 
 	{flags} is a string, which can contain the following character flags:
-		char	meaning ~
-		----	------- ~
-		'b'     select the nearest object BEFORE the cursor if the
-		        cursor is not in the range of an object.
+
+		Character       Meaning ~
+		---------       -------------------------------------------- ~
+		"b"             select the nearest object BEFORE the cursor if
+		                the cursor is not in the range of an object.
+		"v"             select an object characterwise.  (default)
+		"V"             select an object linewise.
+		"\<C-v>"        select an object blockwise.
 
 	For the detail of {previous-mode}, see |textobj#user#move()|.
 

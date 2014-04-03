@@ -275,6 +275,17 @@ The following properties are available:
 		where the 1st part is matched to the 1st regular expression
 		and the 2nd part is matched to the 2nd regular expression.
 
+						    *textobj-user-region-type*
+"region-type"			{char}  (default: "v")
+	A single character string that specifies the type of a region defined
+	by the "pattern" property.  Possible values are as follows:
+
+		Value           Meaning         ~
+		------------------------------- ~
+		"v"             Characterwise
+		"V"             Linewise
+		"\<C-v>"        Blockwise
+
 "{property}-function"		{fname}
 	If this property is defined, the function named {fname} instead of the
 	"pattern" property is used to determine a target text object for
@@ -289,12 +300,8 @@ The following properties are available:
 
 		[region_type, start_position, end_position]
 
-	- "region_type" is a string to denote the type of a region.
-		Valid value     Meaning     ~
-		--------------------------- ~
-		"v"             Characterwise
-		"V"             Linewise
-		"\<C-v>"        Blockwise
+	- "region_type" is a single-character string to specify the type of
+	  a region.  See |textobj-user-region-type| for valid values.
 	- "start_position" denotes the start position of a region.
 	  The detail of this value is the same as |getpos()|.
 	- "end_position" is like "start_position", but it denotes the

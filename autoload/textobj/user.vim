@@ -398,6 +398,10 @@ function s:normalize_property_values(obj_specs)
         else
           " Nothing to do.
         endif
+      elseif spec_name ==# 'pattern'
+        if !has_key(specs, 'region-type')
+          let specs['region-type'] = 'v'
+        endif
       endif
 
       unlet spec_info  " to avoid E706.

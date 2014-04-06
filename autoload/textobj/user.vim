@@ -485,10 +485,10 @@ function! s:plugin.do_by_pattern(spec_name, obj_name, previous_mode)
 endfunction
 
 let s:PATTERN_IMPL_TABLE = {
-\   'move-n': 'textobj#user#move',
-\   'move-N': 'textobj#user#move',
-\   'move-p': 'textobj#user#move',
-\   'move-P': 'textobj#user#move',
+\   'move-n': 's:move_wrapper',
+\   'move-N': 's:move_wrapper',
+\   'move-p': 's:move_wrapper',
+\   'move-P': 's:move_wrapper',
 \   'select': 'textobj#user#select',
 \   'select-a': 's:select_pair_wrapper',
 \   'select-i': 's:select_pair_wrapper',
@@ -503,6 +503,15 @@ let s:PATTERN_FLAGS_TABLE = {
 \   'select-a': 'a',
 \   'select-i': 'i',
 \ }
+
+function! s:move_wrapper(patterns, flags, previous_mode)
+  " \x16 = CTRL-V
+  call textobj#user#move(
+  \   a:patterns,
+  \   substitute(a:flags, '[vV\x16]', '', 'g'),
+  \   a:previous_mode
+  \ )
+endfunction
 
 function! s:select_pair_wrapper(patterns, flags, previous_mode)
   call textobj#user#select_pair(

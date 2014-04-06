@@ -457,7 +457,8 @@ function! s:plugin.define_interface_key_mappings()  "{{{3
           let flags = "\<C-v>\<C-v>\<C-v>" . specs['region-type']
           let impl_fname = 'select'
         elseif spec_name =~# '^select-[ai]$'
-          let flags = ''
+          " FIXME: Too dirty.  It might be better to make flags at runtime.
+          let flags = "\<C-v>\<C-v>\<C-v>" . specs['region-type']
           let flags .= (spec_name =~# 'a$' ? 'a' : '')
           let flags .= (spec_name =~# 'i$' ? 'i' : '')
           let impl_fname = 'select_pair'

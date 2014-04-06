@@ -417,7 +417,7 @@ endfunction
 
 function! s:plugin.define_interface_key_mappings()  "{{{3
   let RHS_PATTERN =
-  \   ':<C-u>call g:__textobj_' . self.name . '.%s('
+  \   ':<C-u>call g:__textobj_' . self.name . '.do_by_pattern('
   \ .   '"%s",'
   \ .   '"%s",'
   \ .   '"<mode>"'
@@ -447,23 +447,7 @@ function! s:plugin.define_interface_key_mappings()  "{{{3
           let rhs = printf(RHS_MOVE_FUNCTION, obj_name, _, spec_name)
         endif
       elseif has_key(specs, 'pattern')
-        if spec_name =~# '^move-[npNP]$'
-          let flags = ''
-          let flags .= (spec_name =~# '[pP]$' ? 'b' : '')
-          let flags .= (spec_name =~# '[NP]$' ? 'e' : '')
-          let impl_fname = 'move'
-        elseif spec_name ==# 'select'
-          " FIXME: Too dirty.  It might be better to make flags at runtime.
-          let flags = "\<C-v>\<C-v>\<C-v>" . specs['region-type']
-          let impl_fname = 'select'
-        elseif spec_name =~# '^select-[ai]$'
-          " FIXME: Too dirty.  It might be better to make flags at runtime.
-          let flags = "\<C-v>\<C-v>\<C-v>" . specs['region-type']
-          let flags .= (spec_name =~# 'a$' ? 'a' : '')
-          let flags .= (spec_name =~# 'i$' ? 'i' : '')
-          let impl_fname = 'select_pair'
-        endif
-        let rhs = printf(RHS_PATTERN, impl_fname, obj_name, flags)
+        let rhs = printf(RHS_PATTERN, spec_name, obj_name)
       else
         " skip to allow to define user's own {rhs} of the interface mapping.
         continue
@@ -497,21 +481,44 @@ function! s:interface_mapping_name(plugin_name, obj_name, spec_name)  "{{{3
 endfunction
 
 
-" "pattern" implementations  "{{{3
-function! s:plugin.move(obj_name, flags, previous_mode)
+" "pattern" wrappers  "{{{3
+function! s:plugin.do_by_pattern(spec_name, obj_name, previous_mode)
   let specs = self.obj_specs[a:obj_name]
-  call textobj#user#move(specs['pattern'], a:flags, a:previous_mode)
+  let flags = s:PATTERN_FLAGS_TABLE[a:spec_name] . specs['region-type']
+  call {s:PATTERN_IMPL_TABLE[a:spec_name]}(
+  \   specs['pattern'],
+  \   flags,
+  \   a:previous_mode
+  \ )
 endfunction
 
-function! s:plugin.select(obj_name, flags, previous_mode)
-  let specs = self.obj_specs[a:obj_name]
-  call textobj#user#select(specs['pattern'], a:flags, a:previous_mode)
-endfunction
+let s:PATTERN_IMPL_TABLE = {
+\   'move-n': 'textobj#user#move',
+\   'move-N': 'textobj#user#move',
+\   'move-p': 'textobj#user#move',
+\   'move-P': 'textobj#user#move',
+\   'select': 'textobj#user#select',
+\   'select-a': 's:select_pair_wrapper',
+\   'select-i': 's:select_pair_wrapper',
+\ }
 
-function! s:plugin.select_pair(obj_name, flags, previous_mode)
-  let specs = self.obj_specs[a:obj_name]
-  call textobj#user#select_pair(specs['pattern'][0], specs['pattern'][1],
-  \                             a:flags, a:previous_mode)
+let s:PATTERN_FLAGS_TABLE = {
+\   'move-n': '',
+\   'move-N': 'e',
+\   'move-p': 'b',
+\   'move-P': 'be',
+\   'select': '',
+\   'select-a': 'a',
+\   'select-i': 'i',
+\ }
+
+function! s:select_pair_wrapper(patterns, flags, previous_mode)
+  call textobj#user#select_pair(
+  \   a:patterns[0],
+  \   a:patterns[1],
+  \   a:flags,
+  \   a:previous_mode
+  \ )
 endfunction
 
 

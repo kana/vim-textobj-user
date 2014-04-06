@@ -534,6 +534,11 @@ KNOWN ISSUES					*textobj-user-known-issues*
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
 
+0.6.0	2014-04-06T20:42:29+09:00		*textobj-user-changelog-0.6.0*
+	- Support "region-type" to specify region types for simple text
+	  objects defined by "pattern".  See |textobj-user-region-type| for
+	  the details.
+
 0.5.0	2014-02-15T00:43:05+09:00		*textobj-user-changelog-0.5.0*
 	- Add |textobj#user#map()| for ease of customization.
 

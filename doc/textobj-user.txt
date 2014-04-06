@@ -275,6 +275,17 @@ The following properties are available:
 		where the 1st part is matched to the 1st regular expression
 		and the 2nd part is matched to the 2nd regular expression.
 
+						    *textobj-user-region-type*
+"region-type"			{char}  (default: "v")
+	A single character string that specifies the type of a region defined
+	by the "pattern" property.  Possible values are as follows:
+
+		Value           Meaning         ~
+		------------------------------- ~
+		"v"             Characterwise
+		"V"             Linewise
+		"\<C-v>"        Blockwise
+
 "{property}-function"		{fname}
 	If this property is defined, the function named {fname} instead of the
 	"pattern" property is used to determine a target text object for
@@ -289,12 +300,8 @@ The following properties are available:
 
 		[region_type, start_position, end_position]
 
-	- "region_type" is a string to denote the type of a region.
-		Valid value     Meaning     ~
-		--------------------------- ~
-		"v"             Characterwise
-		"V"             Linewise
-		"\<C-v>"        Blockwise
+	- "region_type" is a single-character string to specify the type of
+	  a region.  See |textobj-user-region-type| for valid values.
 	- "start_position" denotes the start position of a region.
 	  The detail of this value is the same as |getpos()|.
 	- "end_position" is like "start_position", but it denotes the
@@ -420,10 +427,14 @@ textobj#user#select({pattern}, {flags}, {prevous-mode})
 	object after the cursor.
 
 	{flags} is a string, which can contain the following character flags:
-		char	meaning ~
-		----	------- ~
-		'b'     select the nearest object BEFORE the cursor if the
-		        cursor is not in the range of an object.
+
+		Character       Meaning ~
+		---------       -------------------------------------------- ~
+		"b"             select the nearest object BEFORE the cursor if
+		                the cursor is not in the range of an object.
+		"v"             select an object characterwise.  (default)
+		"V"             select an object linewise.
+		"\<C-v>"        select an object blockwise.
 
 	For the detail of {previous-mode}, see |textobj#user#move()|.
 
@@ -437,15 +448,20 @@ textobj#user#select_pair({pattern1}, {pattern2}, {flags}, {previous-mode})
 	with {pattern2}.
 
 	{flags} is a string, which can contain the following character flags:
-		char	meaning ~
-		----	------- ~
-		'a'     select the range including {pattern1} and {pattern2},
-			like |at|.
-		'i'     select the range excluding {pattern1} and {pattern2},
-			like |it|.  This is the default behavior unless 'a' is
-			explicitly specified.  If the cursor is not in a text
-			between {pattern1} and {pattern2}, this function does
-			nothing.
+
+		Character       Meaning ~
+		---------       -------------------------------------------- ~
+		"a"             select the range including {pattern1} and
+		                {pattern2}, like |at|.
+		"i"             select the range excluding {pattern1} and
+				{pattern2}, like |it|.  This is the default
+				behavior unless 'a' is explicitly specified.
+				If the cursor is not in a text between
+				{pattern1} and {pattern2}, this function does
+				nothing.
+		"v"             select an object characterwise.  (default)
+		"V"             select an object linewise.
+		"\<C-v>"        select an object blockwise.
 
 	For the detail of {previous-mode}, see |textobj#user#move()|.
 

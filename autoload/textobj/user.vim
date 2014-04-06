@@ -422,15 +422,11 @@ function! s:plugin.define_interface_key_mappings()  "{{{3
   \ .   '"%s",'
   \ .   '"<mode>"'
   \ . ')<Return>'
-  let RHS_SELECT_FUNCTION =
-  \   ':<C-u>call <SID>select_function_wrapper('
-  \ .   'g:__textobj_' . self.name . '.obj_specs["%s"]["%s"],'
+  let RHS_FUNCTION =
+  \   ':<C-u>call g:__textobj_' . self.name . '.do_by_function('
+  \ .   '"%s",'
+  \ .   '"%s",'
   \ .   '"<mode>"'
-  \ . ')<Return>'
-  let RHS_MOVE_FUNCTION =
-  \   ':<C-u>call <SID>move_function_wrapper('
-  \ .   'g:__textobj_' . self.name . '.obj_specs["%s"]["%s"],'
-  \ .   '"%s"'
   \ . ')<Return>'
 
   for [obj_name, specs] in items(self.obj_specs)
@@ -441,11 +437,7 @@ function! s:plugin.define_interface_key_mappings()  "{{{3
       " rhs
       let _ = spec_name . '-function'
       if has_key(specs, _)
-        if spec_name =~# '^select'
-          let rhs = printf(RHS_SELECT_FUNCTION, obj_name, _)
-        else
-          let rhs = printf(RHS_MOVE_FUNCTION, obj_name, _, spec_name)
-        endif
+        let rhs = printf(RHS_FUNCTION, spec_name, obj_name)
       elseif has_key(specs, 'pattern')
         let rhs = printf(RHS_PATTERN, spec_name, obj_name)
       else
@@ -522,6 +514,58 @@ function! s:select_pair_wrapper(patterns, flags, previous_mode)
 endfunction
 
 
+" "*-function" wrappers  "{{{3
+function! s:plugin.do_by_function(spec_name, obj_name, previous_mode)
+  let specs = self.obj_specs[a:obj_name]
+  call {s:FUNCTION_IMPL_TABLE[a:spec_name]}(
+  \   specs[a:spec_name . '-function'],
+  \   a:spec_name,
+  \   a:previous_mode
+  \ )
+endfunction
+
+let s:FUNCTION_IMPL_TABLE = {
+\   'move-n': 's:move_function_wrapper',
+\   'move-N': 's:move_function_wrapper',
+\   'move-p': 's:move_function_wrapper',
+\   'move-P': 's:move_function_wrapper',
+\   'select': 's:select_function_wrapper',
+\   'select-a': 's:select_function_wrapper',
+\   'select-i': 's:select_function_wrapper',
+\ }
+
+function! s:select_function_wrapper(function_name, spec_name, previous_mode)
+  let ORIG_POS = s:gpos_to_spos(getpos('.'))
+  call s:prepare_selection(a:previous_mode)
+
+  let _ = function(a:function_name)()
+  if _ is 0
+    call s:cancel_selection(a:previous_mode, ORIG_POS)
+  else
+    let [motion_type, start_position, end_position] = _
+    call s:range_select(
+    \   s:gpos_to_spos(start_position),
+    \   s:gpos_to_spos(end_position),
+    \   motion_type
+    \ )
+  endif
+endfunction
+
+function! s:move_function_wrapper(function_name, spec_name, previous_mode)
+  let ORIG_POS = s:gpos_to_spos(getpos('.'))
+
+  let _ = function(a:function_name)()
+  if _ is 0
+    call cursor(ORIG_POS)
+  else
+    " FIXME: Support motion_type.  But unlike selecting a text object, the
+    " motion_type must be known before calling a user-given function.
+    let [motion_type, start_position, end_position] = _
+    call setpos('.', a:spec_name =~# '[np]$' ? start_position : end_position)
+  endif
+endfunction
+
+
 " map wrappers  "{{{3
 function! s:_map(map_commands, forced_p, lhs, rhs)
   for _ in a:map_commands
@@ -550,43 +594,6 @@ endfunction
 function! s:objmap(forced_p, lhs, rhs)
   let v = s:proper_visual_mode(a:lhs)
   call s:_map([v.'map', 'omap'], a:forced_p, a:lhs, a:rhs)
-endfunction
-
-
-" "select-function" wrapper  "{{{3
-function! s:select_function_wrapper(function_name, previous_mode)
-  let ORIG_POS = s:gpos_to_spos(getpos('.'))
-  call s:prepare_selection(a:previous_mode)
-
-  let _ = function(a:function_name)()
-  if _ is 0
-    call s:cancel_selection(a:previous_mode, ORIG_POS)
-  else
-    let [motion_type, start_position, end_position] = _
-    call s:range_select(
-    \   s:gpos_to_spos(start_position),
-    \   s:gpos_to_spos(end_position),
-    \   motion_type
-    \ )
-  endif
-endfunction
-
-
-
-
-" "move-function" wrapper  "{{{3
-function! s:move_function_wrapper(function_name, spec_name)
-  let ORIG_POS = s:gpos_to_spos(getpos('.'))
-
-  let _ = function(a:function_name)()
-  if _ is 0
-    call cursor(ORIG_POS)
-  else
-    " FIXME: Support motion_type.  But unlike selecting a text object, the
-    " motion_type must be known before calling a user-given function.
-    let [motion_type, start_position, end_position] = _
-    call setpos('.', a:spec_name =~# '[np]$' ? start_position : end_position)
-  endif
 endfunction
 
 

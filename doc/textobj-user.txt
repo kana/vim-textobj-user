@@ -1,6 +1,6 @@
 *textobj-user.txt*	Create your own text objects
 
-Version 0.6.0
+Version 0.6.1
 Script ID: 2100
 Copyright (C) 2007-2014 Kana Natsuno <http://whileimautomaton.net/>
 License: MIT license  {{{
@@ -533,6 +533,10 @@ KNOWN ISSUES					*textobj-user-known-issues*
 
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
+
+0.6.1	2014-04-07T21:55:39+09:00		*textobj-user-changelog-0.6.1*
+	- Fix a bug that "move-n", "move-N", "move-p" and "move-P" for text
+	  objects defined by "pattern" do not work since 0.6.0.
 
 0.6.0	2014-04-06T20:42:29+09:00		*textobj-user-changelog-0.6.0*
 	- Support "region-type" to specify region types for simple text

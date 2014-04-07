@@ -1,54 +1,57 @@
+" Anchored-word is <a> <word> <like> <this>.
+" But <> is not valid, because it doesn't contain a word.
+
+function! MoveNext()
+  while !0
+    let [bl, bc] = searchpos('<', 'W')
+    let [el, ec] = searchpos('>', 'W')
+    if bl == 0 || el == 0
+      return 0
+    else
+      if bl == el && bc + 1 < ec
+        return ['v', [0, bl, bc, 0], [0, el, ec, 0]]
+      else
+        continue
+      endif
+    endif
+  endwhile
+endfunction
+
+function! MovePrevious()
+  while !0
+    let [el, ec] = searchpos('>', 'bW')
+    let [bl, bc] = searchpos('<', 'bW')
+    if bl == 0 || el == 0
+      return 0
+    else
+      if bl == el && bc + 1 < ec
+        return ['v', [0, bl, bc, 0], [0, el, ec, 0]]
+      else
+        continue
+      endif
+    endif
+  endwhile
+endfunction
+
+call textobj#user#plugin('anchoredword', {
+\   '-': {
+\     'move-n': '[n]',
+\     'move-n-function': 'MoveNext',
+\     'move-N': '[N]',
+\     'move-N-function': 'MoveNext',
+\     'move-p': '[p]',
+\     'move-p-function': 'MovePrevious',
+\     'move-P': '[P]',
+\     'move-P-function': 'MovePrevious',
+\   }
+\ })
+
 describe 'move-x-function'
   before
     new
-
-    " Anchored-word is <a> <word> <like> <this>.
-    " But <> is not valid, because it doesn't contain a word.
-
-    function! b:move_next()
-      while !0
-        let [bl, bc] = searchpos('<', 'W')
-        let [el, ec] = searchpos('>', 'W')
-        if bl == 0 || el == 0
-          return 0
-        else
-          if bl == el && bc + 1 < ec
-            return ['v', [0, bl, bc, 0], [0, el, ec, 0]]
-          else
-            continue
-          endif
-        endif
-      endwhile
-    endfunction
-
-    function! b:move_previous()
-      while !0
-        let [el, ec] = searchpos('>', 'bW')
-        let [bl, bc] = searchpos('<', 'bW')
-        if bl == 0 || el == 0
-          return 0
-        else
-          if bl == el && bc + 1 < ec
-            return ['v', [0, bl, bc, 0], [0, el, ec, 0]]
-          else
-            continue
-          endif
-        endif
-      endwhile
-    endfunction
-
-    call textobj#user#plugin('anchoredword', {
-    \   '-': {
-    \     'move-n': '<buffer> [n]',
-    \     'move-n-function': 'b:move_next',
-    \     'move-N': '<buffer> [N]',
-    \     'move-N-function': 'b:move_next',
-    \     'move-p': '<buffer> [p]',
-    \     'move-p-function': 'b:move_previous',
-    \     'move-P': '<buffer> [P]',
-    \     'move-P-function': 'b:move_previous',
-    \   }
-    \ })
+    put ='The <quick> brown fox jumps <over> the lazy <dog'
+    put ='The> quick <brown> fox <jumps over the> lazy dog'
+    1 delete _
   end
 
   after
@@ -56,10 +59,6 @@ describe 'move-x-function'
   end
 
   it 'is used to move the cursor to a text object'
-    put ='The <quick> brown fox jumps <over> the lazy <dog'
-    put ='The> quick <brown> fox <jumps over the> lazy dog'
-    1 delete _
-
     let cases = [
     \   [1,  4, 'n', 1,  5],
     \   [1,  5, 'n', 1, 29],

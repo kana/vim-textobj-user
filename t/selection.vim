@@ -68,7 +68,7 @@ describe 'Custom text object'
     put ='ggg *) hhh'
     1 delete _
 
-    function! b:test(selection)
+    function! b:.test(selection)
       let &selection = a:selection
 
       let cases = [
@@ -100,10 +100,10 @@ describe 'Custom text object'
   end
 
   it 'works if &selection is inclusive'
-    call b:test('inclusive')
+    call b:.test('inclusive')
   end
 
   it 'works if &selection is exclusive'
-    call b:test('exclusive')
+    call b:.test('exclusive')
   end
 end

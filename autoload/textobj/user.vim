@@ -544,6 +544,7 @@ let s:FUNCTION_IMPL_TABLE = {
 \ }
 
 function! s:select_function_wrapper(function_name, spec_name, previous_mode)
+  let g:textobj_user_select_count = v:count1
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
   call s:prepare_selection(a:previous_mode)
 
@@ -558,6 +559,7 @@ function! s:select_function_wrapper(function_name, spec_name, previous_mode)
     \   motion_type
     \ )
   endif
+  unlet g:textobj_user_select_count
 endfunction
 
 function! s:move_function_wrapper(function_name, spec_name, previous_mode)

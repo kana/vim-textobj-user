@@ -1,6 +1,6 @@
 *textobj-user.txt*	Create your own text objects
 
-Version 0.6.1
+Version 0.6.2
 Script ID: 2100
 Copyright (C) 2007-2014 Kana Natsuno <http://whileimautomaton.net/>
 License: MIT license  {{{
@@ -115,7 +115,7 @@ https://github.com/kana/vim-textobj-user/wiki
 
 
 Requirements:
-- Vim 7.0 or later
+- Vim 7.4 or later
 
 Latest version:
 https://github.com/kana/vim-textobj-user
@@ -533,6 +533,13 @@ KNOWN ISSUES					*textobj-user-known-issues*
 
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
+
+0.6.2	2014-04-14T23:16:56+09:00		*textobj-user-changelog-0.6.2*
+	- Fix a bug that "select-function", "select-a-function" and
+	  "select-i-function" cannot get a count typed in Visual mode via
+	  |v:count| and |v:count1|.  This fix requires recent versions of Vim.
+	  In Vim version X or older (where X is 7.3.002 <= X < 7.3.353), these
+	  functions still cannot get an actual count.
 
 0.6.1	2014-04-07T21:55:39+09:00		*textobj-user-changelog-0.6.1*
 	- Fix a bug that "move-n", "move-N", "move-p" and "move-P" for text

@@ -40,7 +40,6 @@ endfunction
 " FIXME: countable.
 " FIXME: In a case of a:pattern matches with one character.
 function! textobj#user#select(pattern, flags, previous_mode)
-  call s:prepare_selection(a:previous_mode)
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
 
   let posf_tail = searchpos(a:pattern, 'ceW')
@@ -80,7 +79,6 @@ endfunction
 
 " BUGS: With o_CTRL-V, this may not work properly.
 function! textobj#user#select_pair(pattern1, pattern2, flags, previous_mode)
-  call s:prepare_selection(a:previous_mode)
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
 
   " adjust the cursor to the head of a:pattern2 if it's already in the range.
@@ -545,7 +543,6 @@ let s:FUNCTION_IMPL_TABLE = {
 
 function! s:select_function_wrapper(function_name, spec_name, previous_mode)
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
-  call s:prepare_selection(a:previous_mode)
 
   let _ = function(a:function_name)()
   if _ is 0
@@ -619,12 +616,6 @@ nnoremap <SID>  <SID>
 function! s:prepare_movement(previous_mode)
   if a:previous_mode ==# 'v'
     normal! gv
-  endif
-endfunction
-
-function! s:prepare_selection(previous_mode)
-  if a:previous_mode ==# 'v'
-    execute 'normal!' "gv\<Esc>"
   endif
 endfunction
 

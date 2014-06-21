@@ -636,7 +636,11 @@ function! s:snr_prefix(sfile)
 
   for line in split(result, '\n')
     let _ = matchlist(line, '^\s*\(\d\+\):\s*\(.*\)$')
-    if s:normalize_path(a:sfile) ==# s:normalize_path(_[2])
+
+    " _ could be an empty list if vim was run with the verbosity turned up high
+    " (such as -V20).  Check the list size before accessing it to ensure that
+    " enough elements are present.
+    if len(_) > 2 && s:normalize_path(a:sfile) ==# s:normalize_path(_[2])
       return printf("\<SNR>%d_", _[1])
     endif
   endfor

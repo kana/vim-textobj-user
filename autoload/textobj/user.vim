@@ -630,13 +630,14 @@ endfunction
 
 
 function! s:snr_prefix(sfile)
+  " :redir captures also 'verbose' messages.  Its result must be filtered.
   redir => result
   silent scriptnames
   redir END
 
   for line in split(result, '\n')
     let _ = matchlist(line, '^\s*\(\d\+\):\s*\(.*\)$')
-    if s:normalize_path(a:sfile) ==# s:normalize_path(_[2])
+    if !empty(_) && s:normalize_path(a:sfile) ==# s:normalize_path(_[2])
       return printf("\<SNR>%d_", _[1])
     endif
   endfor

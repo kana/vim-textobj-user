@@ -2,6 +2,14 @@ call vspec#hint({'sid': 'textobj#user#_sid()'})
 
 let g:__FILE__ = expand('<sfile>')
 
+let s:to_be_snr_prefix = {}
+function! s:to_be_snr_prefix.match(actual)
+  " NB: `Expect a:actual =~# "^\<SNR>\\d\\+_$"` fails depending on 'encoding'.
+  return a:actual =~# '\d\+_$' &&
+  \      substitute(a:actual, '\d\+_$', '', '') ==# "\<SNR>"
+endfunction
+call vspec#customize_matcher('to_be_snr_prefix', s:to_be_snr_prefix)
+
 describe 's:snr_prefix'
   context 'in a ordinary situation (verbose=0)'
     it 'works'

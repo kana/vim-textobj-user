@@ -57,9 +57,9 @@ define `il` to select the current line without indentation:
 call textobj#user#plugin('line', {
 \   '-': {
 \     'select-a-function': 'CurrentLineA',
-\     'select-a': 'aP',
+\     'select-a': 'al',
 \     'select-i-function': 'CurrentLineI',
-\     'select-i': 'iP',
+\     'select-i': 'il',
 \   },
 \ })
 

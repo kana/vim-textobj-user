@@ -44,7 +44,7 @@ function! textobj#user#select(pattern, flags, previous_mode)
 
   let posf_tail = searchpos(a:pattern, 'ceW')
   let posf_head = searchpos(a:pattern, 'bW')
-  call cursor(ORIG_POS)
+  call s:cursor_to_screenpos(ORIG_POS)
   let posb_head = searchpos(a:pattern, 'bcW')
   let posb_tail = searchpos(a:pattern, 'eW')
 
@@ -91,7 +91,7 @@ function! textobj#user#select_pair(pattern1, pattern2, flags, previous_mode)
     let more_flags = 'c'
   else
     let more_flags = ''
-    call cursor(ORIG_POS)
+    call s:cursor_to_screenpos(ORIG_POS)
   endif
 
   " get the positions of a:pattern1 and a:pattern2.
@@ -100,7 +100,7 @@ function! textobj#user#select_pair(pattern1, pattern2, flags, previous_mode)
   if !s:range_validp(pos2p_head, pos2p_tail)
     return s:cancel_selection(a:previous_mode, ORIG_POS)
   endif
-  call cursor(pos2p_head)
+  call s:cursor_to_screenpos(pos2p_head)
   let pos1p_head = searchpairpos(a:pattern1, '', a:pattern2, 'bW')
   let pos1p_tail = searchpos(a:pattern1, 'ceW')
   if !s:range_validp(pos1p_head, pos1p_tail)
@@ -269,6 +269,14 @@ function! s:pos_le(pos1, pos2)  " less than or equal
 endfunction
 
 
+function! s:cursor_to_screenpos(pos)
+  call cursor(a:pos)
+  " Move to input screen column instead of byte index. Assumes input used
+  " virtcol.
+  execute 'normal! '. a:pos[1] .'|'
+endfunction
+
+
 
 
 " range  "{{{2
@@ -296,9 +304,9 @@ endfunction
 
 function! s:range_select(range_head, range_tail, fallback_wise)
   execute 'normal!' s:wise(a:fallback_wise)
-  call cursor(a:range_head)
+  call s:cursor_to_screenpos(a:range_head)
   normal! o
-  call cursor(a:range_tail)
+  call s:cursor_to_screenpos(a:range_tail)
   if &selection ==# 'exclusive'
     normal! l
   endif
@@ -562,12 +570,12 @@ function! s:move_function_wrapper(function_name, spec_name, previous_mode)
 
   let _ = function(a:function_name)()
   if _ is 0
-    call cursor(ORIG_POS)
+    call s:cursor_to_screenpos(ORIG_POS)
   else
     " FIXME: Support motion_type.  But unlike selecting a text object, the
     " motion_type must be known before calling a user-given function.
     let [motion_type, start_position, end_position] = _
-    call setpos('.', a:spec_name =~# '[np]$' ? start_position : end_position)
+    call s:cursor_to_screenpos(a:spec_name =~# '[np]$' ? start_position : end_position)
   endif
 endfunction
 
@@ -624,7 +632,7 @@ function! s:cancel_selection(previous_mode, orig_pos)
   if a:previous_mode ==# 'v'
     normal! gv
   else  " if a:previous_mode ==# 'o'
-    call cursor(a:orig_pos)
+    call s:cursor_to_screenpos(a:orig_pos)
   endif
 endfunction
 

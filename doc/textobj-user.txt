@@ -534,6 +534,12 @@ KNOWN ISSUES					*textobj-user-known-issues*
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
 
+0.6.4	2014-10-29T20:59:54+09:00		*textobj-user-changelog-0.6.4*
+	- Fix a bug that text objects are not correctly selected if those
+	  objects match single characters.  See also:
+	  https://github.com/kana/vim-textobj-user/issues/41
+	- Fix a few typos in the document.
+
 0.6.3	2014-06-22T17:40:07+09:00		*textobj-user-changelog-0.6.3*
 	- Fix a bug that using script-local functions as "{property}-function"
 	  causes errors if 'verbose' is set to 15 or bigger value when

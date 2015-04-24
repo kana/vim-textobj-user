@@ -710,6 +710,7 @@ let s:non_ui_property_names = [
 \   'move-p-function',
 \   'pattern',
 \   'region-type',
+\   'scan',
 \   'select-a-function',
 \   'select-function',
 \   'select-i-function',

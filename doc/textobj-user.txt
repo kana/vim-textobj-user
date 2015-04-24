@@ -244,8 +244,7 @@ The following properties are available:
 
 "select"			{lhs} or [{lhs}, ...]
 	Like "move-n", but {lhs} is used as a default key mapping to select
-	the text object under the cursor.  If there is no text object under
-	the cursor, the next text object is selected.
+	the text object under the cursor.  See also |textobj-usre-scan|.
 
 	A target text object is determined by
 	- the "pattern" property with a single regular expression, or
@@ -285,6 +284,19 @@ The following properties are available:
 		"v"             Characterwise
 		"V"             Linewise
 		"\<C-v>"        Blockwise
+
+							   *textobj-user-scan*
+"scan"				{string}  (default: "forward")
+	A string that specifies how to find a "pattern"-based text object for
+	"select".  Possible values are:
+
+	"cursor"
+		Try to find from text under the cursor.
+
+	"forward"
+		Try to find from text:
+		(1) Under the cursor
+		(2) After the cursor
 
 "{property}-function"		{fname}
 	If this property is defined, the function named {fname} instead of the

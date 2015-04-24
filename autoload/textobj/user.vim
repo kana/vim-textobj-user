@@ -59,6 +59,7 @@ function! textobj#user#select(pattern, flags, previous_mode)
   endif
 
   if s:range_validp(pos_head, pos_tail)
+  \  && (a:flags !~# 'c' || s:range_containsp(pos_head, pos_tail, ORIG_POS))
     call s:range_select(pos_head, pos_tail, s:choose_wise(a:flags))
     return [pos_head, pos_tail]
   else

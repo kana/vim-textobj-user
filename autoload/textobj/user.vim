@@ -399,6 +399,9 @@ function s:normalize_property_values(obj_specs)
         if !has_key(specs, 'region-type')
           let specs['region-type'] = 'v'
         endif
+        if !has_key(specs, 'scan')
+          let specs['scan'] = 'forward'
+        endif
       endif
 
       unlet spec_info  " to avoid E706.

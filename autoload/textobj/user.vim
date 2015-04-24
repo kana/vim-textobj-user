@@ -476,7 +476,8 @@ endfunction
 " "pattern" wrappers  "{{{3
 function! s:plugin.do_by_pattern(spec_name, obj_name, previous_mode)
   let specs = self.obj_specs[a:obj_name]
-  let flags = s:PATTERN_FLAGS_TABLE[a:spec_name] . specs['region-type']
+  let flags = s:PATTERN_FLAGS_TABLE[a:spec_name]
+  \           . (a:spec_name =~# '^select' ? specs['region-type'] : '')
   call {s:PATTERN_IMPL_TABLE[a:spec_name]}(
   \   specs['pattern'],
   \   flags,

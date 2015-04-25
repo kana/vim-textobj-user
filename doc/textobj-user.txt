@@ -298,6 +298,12 @@ The following properties are available:
 		(1) Under the cursor
 		(2) After the cursor
 
+	"line"
+		Try to find from text:
+		(1) Under the cursor
+		(2) In the current line and after the cursor
+		(3) In the current line and before the cursor
+
 	"nearest"
 		Try to find from text:
 		(1) Under the cursor

@@ -290,6 +290,12 @@ function! s:range_containsp(range_head, range_tail, target_pos)
 endfunction
 
 
+function! s:range_in_linep(range_head, range_tail, target_pos)
+  return a:range_head[0] == a:target_pos[0]
+  \      || a:range_tail[0] == a:target_pos[0]
+endfunction
+
+
 function! s:range_no_text_without_edgesp(range_head, range_tail)
   let [hl, hc] = a:range_head
   let [tl, tc] = a:range_tail

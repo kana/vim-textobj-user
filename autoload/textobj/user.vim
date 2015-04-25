@@ -71,11 +71,11 @@ function! s:choose_better_pos(flags, ORIG_POS, pfh, pft, pbh, pbt)
     return [a:pbh, a:pbt]
   elseif cf
     return [a:pfh, a:pft]
-  elseif lf && a:flags =~# 'n'
+  elseif lf && a:flags =~# '[nl]'
     return [a:pfh, a:pft]
-  elseif lb && a:flags =~# 'n'
+  elseif lb && a:flags =~# '[nl]'
     return [a:pbh, a:pbt]
-  elseif vf && (a:flags =~# '[fn]' || a:flags !~# '[bc]')
+  elseif vf && (a:flags =~# '[fn]' || a:flags !~# '[bcl]')
     return [a:pfh, a:pft]
   elseif vb && a:flags =~# '[bn]'
     return [a:pbh, a:pbt]

@@ -41,27 +41,27 @@ endfunction
 function! textobj#user#select(pattern, flags, previous_mode)
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
 
-  let posf_tail = searchpos(a:pattern, 'ceW')
-  let posf_head = searchpos(a:pattern, 'bcW')
+  let pft = searchpos(a:pattern, 'ceW')
+  let pfh = searchpos(a:pattern, 'bcW')
   call cursor(ORIG_POS)
-  let posb_head = searchpos(a:pattern, 'bcW')
-  let posb_tail = searchpos(a:pattern, 'ceW')
+  let pbh = searchpos(a:pattern, 'bcW')
+  let pbt = searchpos(a:pattern, 'ceW')
 
   " search() family with 'c' flag may not be matched to a pattern which
   " matches to multiple lines.  To choose appropriate range, we have to check
   " another range whether it contains the cursor or not.
   if (a:flags =~# 'b'
-  \   || (s:range_containsp(posb_head, posb_tail, ORIG_POS)
-  \       && s:range_validp(posb_head, posb_tail)))
-    let [pos_head, pos_tail] = [posb_head, posb_tail]
+  \   || (s:range_containsp(pbh, pbt, ORIG_POS)
+  \       && s:range_validp(pbh, pbt)))
+    let [ph, pt] = [pbh, pbt]
   else
-    let [pos_head, pos_tail] = [posf_head, posf_tail]
+    let [ph, pt] = [pfh, pft]
   endif
 
-  if s:range_validp(pos_head, pos_tail)
-  \  && (a:flags !~# 'c' || s:range_containsp(pos_head, pos_tail, ORIG_POS))
-    call s:range_select(pos_head, pos_tail, s:choose_wise(a:flags))
-    return [pos_head, pos_tail]
+  if s:range_validp(ph, pt)
+  \  && (a:flags !~# 'c' || s:range_containsp(ph, pt, ORIG_POS))
+    call s:range_select(ph, pt, s:choose_wise(a:flags))
+    return [ph, pt]
   else
     return s:cancel_selection(a:previous_mode, ORIG_POS)
   endif

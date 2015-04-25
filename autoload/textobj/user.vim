@@ -64,14 +64,20 @@ function! s:choose_better_pos(flags, ORIG_POS, pfh, pft, pbh, pbt)
   let vb = s:range_validp(a:pbh, a:pbt)
   let cf = vf && s:range_containsp(a:pfh, a:pft, a:ORIG_POS)
   let cb = vb && s:range_containsp(a:pbh, a:pbt, a:ORIG_POS)
+  let lf = vf && s:range_in_linep(a:pfh, a:pft, a:ORIG_POS)
+  let lb = vb && s:range_in_linep(a:pbh, a:pbt, a:ORIG_POS)
 
   if cb  " [X]
     return [a:pbh, a:pbt]
   elseif cf
     return [a:pfh, a:pft]
-  elseif vf && (a:flags =~# 'f' || a:flags !~# '[bc]')
+  elseif lf && a:flags =~# 'n'
     return [a:pfh, a:pft]
-  elseif vb && a:flags =~# 'b'
+  elseif lb && a:flags =~# 'n'
+    return [a:pbh, a:pbt]
+  elseif vf && (a:flags =~# '[fn]' || a:flags !~# '[bc]')
+    return [a:pfh, a:pft]
+  elseif vb && a:flags =~# '[bn]'
     return [a:pbh, a:pbt]
   else
     return 0

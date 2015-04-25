@@ -59,6 +59,7 @@ function! textobj#user#select(pattern, flags, previous_mode)
   endif
 
   if s:range_validp(pos_head, pos_tail)
+  \  && (a:flags !~# 'c' || s:range_containsp(pos_head, pos_tail, ORIG_POS))
     call s:range_select(pos_head, pos_tail, s:choose_wise(a:flags))
     return [pos_head, pos_tail]
   else
@@ -399,6 +400,9 @@ function s:normalize_property_values(obj_specs)
         if !has_key(specs, 'region-type')
           let specs['region-type'] = 'v'
         endif
+        if !has_key(specs, 'scan')
+          let specs['scan'] = 'forward'
+        endif
       endif
 
       unlet spec_info  " to avoid E706.
@@ -473,7 +477,9 @@ endfunction
 " "pattern" wrappers  "{{{3
 function! s:plugin.do_by_pattern(spec_name, obj_name, previous_mode)
   let specs = self.obj_specs[a:obj_name]
-  let flags = s:PATTERN_FLAGS_TABLE[a:spec_name] . specs['region-type']
+  let flags = s:PATTERN_FLAGS_TABLE[a:spec_name]
+  \           . (a:spec_name =~# '^select' ? specs['region-type'] : '')
+  \           . (a:spec_name ==# 'select' ? specs['scan'][0] : '')
   call {s:PATTERN_IMPL_TABLE[a:spec_name]}(
   \   specs['pattern'],
   \   flags,
@@ -710,6 +716,7 @@ let s:non_ui_property_names = [
 \   'move-p-function',
 \   'pattern',
 \   'region-type',
+\   'scan',
 \   'select-a-function',
 \   'select-function',
 \   'select-i-function',

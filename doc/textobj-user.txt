@@ -244,8 +244,7 @@ The following properties are available:
 
 "select"			{lhs} or [{lhs}, ...]
 	Like "move-n", but {lhs} is used as a default key mapping to select
-	the text object under the cursor.  If there is no text object under
-	the cursor, the next text object is selected.
+	the text object under the cursor.  See also |textobj-usre-scan|.
 
 	A target text object is determined by
 	- the "pattern" property with a single regular expression, or
@@ -285,6 +284,19 @@ The following properties are available:
 		"v"             Characterwise
 		"V"             Linewise
 		"\<C-v>"        Blockwise
+
+							   *textobj-user-scan*
+"scan"				{string}  (default: "forward")
+	A string that specifies how to find a "pattern"-based text object for
+	"select".  Possible values are:
+
+	"cursor"
+		Try to find from text under the cursor.
+
+	"forward"
+		Try to find from text:
+		(1) Under the cursor
+		(2) After the cursor
 
 "{property}-function"		{fname}
 	If this property is defined, the function named {fname} instead of the
@@ -421,17 +433,22 @@ textobj#user#move({pattern}, {flags}, {previous-mode})
 textobj#user#select({pattern}, {flags}, {prevous-mode})
 	Note: This function is obsolete.  It will be removed in sometime.
 
-	Select the appropriate object defined by {pattern}.
-	If the cursor is already in the range of an object, select it.
-	If the cursor is not in the range of an object, select the nearest
-	object after the cursor.
+	Select an appropriate object defined by {pattern}.  The following
+	places are scaned to find an appropriate object:
+
+		(1) Under the cursor
+		(2) In the current line and after the cursor
+		(3) In the current line and before the cursor
+		(4) After the current line
+		(5) Before the current line
 
 	{flags} is a string, which can contain the following character flags:
 
 		Character       Meaning ~
 		---------       -------------------------------------------- ~
-		"b"             select the nearest object BEFORE the cursor if
-		                the cursor is not in the range of an object.
+		"b"             find an object from (1), (3), (5).
+		"c"             find an object from (1).
+		"f"             find an object from (1), (2), (4).  (default)
 		"v"             select an object characterwise.  (default)
 		"V"             select an object linewise.
 		"\<C-v>"        select an object blockwise.
@@ -689,4 +706,4 @@ CHANGELOG					*textobj-user-changelog*
 
 
 ==============================================================================
-vim:tw=78:ts=8:ft=help:norl:fen:fdl=0:fdm=marker:
+vim:tw=78:ts=8:ft=help:norl:fen:fdl=0:fdm=marker:noet:

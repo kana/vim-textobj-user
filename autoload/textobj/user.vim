@@ -59,18 +59,20 @@ endfunction
 function! s:choose_better_pos(flags, ORIG_POS, pfh, pft, pbh, pbt)
   " search() family with 'c' flag may not be matched to a pattern which
   " matches to multiple lines.  To choose appropriate range, we have to check
-  " another range whether it contains the cursor or not.
-  if (a:flags =~# 'b'
-  \   || (s:range_containsp(a:pbh, a:pbt, a:ORIG_POS)
-  \       && s:range_validp(a:pbh, a:pbt)))
-    let [ph, pt] = [a:pbh, a:pbt]
-  else
-    let [ph, pt] = [a:pfh, a:pft]
-  endif
+  " another range [X] whether it contains the cursor or not.
+  let vf = s:range_validp(a:pfh, a:pft)
+  let vb = s:range_validp(a:pbh, a:pbt)
+  let cf = vf && s:range_containsp(a:pfh, a:pft, a:ORIG_POS)
+  let cb = vb && s:range_containsp(a:pbh, a:pbt, a:ORIG_POS)
 
-  if s:range_validp(ph, pt)
-  \  && (a:flags !~# 'c' || s:range_containsp(ph, pt, a:ORIG_POS))
-    return [ph, pt]
+  if cb  " [X]
+    return [a:pbh, a:pbt]
+  elseif cf
+    return [a:pfh, a:pft]
+  elseif vf && (a:flags =~# 'f' || a:flags !~# '[bc]')
+    return [a:pfh, a:pft]
+  elseif vb && a:flags =~# 'b'
+    return [a:pbh, a:pbt]
   else
     return 0
   endif

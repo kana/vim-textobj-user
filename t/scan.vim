@@ -13,6 +13,11 @@ call textobj#user#plugin('number', {
 \     'select': 'nf',
 \     'scan': 'forward',
 \   },
+\   'nearest': {
+\     'pattern': '\a\+',
+\     'select': 'nn',
+\     'scan': 'nearest',
+\   },
 \ })
 
 function! Select(lnum, col, object)
@@ -134,6 +139,40 @@ describe '"pattern"-based text object'
       Expect Select(3, 7, 'nf') ==# ['v', [3, 7], [3, 7]]
       Expect Select(3, 8, 'nf') ==# ['v', [3, 8], [3, 8]]
       Expect Select(3, 9, 'nf') ==# ['v', [3, 9], [3, 9]]
+    end
+  end
+
+  context 'with "scan" = "nearest"'
+    it 'is targeted if it is nearest from the cursor'
+      Expect Select(1, 1, 'nn') ==# ['v', [1, 4], [1, 6]]
+      Expect Select(1, 2, 'nn') ==# ['v', [1, 4], [1, 6]]
+      Expect Select(1, 3, 'nn') ==# ['v', [1, 4], [1, 6]]
+      Expect Select(1, 4, 'nn') ==# ['v', [1, 4], [1, 6]]
+      Expect Select(1, 5, 'nn') ==# ['v', [1, 4], [1, 6]]
+      Expect Select(1, 6, 'nn') ==# ['v', [1, 4], [1, 6]]
+      Expect Select(1, 7, 'nn') ==# ['v', [1, 4], [1, 6]]
+      Expect Select(1, 8, 'nn') ==# ['v', [1, 4], [1, 6]]
+      Expect Select(1, 9, 'nn') ==# ['v', [1, 4], [1, 6]]
+
+      Expect Select(2, 1, 'nn') ==# ['v', [2, 1], [2, 3]]
+      Expect Select(2, 2, 'nn') ==# ['v', [2, 1], [2, 3]]
+      Expect Select(2, 3, 'nn') ==# ['v', [2, 1], [2, 3]]
+      Expect Select(2, 4, 'nn') ==# ['v', [2, 7], [2, 9]]
+      Expect Select(2, 5, 'nn') ==# ['v', [2, 7], [2, 9]]
+      Expect Select(2, 6, 'nn') ==# ['v', [2, 7], [2, 9]]
+      Expect Select(2, 7, 'nn') ==# ['v', [2, 7], [2, 9]]
+      Expect Select(2, 8, 'nn') ==# ['v', [2, 7], [2, 9]]
+      Expect Select(2, 9, 'nn') ==# ['v', [2, 7], [2, 9]]
+
+      Expect Select(3, 1, 'nn') ==# ['v', [3, 4], [3, 6]]
+      Expect Select(3, 2, 'nn') ==# ['v', [3, 4], [3, 6]]
+      Expect Select(3, 3, 'nn') ==# ['v', [3, 4], [3, 6]]
+      Expect Select(3, 4, 'nn') ==# ['v', [3, 4], [3, 6]]
+      Expect Select(3, 5, 'nn') ==# ['v', [3, 4], [3, 6]]
+      Expect Select(3, 6, 'nn') ==# ['v', [3, 4], [3, 6]]
+      Expect Select(3, 7, 'nn') ==# ['v', [3, 4], [3, 6]]
+      Expect Select(3, 8, 'nn') ==# ['v', [3, 4], [3, 6]]
+      Expect Select(3, 9, 'nn') ==# ['v', [3, 4], [3, 6]]
     end
   end
 end

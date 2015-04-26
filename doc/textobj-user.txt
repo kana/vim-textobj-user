@@ -244,7 +244,7 @@ The following properties are available:
 
 "select"			{lhs} or [{lhs}, ...]
 	Like "move-n", but {lhs} is used as a default key mapping to select
-	the text object under the cursor.  See also |textobj-usre-scan|.
+	the text object under the cursor.  See also |textobj-user-scan|.
 
 	A target text object is determined by
 	- the "pattern" property with a single regular expression, or

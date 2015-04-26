@@ -190,9 +190,9 @@ textobj#user#plugin({plugin-name}, {specs})
 	key mappings are defined for extra customization for users.
 
 	For example, one might prefer "aT" and "iT" to select a time, because
-	|at| and |it| are bound to the extremely useful text objects by
-	default, and it is usually a bad idea to override them.  In this case,
-	interface key mappings are used as follows:
+	|at| and |it| are bound to the extremely useful text objects to select
+	a tag by default, and it is usually a bad idea to override them.
+	In this case, interface key mappings are used as follows:
 >
 		xmap aT  <Plug>(textobj-datetime-time)
 		omap aT  <Plug>(textobj-datetime-time)
@@ -204,13 +204,13 @@ textobj#user#plugin({plugin-name}, {specs})
 	to define default key mappings -- "ad", "id", "at" and "it".
 
 	As described in (b), sometimes users do not want to use default key
-	mappings such as "at" and "at".  If
+	mappings such as "at" and "it".  If
 	g:textobj_datetime_no_default_key_mappings is set to true, default key
 	mappings will not be defined.
 
 	For backward compatibility, if {specs} contains a key
 	"*no-default-key-mappings*", default key mappings will not be defined.
-	But this feature will be removed from furture version.
+	But this feature will be removed in a future version.
 
 
 							  *textobj-user-specs*
@@ -401,10 +401,9 @@ textobj#user#map({plugin-name}, {specs})
 	  filetype plugins.
 
 	As a result, textobj#user#map() cannot detect whether {plugin-name} is
-	right or not.  To notice something wrong, an error message will be
-	shown when
+	correct.  An error message will be shown when
 
-	- A key mapping defined by textobj#user#map() is actually used, and
+	- A key mapping defined by textobj#user#map() is already used, and
 	- The corresponding text object does not exist at that moment.
 
 

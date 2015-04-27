@@ -1,4 +1,4 @@
-" textobj-user - Support for user-defined text objects
+" textobj-user - Create your own text objects
 " Version: 0.6.4
 " Copyright (C) 2007-2014 Kana Natsuno <http://whileimautomaton.net/>
 " License: MIT license  {{{

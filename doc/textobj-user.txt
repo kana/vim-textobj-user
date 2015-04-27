@@ -567,6 +567,10 @@ KNOWN ISSUES					*textobj-user-known-issues*
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
 
+0.7.0	2015-04-27T21:42:27+09:00		*textobj-user-changelog-0.7.0*
+	- Add "scan" to specify how to find a "pattern"-based text object for
+	  "select".  See |textobj-user-scan| for the details.
+
 0.6.4	2014-10-29T20:59:54+09:00		*textobj-user-changelog-0.6.4*
 	- Fix a bug that text objects are not correctly selected if those
 	  objects match single characters.  See also:

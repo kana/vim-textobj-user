@@ -11,6 +11,16 @@ call textobj#user#plugin('anchoredwordp', {
 \   }
 \ })
 
+function! Test(type, cases)
+  for [il, ic, d, el, ec] in a:cases
+    call cursor(il, ic)
+    Expect [il, ic] == getpos('.')[1:2]
+    execute 'silent! normal' printf('[%s%s]', a:type, d)
+    let [_, al, ac, _] = getpos('.')
+    Expect [il, ic, d, al, ac] == [il, ic, d, el, ec]
+  endfor
+endfunction
+
 describe 'textobj#user#plugin'
   before
     new
@@ -75,13 +85,7 @@ describe 'textobj#user#plugin'
     \   [2, 18, 'P', 1, 34],
     \   [2, 19, 'P', 2, 18],
     \ ]
-    for [il, ic, d, el, ec] in cases
-      call cursor(il, ic)
-      Expect [il, ic] == getpos('.')[1:2]
-      execute 'silent! normal' printf('[%s%s]', type, d)
-      let [_, al, ac, _] = getpos('.')
-      Expect [il, ic, d, al, ac] == [il, ic, d, el, ec]
-    endfor
+    call Test(type, cases)
   end
 end
 

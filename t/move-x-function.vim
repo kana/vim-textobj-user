@@ -46,6 +46,16 @@ call textobj#user#plugin('anchoredwordf', {
 \   }
 \ })
 
+function! Test(type, cases)
+  for [il, ic, d, el, ec] in a:cases
+    call cursor(il, ic)
+    Expect [il, ic] == getpos('.')[1:2]
+    execute 'silent! normal' printf('[%s%s]', a:type, d)
+    let [_, al, ac, _] = getpos('.')
+    Expect [il, ic, d, al, ac] == [il, ic, d, el, ec]
+  endfor
+endfunction
+
 describe 'move-x-function'
   before
     new
@@ -106,12 +116,6 @@ describe 'move-x-function'
     \   [2, 24, 'P', 2, 18],
     \   [2, 26, 'P', 2, 18],
     \ ]
-    for [il, ic, d, el, ec] in cases
-      call cursor(il, ic)
-      Expect [il, ic] == getpos('.')[1:2]
-      execute 'silent! normal' printf('[%s%s]', type, d)
-      let [_, al, ac, _] = getpos('.')
-      Expect [il, ic, d, al, ac] == [il, ic, d, el, ec]
-    endfor
+    call Test(type, cases)
   end
 end

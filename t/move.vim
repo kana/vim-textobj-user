@@ -1,6 +1,16 @@
 " Anchored-word is <a> <word> <like> <this>.
 " But <> is not valid, because it doesn't contain a word.
 
+call textobj#user#plugin('anchoredwordp', {
+\   '-': {
+\     'pattern': '<\a\+>',
+\     'move-n': '[pn]',
+\     'move-N': '[pN]',
+\     'move-p': '[pp]',
+\     'move-P': '[pP]',
+\   }
+\ })
+
 let s:pattern = '<\a\+>'
 
 function! s:regionize(bp, ep)
@@ -109,7 +119,7 @@ let s:cases = [
 \   [2, 19, 'P', 2, 18],
 \ ]
 
-describe 'move-x-function'
+describe 'textobj#user#plugin'
   before
     new
     put ='The <quick> brown fox jumps <over> the lazy <dog'
@@ -121,7 +131,11 @@ describe 'move-x-function'
     close!
   end
 
-  it 'is used to move the cursor to a text object'
+  it 'supports "move-*" by "pattern"'
+    call Test('p', s:cases)
+  end
+
+  it 'supports "move-*" by "move-*-function"'
     call Test('f', s:cases)
   end
 end

@@ -1,48 +1,50 @@
 " Anchored-word is <a> <word> <like> <this>.
 " But <> is not valid, because it doesn't contain a word.
 
-function! MoveNext()
-  while !0
-    let [bl, bc] = searchpos('<', 'W')
-    let [el, ec] = searchpos('>', 'W')
-    if bl == 0 || el == 0
-      return 0
-    else
-      if bl == el && bc + 1 < ec
-        return ['v', [0, bl, bc, 0], [0, el, ec, 0]]
-      else
-        continue
-      endif
-    endif
-  endwhile
+let s:pattern = '<\a\+>'
+
+function! s:regionize(bp, ep)
+  if a:bp[0] != 0 && a:ep[0] != 0
+    return ['v', [0, a:bp[0], a:bp[1], 0], [0, a:ep[0], a:ep[1], 0]]
+  else
+    return 0
+  endif
 endfunction
 
-function! MovePrevious()
-  while !0
-    let [el, ec] = searchpos('>', 'bW')
-    let [bl, bc] = searchpos('<', 'bW')
-    if bl == 0 || el == 0
-      return 0
-    else
-      if bl == el && bc + 1 < ec
-        return ['v', [0, bl, bc, 0], [0, el, ec, 0]]
-      else
-        continue
-      endif
-    endif
-  endwhile
+function! Move_n()
+  let bp = searchpos(s:pattern, 'W')
+  let ep = searchpos(s:pattern, 'ceW')
+  return s:regionize(bp, ep)
+endfunction
+
+function! Move_N()
+  let ep = searchpos(s:pattern, 'eW')
+  let bp = searchpos(s:pattern, 'bcW')
+  return s:regionize(bp, ep)
+endfunction
+
+function! Move_p()
+  let bp = searchpos(s:pattern, 'bW')
+  let ep = searchpos(s:pattern, 'ceW')
+  return s:regionize(bp, ep)
+endfunction
+
+function! Move_P()
+  let ep = searchpos(s:pattern, 'beW')
+  let bp = searchpos(s:pattern, 'bcW')
+  return s:regionize(bp, ep)
 endfunction
 
 call textobj#user#plugin('anchoredwordf', {
 \   '-': {
 \     'move-n': '[fn]',
-\     'move-n-function': 'MoveNext',
+\     'move-n-function': 'Move_n',
 \     'move-N': '[fN]',
-\     'move-N-function': 'MoveNext',
+\     'move-N-function': 'Move_N',
 \     'move-p': '[fp]',
-\     'move-p-function': 'MovePrevious',
+\     'move-p-function': 'Move_p',
 \     'move-P': '[fP]',
-\     'move-P-function': 'MovePrevious',
+\     'move-P-function': 'Move_P',
 \   }
 \ })
 
@@ -60,47 +62,51 @@ let s:cases = [
 \   [1,  4, 'n', 1,  5],
 \   [1,  5, 'n', 1, 29],
 \   [1,  6, 'n', 1, 29],
+\   [1, 10, 'n', 1, 29],
 \   [1, 11, 'n', 1, 29],
 \   [1, 12, 'n', 1, 29],
-\   [1, 28, 'n', 1, 29],
-\   [1, 29, 'n', 2, 12],
-\   [2, 21, 'n', 2, 24],
-\   [2, 23, 'n', 2, 24],
-\   [2, 24, 'n', 2, 24],
-\   [2, 26, 'n', 2, 26],
+\   [2, 11, 'n', 2, 12],
+\   [2, 12, 'n', 2, 12],
+\   [2, 13, 'n', 2, 13],
+\   [2, 17, 'n', 2, 17],
+\   [2, 18, 'n', 2, 18],
+\   [2, 19, 'n', 2, 19],
 \   [1,  4, 'N', 1, 11],
-\   [1,  5, 'N', 1, 34],
-\   [1,  6, 'N', 1, 34],
+\   [1,  5, 'N', 1, 11],
+\   [1,  6, 'N', 1, 11],
+\   [1, 10, 'N', 1, 11],
 \   [1, 11, 'N', 1, 34],
 \   [1, 12, 'N', 1, 34],
-\   [1, 28, 'N', 1, 34],
-\   [1, 29, 'N', 2, 18],
-\   [2, 21, 'N', 2, 39],
-\   [2, 23, 'N', 2, 39],
-\   [2, 24, 'N', 2, 24],
-\   [2, 26, 'N', 2, 26],
+\   [2, 11, 'N', 2, 18],
+\   [2, 12, 'N', 2, 18],
+\   [2, 13, 'N', 2, 18],
+\   [2, 17, 'N', 2, 18],
+\   [2, 18, 'N', 2, 18],
+\   [2, 19, 'N', 2, 19],
 \   [1,  4, 'p', 1,  4],
 \   [1,  5, 'p', 1,  5],
-\   [1,  6, 'p', 1,  6],
-\   [1, 11, 'p', 1, 11],
+\   [1,  6, 'p', 1,  5],
+\   [1, 10, 'p', 1,  5],
+\   [1, 11, 'p', 1,  5],
 \   [1, 12, 'p', 1,  5],
-\   [1, 28, 'p', 1,  5],
-\   [1, 29, 'p', 1,  5],
-\   [2, 21, 'p', 2, 12],
-\   [2, 23, 'p', 2, 12],
-\   [2, 24, 'p', 2, 12],
-\   [2, 26, 'p', 2, 12],
+\   [2, 11, 'p', 1, 29],
+\   [2, 12, 'p', 1, 29],
+\   [2, 13, 'p', 2, 12],
+\   [2, 17, 'p', 2, 12],
+\   [2, 18, 'p', 2, 12],
+\   [2, 19, 'p', 2, 12],
 \   [1,  4, 'P', 1,  4],
 \   [1,  5, 'P', 1,  5],
 \   [1,  6, 'P', 1,  6],
+\   [1, 10, 'P', 1, 10],
 \   [1, 11, 'P', 1, 11],
 \   [1, 12, 'P', 1, 11],
-\   [1, 28, 'P', 1, 11],
-\   [1, 29, 'P', 1, 11],
-\   [2, 21, 'P', 2, 18],
-\   [2, 23, 'P', 2, 18],
-\   [2, 24, 'P', 2, 18],
-\   [2, 26, 'P', 2, 18],
+\   [2, 11, 'P', 1, 34],
+\   [2, 12, 'P', 1, 34],
+\   [2, 13, 'P', 1, 34],
+\   [2, 17, 'P', 1, 34],
+\   [2, 18, 'P', 1, 34],
+\   [2, 19, 'P', 2, 18],
 \ ]
 
 describe 'move-x-function'

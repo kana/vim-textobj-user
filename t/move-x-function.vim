@@ -33,7 +33,7 @@ function! MovePrevious()
   endwhile
 endfunction
 
-call textobj#user#plugin('anchoredword', {
+call textobj#user#plugin('anchoredwordf', {
 \   '-': {
 \     'move-n': '[fn]',
 \     'move-n-function': 'MoveNext',

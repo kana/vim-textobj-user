@@ -1,7 +1,7 @@
 " Anchored-word is <a> <word> <like> <this>.
 " But <> is not valid, because it doesn't contain a word.
 
-call textobj#user#plugin('anchoredword', {
+call textobj#user#plugin('anchoredwordp', {
 \   '-': {
 \     'pattern': '<\a\+>',
 \     'move-n': '[pn]',

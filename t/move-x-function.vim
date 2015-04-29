@@ -35,13 +35,13 @@ endfunction
 
 call textobj#user#plugin('anchoredword', {
 \   '-': {
-\     'move-n': '[n]',
+\     'move-n': '[fn]',
 \     'move-n-function': 'MoveNext',
-\     'move-N': '[N]',
+\     'move-N': '[fN]',
 \     'move-N-function': 'MoveNext',
-\     'move-p': '[p]',
+\     'move-p': '[fp]',
 \     'move-p-function': 'MovePrevious',
-\     'move-P': '[P]',
+\     'move-P': '[fP]',
 \     'move-P-function': 'MovePrevious',
 \   }
 \ })
@@ -59,6 +59,7 @@ describe 'move-x-function'
   end
 
   it 'is used to move the cursor to a text object'
+    let type = 'f'
     let cases = [
     \   [1,  4, 'n', 1,  5],
     \   [1,  5, 'n', 1, 29],
@@ -108,7 +109,7 @@ describe 'move-x-function'
     for [il, ic, d, el, ec] in cases
       call cursor(il, ic)
       Expect [il, ic] == getpos('.')[1:2]
-      execute 'silent! normal' printf('[%s]', d)
+      execute 'silent! normal' printf('[%s%s]', type, d)
       let [_, al, ac, _] = getpos('.')
       Expect [il, ic, d, al, ac] == [il, ic, d, el, ec]
     endfor

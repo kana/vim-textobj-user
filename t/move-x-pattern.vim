@@ -4,10 +4,10 @@
 call textobj#user#plugin('anchoredword', {
 \   '-': {
 \     'pattern': '<\a\+>',
-\     'move-n': '[n]',
-\     'move-N': '[N]',
-\     'move-p': '[p]',
-\     'move-P': '[P]',
+\     'move-n': '[pn]',
+\     'move-N': '[pN]',
+\     'move-p': '[pp]',
+\     'move-P': '[pP]',
 \   }
 \ })
 
@@ -24,6 +24,7 @@ describe 'textobj#user#plugin'
   end
 
   it 'supports "move-*" by "pattern"'
+    let type = 'p'
     let cases = [
     \   [1,  4, 'n', 1,  5],
     \   [1,  5, 'n', 1, 29],
@@ -77,7 +78,7 @@ describe 'textobj#user#plugin'
     for [il, ic, d, el, ec] in cases
       call cursor(il, ic)
       Expect [il, ic] == getpos('.')[1:2]
-      execute 'silent! normal' printf('[%s]', d)
+      execute 'silent! normal' printf('[%s%s]', type, d)
       let [_, al, ac, _] = getpos('.')
       Expect [il, ic, d, al, ac] == [il, ic, d, el, ec]
     endfor

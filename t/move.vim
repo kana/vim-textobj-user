@@ -25,28 +25,37 @@ function! s:regionize(bp, ep)
   endif
 endfunction
 
-function! Move_n()
-  let bp = searchpos(s:pattern, 'W')
-  let ep = searchpos(s:pattern, 'ceW')
+function! s:move(type)
+  if a:type ==# 'n'
+    let bp = searchpos(s:pattern, 'W')
+    let ep = searchpos(s:pattern, 'ceW')
+  elseif a:type ==# 'N'
+    let ep = searchpos(s:pattern, 'eW')
+    let bp = searchpos(s:pattern, 'bcW')
+  elseif a:type ==# 'p'
+    let bp = searchpos(s:pattern, 'bW')
+    let ep = searchpos(s:pattern, 'ceW')
+  else  " if a:type ==# 'P'
+    let ep = searchpos(s:pattern, 'beW')
+    let bp = searchpos(s:pattern, 'bcW')
+  endif
   return s:regionize(bp, ep)
+endfunction
+
+function! Move_n()
+  return s:move('n')
 endfunction
 
 function! Move_N()
-  let ep = searchpos(s:pattern, 'eW')
-  let bp = searchpos(s:pattern, 'bcW')
-  return s:regionize(bp, ep)
+  return s:move('N')
 endfunction
 
 function! Move_p()
-  let bp = searchpos(s:pattern, 'bW')
-  let ep = searchpos(s:pattern, 'ceW')
-  return s:regionize(bp, ep)
+  return s:move('p')
 endfunction
 
 function! Move_P()
-  let ep = searchpos(s:pattern, 'beW')
-  let bp = searchpos(s:pattern, 'bcW')
-  return s:regionize(bp, ep)
+  return s:move('P')
 endfunction
 
 call textobj#user#plugin('anchoredwordf', {

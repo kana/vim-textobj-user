@@ -181,6 +181,90 @@ endfunction
 
 let s:cases_on_visual_mode = s:cases_on_normal_mode
 
+" Case: Operator-pending mode "{{{1
+
+function! s:test_on_operator_pending_mode(type, cases)
+  for [il, ic, c, d, ebl, ebc, eel, eec] in a:cases
+    call cursor(il, ic)
+    Expect [il, ic] == getpos('.')[1:2]
+    execute 'silent! normal' printf('y%s[%s%s]', c ? c : '', a:type, d)
+    let [_, abl, abc, _] = getpos("'[")
+    let [_, ael, aec, _] = getpos("']")
+    Expect [il, ic, c, d, abl, abc, ael, aec]
+    \   == [il, ic, c, d, ebl, ebc, eel, eec]
+  endfor
+endfunction
+
+let s:cases_on_operator_pending_mode = [
+\   [1,  4, 0, 'n', 1,  4, 1,  5],
+\   [1,  5, 0, 'n', 1,  5, 1, 29],
+\   [1,  6, 0, 'n', 1,  6, 1, 29],
+\   [1, 10, 0, 'n', 1, 10, 1, 29],
+\   [1, 11, 0, 'n', 1, 11, 1, 29],
+\   [1, 12, 0, 'n', 1, 12, 1, 29],
+\   [2, 11, 0, 'n', 2, 11, 2, 12],
+\   [2, 12, 0, 'n', 2, 12, 2, 12],
+\   [2, 13, 0, 'n', 2, 13, 2, 13],
+\   [2, 17, 0, 'n', 2, 17, 2, 17],
+\   [2, 18, 0, 'n', 2, 18, 2, 18],
+\   [2, 19, 0, 'n', 2, 19, 2, 19],
+\   [1,  1, 1, 'n', 1,  1, 1,  5],
+\   [1,  1, 2, 'n', 1,  1, 1, 29],
+\   [1,  1, 3, 'n', 1,  1, 2, 12],
+\   [1,  1, 4, 'n', 1,  1, 2, 12],
+\
+\   [1,  4, 0, 'N', 1,  4, 1, 11],
+\   [1,  5, 0, 'N', 1,  5, 1, 11],
+\   [1,  6, 0, 'N', 1,  6, 1, 11],
+\   [1, 10, 0, 'N', 1, 10, 1, 11],
+\   [1, 11, 0, 'N', 1, 11, 1, 34],
+\   [1, 12, 0, 'N', 1, 12, 1, 34],
+\   [2, 11, 0, 'N', 2, 11, 2, 18],
+\   [2, 12, 0, 'N', 2, 12, 2, 18],
+\   [2, 13, 0, 'N', 2, 13, 2, 18],
+\   [2, 17, 0, 'N', 2, 17, 2, 18],
+\   [2, 18, 0, 'N', 2, 18, 2, 18],
+\   [2, 19, 0, 'N', 2, 19, 2, 19],
+\   [1,  1, 1, 'N', 1,  1, 1, 11],
+\   [1,  1, 2, 'N', 1,  1, 1, 34],
+\   [1,  1, 3, 'N', 1,  1, 2, 18],
+\   [1,  1, 4, 'N', 1,  1, 2, 18],
+\
+\   [1,  4, 0, 'p', 1,  4, 1,  4],
+\   [1,  5, 0, 'p', 1,  5, 1,  5],
+\   [1,  6, 0, 'p', 1,  5, 1,  6],
+\   [1, 10, 0, 'p', 1,  5, 1, 10],
+\   [1, 11, 0, 'p', 1,  5, 1, 11],
+\   [1, 12, 0, 'p', 1,  5, 1, 12],
+\   [2, 11, 0, 'p', 1, 29, 2, 11],
+\   [2, 12, 0, 'p', 1, 29, 2, 12],
+\   [2, 13, 0, 'p', 2, 12, 2, 13],
+\   [2, 17, 0, 'p', 2, 12, 2, 17],
+\   [2, 18, 0, 'p', 2, 12, 2, 18],
+\   [2, 19, 0, 'p', 2, 12, 2, 19],
+\   [2, 48, 1, 'p', 2, 12, 2, 48],
+\   [2, 48, 2, 'p', 1, 29, 2, 48],
+\   [2, 48, 3, 'p', 1,  5, 2, 48],
+\   [2, 48, 4, 'p', 1,  5, 2, 48],
+\
+\   [1,  4, 0, 'P', 1,  4, 1,  4],
+\   [1,  5, 0, 'P', 1,  5, 1,  5],
+\   [1,  6, 0, 'P', 1,  6, 1,  6],
+\   [1, 10, 0, 'P', 1, 10, 1, 10],
+\   [1, 11, 0, 'P', 1, 11, 1, 11],
+\   [1, 12, 0, 'P', 1, 11, 1, 12],
+\   [2, 11, 0, 'P', 1, 34, 2, 11],
+\   [2, 12, 0, 'P', 1, 34, 2, 12],
+\   [2, 13, 0, 'P', 1, 34, 2, 13],
+\   [2, 17, 0, 'P', 1, 34, 2, 17],
+\   [2, 18, 0, 'P', 1, 34, 2, 18],
+\   [2, 19, 0, 'P', 2, 18, 2, 19],
+\   [2, 48, 1, 'P', 2, 18, 2, 48],
+\   [2, 48, 2, 'P', 1, 34, 2, 48],
+\   [2, 48, 3, 'P', 1, 11, 2, 48],
+\   [2, 48, 4, 'P', 1, 11, 2, 48],
+\ ]
+
 " }}}1
 
 describe '"move-*"'
@@ -203,6 +287,10 @@ describe '"move-*"'
     it 'works in Visual mode'
       call s:test_on_visual_mode('p', s:cases_on_visual_mode)
     end
+
+    it 'works in Operator-pending mode'
+      call s:test_on_operator_pending_mode('p', s:cases_on_operator_pending_mode)
+    end
   end
 
   context 'defined by "move-*-function"'
@@ -212,6 +300,10 @@ describe '"move-*"'
 
     it 'works in Visual mode'
       call s:test_on_visual_mode('f', s:cases_on_visual_mode)
+    end
+
+    it 'works in Operator-pending mode'
+      call s:test_on_operator_pending_mode('f', s:cases_on_operator_pending_mode)
     end
   end
 end

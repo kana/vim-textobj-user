@@ -167,6 +167,20 @@ let s:cases_on_normal_mode = [
 \   [2, 48, 4, 'P', 1, 11],
 \ ]
 
+" Case: Visual mode "{{{1
+
+function! s:test_on_visual_mode(type, cases)
+  for [il, ic, c, d, el, ec] in a:cases
+    call cursor(il, ic)
+    Expect [il, ic] == getpos('.')[1:2]
+    execute 'silent! normal' printf("v%s[%s%s]\<Esc>", c ? c : '', a:type, d)
+    let [_, al, ac, _] = getpos('.')
+    Expect [il, ic, c, d, al, ac] == [il, ic, c, d, el, ec]
+  endfor
+endfunction
+
+let s:cases_on_visual_mode = s:cases_on_normal_mode
+
 " }}}1
 
 describe '"move-*"'
@@ -185,11 +199,19 @@ describe '"move-*"'
     it 'works in Normal mode'
       call s:test_on_normal_mode('p', s:cases_on_normal_mode)
     end
+
+    it 'works in Visual mode'
+      call s:test_on_visual_mode('p', s:cases_on_visual_mode)
+    end
   end
 
   context 'defined by "move-*-function"'
     it 'works in Normal mode'
       call s:test_on_normal_mode('f', s:cases_on_normal_mode)
+    end
+
+    it 'works in Visual mode'
+      call s:test_on_visual_mode('f', s:cases_on_visual_mode)
     end
   end
 end

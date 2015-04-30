@@ -68,7 +68,7 @@ function! s:test_on_normal_mode(type, cases)
   endfor
 endfunction
 
-let s:cases = [
+let s:cases_on_normal_mode = [
 \   [1,  4, 'n', 1,  5],
 \   [1,  5, 'n', 1, 29],
 \   [1,  6, 'n', 1, 29],
@@ -132,10 +132,10 @@ describe 'textobj#user#plugin'
   end
 
   it 'supports "move-*" by "pattern"'
-    call s:test_on_normal_mode('p', s:cases)
+    call s:test_on_normal_mode('p', s:cases_on_normal_mode)
   end
 
   it 'supports "move-*" by "move-*-function"'
-    call s:test_on_normal_mode('f', s:cases)
+    call s:test_on_normal_mode('f', s:cases_on_normal_mode)
   end
 end

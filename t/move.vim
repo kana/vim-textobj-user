@@ -127,7 +127,7 @@ let s:cases_on_normal_mode = [
 
 " }}}1
 
-describe 'textobj#user#plugin'
+describe '"move-*"'
   before
     new
     put ='The <quick> brown fox jumps <over> the lazy <dog'
@@ -139,12 +139,16 @@ describe 'textobj#user#plugin'
     close!
   end
 
-  it 'supports "move-*" by "pattern"'
-    call s:test_on_normal_mode('p', s:cases_on_normal_mode)
+  context 'defined by "pattern"'
+    it 'works in Normal mode'
+      call s:test_on_normal_mode('p', s:cases_on_normal_mode)
+    end
   end
 
-  it 'supports "move-*" by "move-*-function"'
-    call s:test_on_normal_mode('f', s:cases_on_normal_mode)
+  context 'defined by "move-*-function"'
+    it 'works in Normal mode'
+      call s:test_on_normal_mode('f', s:cases_on_normal_mode)
+    end
   end
 end
 

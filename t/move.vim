@@ -1,6 +1,8 @@
 " Anchored-word is <a> <word> <like> <this>.
 " But <> is not valid, because it doesn't contain a word.
 
+" "pattern" "{{{1
+
 call textobj#user#plugin('anchoredwordp', {
 \   '-': {
 \     'pattern': '<\a\+>',
@@ -10,6 +12,8 @@ call textobj#user#plugin('anchoredwordp', {
 \     'move-P': '[pP]',
 \   }
 \ })
+
+" "move-*-function" "{{{1
 
 let s:pattern = '<\a\+>'
 
@@ -57,6 +61,8 @@ call textobj#user#plugin('anchoredwordf', {
 \     'move-P-function': 'Move_P',
 \   }
 \ })
+
+" Case: Normal mode "{{{1
 
 function! s:test_on_normal_mode(type, cases)
   for [il, ic, d, el, ec] in a:cases
@@ -119,6 +125,8 @@ let s:cases_on_normal_mode = [
 \   [2, 19, 'P', 2, 18],
 \ ]
 
+" }}}1
+
 describe 'textobj#user#plugin'
   before
     new
@@ -139,3 +147,5 @@ describe 'textobj#user#plugin'
     call s:test_on_normal_mode('f', s:cases_on_normal_mode)
   end
 end
+
+" vim: foldmethod=marker

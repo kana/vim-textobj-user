@@ -58,7 +58,7 @@ call textobj#user#plugin('anchoredwordf', {
 \   }
 \ })
 
-function! Test(type, cases)
+function! s:test_on_normal_mode(type, cases)
   for [il, ic, d, el, ec] in a:cases
     call cursor(il, ic)
     Expect [il, ic] == getpos('.')[1:2]
@@ -132,10 +132,10 @@ describe 'textobj#user#plugin'
   end
 
   it 'supports "move-*" by "pattern"'
-    call Test('p', s:cases)
+    call s:test_on_normal_mode('p', s:cases)
   end
 
   it 'supports "move-*" by "move-*-function"'
-    call Test('f', s:cases)
+    call s:test_on_normal_mode('f', s:cases)
   end
 end

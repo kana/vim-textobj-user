@@ -25,9 +25,9 @@
 " simple  "{{{2
 
 function! textobj#user#move(pattern, flags, previous_mode)
-  call s:prepare_movement(a:previous_mode)
-
   let i = v:count1
+
+  call s:prepare_movement(a:previous_mode)
   while 0 < i
     let result = searchpos(a:pattern, a:flags.'W')
     let i = i - 1

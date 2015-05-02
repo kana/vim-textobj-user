@@ -559,6 +559,11 @@ KNOWN ISSUES					*textobj-user-known-issues*
 - In Vim older than 7.3.918, |.| fails to correctly repeat the last operation
   with a custom text object.
 
+- In Vim 7.3.918 or later, |.| shows underlying key sequence in Command line
+  to repeat the last operation with a custom text object.  (The key sequence
+  seems to be stored in the redo buffer for repeatability.  So that it is not
+  possible to hide the key sequence by |:map-<silent>|.)
+
 - See also: https://github.com/kana/vim-textobj-user/issues
 
 

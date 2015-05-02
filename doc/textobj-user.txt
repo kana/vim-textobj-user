@@ -407,8 +407,7 @@ textobj#user#map({plugin-name}, {specs})
 	  filetype plugins.
 
 	As a result, textobj#user#map() cannot detect whether {plugin-name} is
-	right or not.  To notice something wrong, an error message will be
-	shown when
+	correct.  So that an error message will be shown when
 
 	- A key mapping defined by textobj#user#map() is actually used, and
 	- The corresponding text object does not exist at that moment.

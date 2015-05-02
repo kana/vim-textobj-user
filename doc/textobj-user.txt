@@ -204,13 +204,13 @@ textobj#user#plugin({plugin-name}, {specs})
 	to define default key mappings -- "ad", "id", "at" and "it".
 
 	As described in (b), sometimes users do not want to use default key
-	mappings such as "at" and "at".  If
+	mappings such as "at" and "it".  If
 	g:textobj_datetime_no_default_key_mappings is set to true, default key
 	mappings will not be defined.
 
 	For backward compatibility, if {specs} contains a key
 	"*no-default-key-mappings*", default key mappings will not be defined.
-	But this feature will be removed from furture version.
+	But this feature will be removed in a future version.
 
 
 							  *textobj-user-specs*

@@ -1,6 +1,6 @@
 *textobj-user.txt*	Create your own text objects
 
-Version 0.7.0
+Version 0.7.1
 Script ID: 2100
 Copyright (C) 2007-2015 Kana Natsuno <http://whileimautomaton.net/>
 License: MIT license  {{{
@@ -120,9 +120,6 @@ Requirements:
 Latest version:
 https://github.com/kana/vim-textobj-user
 
-Document in HTML format:
-http://vim-doc.heroku.com/view?https://raw.github.com/kana/vim-textobj-user/master/doc/textobj-user.txt
-
 
 
 
@@ -190,9 +187,9 @@ textobj#user#plugin({plugin-name}, {specs})
 	key mappings are defined for extra customization for users.
 
 	For example, one might prefer "aT" and "iT" to select a time, because
-	|at| and |it| are bound to the extremely useful text objects by
-	default, and it is usually a bad idea to override them.  In this case,
-	interface key mappings are used as follows:
+	|at| and |it| are bound to the extremely useful text objects to select
+	a tag block by default, and it is usually a bad idea to override them.
+	In this case, interface key mappings are used as follows:
 >
 		xmap aT  <Plug>(textobj-datetime-time)
 		omap aT  <Plug>(textobj-datetime-time)
@@ -204,13 +201,13 @@ textobj#user#plugin({plugin-name}, {specs})
 	to define default key mappings -- "ad", "id", "at" and "it".
 
 	As described in (b), sometimes users do not want to use default key
-	mappings such as "at" and "at".  If
+	mappings such as "at" and "it".  If
 	g:textobj_datetime_no_default_key_mappings is set to true, default key
 	mappings will not be defined.
 
 	For backward compatibility, if {specs} contains a key
 	"*no-default-key-mappings*", default key mappings will not be defined.
-	But this feature will be removed from furture version.
+	But this feature will be removed in a future version.
 
 
 							  *textobj-user-specs*
@@ -407,8 +404,7 @@ textobj#user#map({plugin-name}, {specs})
 	  filetype plugins.
 
 	As a result, textobj#user#map() cannot detect whether {plugin-name} is
-	right or not.  To notice something wrong, an error message will be
-	shown when
+	correct.  So that an error message will be shown when
 
 	- A key mapping defined by textobj#user#map() is actually used, and
 	- The corresponding text object does not exist at that moment.
@@ -559,6 +555,11 @@ KNOWN ISSUES					*textobj-user-known-issues*
 - In Vim older than 7.3.918, |.| fails to correctly repeat the last operation
   with a custom text object.
 
+- In Vim 7.3.918 or later, |.| shows underlying key sequence in Command line
+  to repeat the last operation with a custom text object.  (The key sequence
+  seems to be stored in the redo buffer for repeatability.  So that it is not
+  possible to hide the key sequence by |:map-<silent>|.)
+
 - See also: https://github.com/kana/vim-textobj-user/issues
 
 
@@ -566,6 +567,10 @@ KNOWN ISSUES					*textobj-user-known-issues*
 
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
+
+0.7.1	2015-05-03T01:45:37+09:00		*textobj-user-changelog-0.7.1*
+	- Fix a bug that count given to "move-n" and others for
+	  "pattern"-based text objects in Visual mode is ignored.
 
 0.7.0	2015-04-27T21:42:27+09:00		*textobj-user-changelog-0.7.0*
 	- Add "scan" to specify how to find a "pattern"-based text object for

@@ -190,9 +190,9 @@ textobj#user#plugin({plugin-name}, {specs})
 	key mappings are defined for extra customization for users.
 
 	For example, one might prefer "aT" and "iT" to select a time, because
-	|at| and |it| are bound to the extremely useful text objects by
-	default, and it is usually a bad idea to override them.  In this case,
-	interface key mappings are used as follows:
+	|at| and |it| are bound to the extremely useful text objects to select
+	a tag block by default, and it is usually a bad idea to override them.
+	In this case, interface key mappings are used as follows:
 >
 		xmap aT  <Plug>(textobj-datetime-time)
 		omap aT  <Plug>(textobj-datetime-time)

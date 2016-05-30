@@ -368,23 +368,23 @@ endfunction
 " basics  "{{{3
 let s:plugin = {}
 
-function s:plugin.new(plugin_name, obj_specs)
+function! s:plugin.new(plugin_name, obj_specs)
   let _ = extend({'name': a:plugin_name, 'obj_specs': a:obj_specs},
   \              s:plugin, 'keep')
   call _.normalize()
   return _
 endfunction
 
-function s:plugin.normalize()
+function! s:plugin.normalize()
   call s:normalize(self.obj_specs)
 endfunction
 
-function s:normalize(obj_specs)
+function! s:normalize(obj_specs)
   call s:normalize_property_names(a:obj_specs)
   call s:normalize_property_values(a:obj_specs)
 endfunction
 
-function s:normalize_property_names(obj_specs)
+function! s:normalize_property_names(obj_specs)
   for spec in values(a:obj_specs)
     for old_prop_name in keys(spec)
       if old_prop_name =~ '^\*.*\*$'
@@ -396,7 +396,7 @@ function s:normalize_property_names(obj_specs)
   endfor
 endfunction
 
-function s:normalize_property_values(obj_specs)
+function! s:normalize_property_values(obj_specs)
   for [obj_name, specs] in items(a:obj_specs)
     for [spec_name, spec_info] in items(specs)
       if s:is_ui_property_name(spec_name)

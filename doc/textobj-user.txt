@@ -464,6 +464,7 @@ textobj#user#select({pattern}, {flags}, {prevous-mode})
 		"v"             select an object characterwise.  (default)
 		"V"             select an object linewise.
 		"\<C-v>"        select an object blockwise.
+		"N"             find the range but don't select.
 
 	For the detail of {previous-mode}, see |textobj#user#move()|.
 

@@ -49,7 +49,9 @@ function! textobj#user#select(pattern, flags, previous_mode)
   let pos = s:choose_better_pos(a:flags, ORIG_POS, pfh, pft, pbh, pbt)
 
   if pos isnot 0
-    call s:range_select(pos[0], pos[1], s:choose_wise(a:flags))
+    if a:flags !~# 'N'
+      call s:range_select(pos[0], pos[1], s:choose_wise(a:flags))
+    endif
     return pos
   else
     return s:cancel_selection(a:previous_mode, ORIG_POS)

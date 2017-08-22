@@ -569,6 +569,10 @@ KNOWN ISSUES					*textobj-user-known-issues*
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
 
+0.7.2	2017-08-22T21:07:30+09:00		*textobj-user-changelog-0.7.2*
+	- |textobj#user#select()|: Support a new flag 'N'.
+	- Fix the plugin itself to be easily reloaded.
+
 0.7.1	2015-05-03T01:45:37+09:00		*textobj-user-changelog-0.7.1*
 	- Fix a bug that count given to "move-n" and others for
 	  "pattern"-based text objects in Visual mode is ignored.

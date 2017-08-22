@@ -409,16 +409,8 @@ textobj#user#map({plugin-name}, {specs})
 	- A key mapping defined by textobj#user#map() is actually used, and
 	- The corresponding text object does not exist at that moment.
 
-
-
-
-==============================================================================
-OBSOLETE API					*textobj-user-obsolete-api*
-
 						*textobj#user#move()*
 textobj#user#move({pattern}, {flags}, {previous-mode})
-	Note: This function is obsolete.  It will be removed in sometime.
-
 	Move the cursor to the appropriate object defined by {pattern}.
 
 	{flags} is a string, which can contain the following character flags:
@@ -441,8 +433,6 @@ textobj#user#move({pattern}, {flags}, {previous-mode})
 
 						*textobj#user#select()*
 textobj#user#select({pattern}, {flags}, {prevous-mode})
-	Note: This function is obsolete.  It will be removed in sometime.
-
 	Select an appropriate object defined by {pattern}.  The following
 	places are scaned to find an appropriate object:
 
@@ -468,12 +458,12 @@ textobj#user#select({pattern}, {flags}, {prevous-mode})
 
 	For the detail of {previous-mode}, see |textobj#user#move()|.
 
-	Return value is not defined.
+	This function returns a list of the start position and the end
+	position for an object.  Each position is [{lnum}, {col}].
+	If there is no appropriate object, 0 is returned instead.
 
 						*textobj#user#select_pair()*
 textobj#user#select_pair({pattern1}, {pattern2}, {flags}, {previous-mode})
-	Note: This function is obsolete.  It will be removed in sometime.
-
 	Select the appropriate object which starts with {pattern1} and ends
 	with {pattern2}.
 
@@ -496,6 +486,12 @@ textobj#user#select_pair({pattern1}, {pattern2}, {flags}, {previous-mode})
 	For the detail of {previous-mode}, see |textobj#user#move()|.
 
 	Return value is not defined.
+
+
+
+
+==============================================================================
+OBSOLETE API					*textobj-user-obsolete-api*
 
 						*textobj#user#define()*
 textobj#user#define({pattern}, {pattern1}, {pattern2}, {guideline})

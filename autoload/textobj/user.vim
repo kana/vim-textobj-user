@@ -442,17 +442,9 @@ endfunction
 
 
 function! s:plugin.define_interface_key_mappings()  "{{{3
-  let RHS_PATTERN =
+  let RHS_FORMAT =
   \   '%s'
-  \ . ':<C-u>call g:__textobj_' . self.name . '.do_by_pattern('
-  \ .   '"%s",'
-  \ .   '"%s",'
-  \ .   '"<mode>"'
-  \ . ')<Return>'
-  \ . '%s'
-  let RHS_FUNCTION =
-  \   '%s'
-  \ . ':<C-u>call g:__textobj_' . self.name . '.do_by_function('
+  \ . ':<C-u>call g:__textobj_' . self.name . '.%s('
   \ .   '"%s",'
   \ .   '"%s",'
   \ .   '"<mode>"'
@@ -475,13 +467,14 @@ function! s:plugin.define_interface_key_mappings()  "{{{3
       " rhs
       let _ = spec_name . '-function'
       if has_key(specs, _)
-        let rhs = printf(RHS_FUNCTION, save, spec_name, obj_name, restore)
+        let do = 'do_by_function'
       elseif has_key(specs, 'pattern')
-        let rhs = printf(RHS_PATTERN, save, spec_name, obj_name, restore)
+        let do = 'do_by_pattern'
       else
         " skip to allow to define user's own {rhs} of the interface mapping.
         continue
       endif
+      let rhs = printf(RHS_FORMAT, save, do, spec_name, obj_name, restore)
 
       " map
       if spec_name =~# '^move'

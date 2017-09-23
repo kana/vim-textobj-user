@@ -443,29 +443,41 @@ endfunction
 
 function! s:plugin.define_interface_key_mappings()  "{{{3
   let RHS_PATTERN =
-  \   ':<C-u>call g:__textobj_' . self.name . '.do_by_pattern('
+  \   '%s'
+  \ . ':<C-u>call g:__textobj_' . self.name . '.do_by_pattern('
   \ .   '"%s",'
   \ .   '"%s",'
   \ .   '"<mode>"'
   \ . ')<Return>'
+  \ . '%s'
   let RHS_FUNCTION =
-  \   ':<C-u>call g:__textobj_' . self.name . '.do_by_function('
+  \   '%s'
+  \ . ':<C-u>call g:__textobj_' . self.name . '.do_by_function('
   \ .   '"%s",'
   \ .   '"%s",'
   \ .   '"<mode>"'
   \ . ')<Return>'
+  \ . '%s'
 
   for [obj_name, specs] in items(self.obj_specs)
     for spec_name in filter(keys(specs), 's:is_ui_property_name(v:val)')
+      if spec_name =~# '^move'
+        let save = ''
+        let restore = ''
+      else  " spec_name =~# '^select'
+        let save = '<SID>(save-marks)'
+        let restore = '<SID>(restore-marks)'
+      endif
+
       " lhs
-      let lhs = '<silent> ' . self.interface_mapping_name(obj_name, spec_name)
+      let lhs = self.interface_mapping_name(obj_name, spec_name)
 
       " rhs
       let _ = spec_name . '-function'
       if has_key(specs, _)
-        let rhs = printf(RHS_FUNCTION, spec_name, obj_name)
+        let rhs = printf(RHS_FUNCTION, save, spec_name, obj_name, restore)
       elseif has_key(specs, 'pattern')
-        let rhs = printf(RHS_PATTERN, spec_name, obj_name)
+        let rhs = printf(RHS_PATTERN, save, spec_name, obj_name, restore)
       else
         " skip to allow to define user's own {rhs} of the interface mapping.
         continue
@@ -477,7 +489,7 @@ function! s:plugin.define_interface_key_mappings()  "{{{3
       else  " spec_name =~# '^select'
         let MapFunction = function('s:objnoremap')
       endif
-      call MapFunction(1, lhs, rhs)
+      call MapFunction(1, '<silent> <script>' . lhs, rhs)
     endfor
   endfor
 endfunction
@@ -774,6 +786,23 @@ endfunction
 
 function! s:fail(interface_key_mapping_lhs)
   throw printf('Text object %s is not defined', a:interface_key_mapping_lhs)
+endfunction
+
+noremap <expr> <SID>(save-marks) <SID>save_marks()
+noremap <expr> <SID>(restore-marks) <SID>restore_marks()
+
+let s:original_marks = {}
+
+function! s:save_marks()
+  let s:original_marks['<'] = getpos("'<")
+  let s:original_marks['>'] = getpos("'>")
+  return ''
+endfunction
+
+function! s:restore_marks()
+  call setpos("'<", s:original_marks['<'])
+  call setpos("'>", s:original_marks['>'])
+  return ''
 endfunction
 
 

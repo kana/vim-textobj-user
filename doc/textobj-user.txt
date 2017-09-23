@@ -1,8 +1,8 @@
 *textobj-user.txt*	Create your own text objects
 
-Version 0.7.2
+Version 0.7.3
 Script ID: 2100
-Copyright (C) 2007-2015 Kana Natsuno <http://whileimautomaton.net/>
+Copyright (C) 2007-2017 Kana Natsuno <http://whileimautomaton.net/>
 License: MIT license  {{{
     Permission is hereby granted, free of charge, to any person obtaining
     a copy of this software and associated documentation files (the
@@ -564,6 +564,11 @@ KNOWN ISSUES					*textobj-user-known-issues*
 
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
+
+0.7.3	2017-09-23T11:10:34+09:00		*textobj-user-changelog-0.7.3*
+	- Fix a bug that |'<| and |'>| are overridden after using any custom
+	  text object in |Operator-pending| mode.  For example, '< and '> were
+	  set to the same region as `vaX` after typing `yaX`.
 
 0.7.2	2017-08-22T21:07:30+09:00		*textobj-user-changelog-0.7.2*
 	- |textobj#user#select()|: Support a new flag 'N'.

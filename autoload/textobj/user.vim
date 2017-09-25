@@ -782,7 +782,9 @@ function! s:fail(interface_key_mapping_lhs)
 endfunction
 
 noremap <expr> <SID>(save-marks) <SID>save_marks()
+noremap! <expr> <SID>(save-marks) <SID>save_marks()
 noremap <expr> <SID>(restore-marks) <SID>restore_marks()
+noremap! <expr> <SID>(restore-marks) <SID>restore_marks()
 
 let s:original_marks = {}
 

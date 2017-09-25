@@ -1,6 +1,6 @@
 *textobj-user.txt*	Create your own text objects
 
-Version 0.7.3
+Version 0.7.4
 Script ID: 2100
 Copyright (C) 2007-2017 Kana Natsuno <http://whileimautomaton.net/>
 License: MIT license  {{{

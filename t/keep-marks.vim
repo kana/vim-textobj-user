@@ -31,7 +31,8 @@ describe 'Custom text object'
     \   '  qux()',
     \   '}',
     \ ]
-    let @0 = '*nothing yanked*'
+    silent $ delete _
+    let @" = '*nothing changed*'
     execute 'normal!' "1G2|vj\<Esc>"
   end
 
@@ -41,7 +42,7 @@ describe 'Custom text object'
 
   context 'defined by a function'
     it 'keeps ''< and ''> marks'
-      Expect @0 ==# '*nothing yanked*'
+      Expect @0 ==# '*nothing changed*'
       Expect [line("'<"), col("'<")] == [1, 2]
       Expect [line("'>"), col("'>")] == [2, 2]
 
@@ -55,13 +56,33 @@ describe 'Custom text object'
 
   context 'defined by a pattern'
     it 'keeps ''< and ''> marks'
-      Expect @0 ==# '*nothing yanked*'
+      Expect @0 ==# '*nothing changed*'
       Expect [line("'<"), col("'<")] == [1, 2]
       Expect [line("'>"), col("'>")] == [2, 2]
 
       normal 3Gyil
 
       Expect @0 ==# 'qux()'
+      Expect [line("'<"), col("'<")] == [1, 2]
+      Expect [line("'>"), col("'>")] == [2, 2]
+    end
+  end
+
+  context 'combined with operator c'
+    it 'also works fine'
+      Expect @" ==# '*nothing changed*'
+      Expect [line("'<"), col("'<")] == [1, 2]
+      Expect [line("'>"), col("'>")] == [2, 2]
+
+      normal 3Gcilxyzzy
+
+      Expect @" ==# 'qux()'
+      Expect getline(1, '$') ==# [
+      \   'if (!foo) {',
+      \   '  bar = ''baz''',
+      \   '  xyzzy',
+      \   '}',
+      \ ]
       Expect [line("'<"), col("'<")] == [1, 2]
       Expect [line("'>"), col("'>")] == [2, 2]
     end

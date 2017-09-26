@@ -4,6 +4,26 @@ function! s:target_x()
   normal! viW
 endfunction
 
+" TODO: Might be simplified with <expr>.
+onoremap ix <Esc>:<C-u>call <SID>stash()<CR>g@l
+
+" TODO: Support {custom-op}{custom-obj}.
+function! s:stash()
+  let s:memo = [v:operator, 'TargetX']
+  set operatorfunc=OperatorX
+endfunction
+
+" TODO: Avoid using v.
+function! TargetX()
+  normal! viW
+endfunction
+
+function! OperatorX(type)
+  let [op, function_to_target] = s:memo
+  call {function_to_target}()
+  execute 'normal!' op
+endfunction
+
 describe 'prototype'
   before
     new

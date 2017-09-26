@@ -1,3 +1,9 @@
+onoremap ix :<C-u>call <SID>target_x()<CR>
+
+function! s:target_x()
+  normal! viW
+endfunction
+
 describe 'prototype'
   before
     new

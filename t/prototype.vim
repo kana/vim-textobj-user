@@ -4,12 +4,11 @@ function! s:target_x()
   normal! viW
 endfunction
 
-" TODO: Might be simplified with <expr>.
-onoremap ix <Esc>:<C-u>call <SID>stash()<CR>g@l
+onoremap ix <Esc>:<C-u>call <SID>stash('TargetX')<CR>g@l
 
 " TODO: Support {custom-op}{custom-obj}.
-function! s:stash()
-  let s:memo = [v:operator, 'TargetX']
+function! s:stash(target)
+  let s:memo = [v:operator, a:target]
   set operatorfunc=OperatorX
 endfunction
 

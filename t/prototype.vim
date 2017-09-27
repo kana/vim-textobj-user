@@ -76,4 +76,21 @@ describe 'prototype'
     Expect [line("'<"), col("'<")] == [2, 1]
     Expect [line("'>"), col("'>")] == [2, 8]
   end
+
+  it 'supports a custom operator'
+    set operatorfunc=Foo
+    function! Foo(type)
+      let v = a:type ==# 'char' ? 'v' : a:type ==# 'line' ? 'V' : "\<C-v>"
+      execute printf('normal! `[g?%s`]', v)
+    endfunction
+
+    normal! 3G7|
+    normal g@ix
+    Expect getline('.') ==# "  if (onm()) {"
+    normal! 4G7|
+    normal! .
+    Expect getline('.') ==# "    dhk()"
+    normal! .
+    Expect getline('.') ==# "    qux()"
+  end
 end

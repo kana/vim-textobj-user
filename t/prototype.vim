@@ -97,4 +97,19 @@ describe 'prototype'
     normal! .
     Expect getline('.') ==# "    qux()"
   end
+
+  it 'sets ''[ and ''] appropriately'
+    normal! 3G7|
+    normal yiW
+    Expect @0 ==# '(baz())'
+    Expect [line('''['), col('''[')] == [3, 6]
+    Expect [line(''']'), col(''']')] == [3, 12]
+
+    " TODO: Investigate - for some reason this doesn't work.
+    normal! 4G7|
+    normal! yix
+    Expect @0 ==# 'qux()'
+    Expect [line('''['), col('''[')] == [4, 5]
+    Expect [line(''']'), col(''']')] == [4, 9]
+  end
 end

@@ -13,15 +13,22 @@ function! s:stash()
   set operatorfunc=OperatorX
 endfunction
 
-" TODO: Avoid using v.
 function! TargetX()
-  normal! viW
+  " Using v here breaks gv.
+  call search('\S\+', 'ceW')
+  let e = getpos('.')
+  call search('\S\+', 'bcW')
+  let b = getpos('.')
+  return ['v', b, e]
 endfunction
 
+" TODO: Support characterwise and exclusive object, though there is no way to
+" specify exclusive or inclusive at the moment.
 function! OperatorX(type)
   let [op, function_to_target] = s:memo
-  call {function_to_target}()
-  execute 'normal!' op
+  let [v, b, e] = {function_to_target}()
+  call setpos('.', b)
+  execute printf("normal! %s%s:call setpos('.', %s)\<CR>", op, v, string(e))
 endfunction
 
 describe 'prototype'

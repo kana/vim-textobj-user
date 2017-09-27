@@ -1,8 +1,11 @@
-onoremap ix :<C-u>call <SID>target_x()<CR>
-
-function! s:target_x()
-  normal! viW
-endfunction
+" The following is a simplified version of custom text objects defined by
+" vim-textobj-user <= 0.7.4.
+"
+"     onoremap ix :<C-u>call <SID>target_x()<CR>
+"
+"     function! s:target_x()
+"       normal! viW
+"     endfunction
 
 onoremap ix <Esc>:<C-u>call <SID>stash('TargetX')<CR>g@l
 

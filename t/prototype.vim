@@ -6,9 +6,8 @@ endfunction
 
 onoremap ix <Esc>:<C-u>call <SID>stash('TargetX')<CR>g@l
 
-" TODO: Support {custom-op}{custom-obj}.
 function! s:stash(target)
-  let s:memo = [v:operator, a:target]
+  let s:memo = [v:operator, a:target, &operatorfunc]
   set operatorfunc=OperatorX
 endfunction
 
@@ -24,10 +23,12 @@ endfunction
 " TODO: Support characterwise and exclusive object, though there is no way to
 " specify exclusive or inclusive at the moment.
 function! OperatorX(type)
-  let [op, function_to_target] = s:memo
+  let [op, function_to_target, operatorfunc] = s:memo
   let [v, b, e] = {function_to_target}()
   call setpos('.', b)
+  let &operatorfunc = operatorfunc
   execute printf("normal! %s%s:call setpos('.', %s)\<CR>", op, v, string(e))
+  set operatorfunc=OperatorX
 endfunction
 
 describe 'prototype'

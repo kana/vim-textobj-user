@@ -113,6 +113,10 @@ describe 'prototype'
     Expect [line(''']'), col(''']')] == [4, 9]
   end
 
+  " TODO: Rethink about the current approach. Operator c seems not to be
+  " possible to emulate with g@.
+  " NOTE: {op}{obj} -> g@l -> normal! `[{op}v`]
+  "       {op}{obj} -> `[{op}v{go-to-end-or-retarget}
   it 'works with operator c'
     normal! 3G7|
     normal cixINKREDIBLE

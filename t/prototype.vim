@@ -112,4 +112,10 @@ describe 'prototype'
     Expect [line('''['), col('''[')] == [4, 5]
     Expect [line(''']'), col(''']')] == [4, 9]
   end
+
+  it 'works with operator c'
+    normal! 3G7|
+    normal cixINKREDIBLE
+    Expect getline('.') ==# '  if INKREDIBLE {'
+  end
 end

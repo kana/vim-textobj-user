@@ -646,10 +646,9 @@ endfunction
 
 
 function! s:cancel_selection(previous_mode, orig_pos)
+  call cursor(a:orig_pos)
   if a:previous_mode ==# 'v'
     normal! gv
-  else  " if a:previous_mode ==# 'o'
-    call cursor(a:orig_pos)
   endif
 endfunction
 

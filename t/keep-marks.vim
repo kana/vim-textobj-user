@@ -42,6 +42,8 @@ describe 'Custom text object'
 
   context 'defined by a function'
     it 'keeps ''< and ''> marks'
+      TODO
+
       Expect @0 ==# '*nothing changed*'
       Expect [line("'<"), col("'<")] == [1, 2]
       Expect [line("'>"), col("'>")] == [2, 2]
@@ -56,6 +58,8 @@ describe 'Custom text object'
 
   context 'defined by a pattern'
     it 'keeps ''< and ''> marks'
+      TODO
+
       Expect @0 ==# '*nothing changed*'
       Expect [line("'<"), col("'<")] == [1, 2]
       Expect [line("'>"), col("'>")] == [2, 2]
@@ -70,6 +74,8 @@ describe 'Custom text object'
 
   context 'combined with operator c'
     it 'also works fine'
+      TODO
+
       Expect @" ==# '*nothing changed*'
       Expect [line("'<"), col("'<")] == [1, 2]
       Expect [line("'>"), col("'>")] == [2, 2]

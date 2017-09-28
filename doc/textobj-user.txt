@@ -1,6 +1,6 @@
 *textobj-user.txt*	Create your own text objects
 
-Version 0.7.4
+Version 0.7.5
 Script ID: 2100
 Copyright (C) 2007-2017 Kana Natsuno <http://whileimautomaton.net/>
 License: MIT license  {{{
@@ -564,6 +564,10 @@ KNOWN ISSUES					*textobj-user-known-issues*
 
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
+
+0.7.5	2017-09-28T20:38:39+09:00		*textobj-user-changelog-0.7.5*
+	- Revert changes from 0.7.3-0.7.4 for compatibility with custom
+	  operators which use |getchar()|.
 
 0.7.4	2017-09-25T20:42:58+09:00		*textobj-user-changelog-0.7.4*
 	- Fix a bug that random characters are inserted if custom text objects

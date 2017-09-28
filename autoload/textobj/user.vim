@@ -1,5 +1,5 @@
 " textobj-user - Create your own text objects
-" Version: 0.7.4
+" Version: 0.7.5
 " Copyright (C) 2007-2017 Kana Natsuno <http://whileimautomaton.net/>
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
@@ -443,24 +443,14 @@ endfunction
 
 function! s:plugin.define_interface_key_mappings()  "{{{3
   let RHS_FORMAT =
-  \   '%s'
-  \ . ':<C-u>call g:__textobj_' . self.name . '.%s('
+  \   ':<C-u>call g:__textobj_' . self.name . '.%s('
   \ .   '"%s",'
   \ .   '"%s",'
   \ .   '"<mode>"'
   \ . ')<Return>'
-  \ . '%s'
 
   for [obj_name, specs] in items(self.obj_specs)
     for spec_name in filter(keys(specs), 's:is_ui_property_name(v:val)')
-      if spec_name =~# '^move'
-        let save = ''
-        let restore = ''
-      else  " spec_name =~# '^select'
-        let save = '<SID>(save-marks)'
-        let restore = '<SID>(restore-marks)'
-      endif
-
       " lhs
       let lhs = self.interface_mapping_name(obj_name, spec_name)
 
@@ -474,7 +464,7 @@ function! s:plugin.define_interface_key_mappings()  "{{{3
         " skip to allow to define user's own {rhs} of the interface mapping.
         continue
       endif
-      let rhs = printf(RHS_FORMAT, save, do, spec_name, obj_name, restore)
+      let rhs = printf(RHS_FORMAT, do, spec_name, obj_name)
 
       " map
       if spec_name =~# '^move'
@@ -779,25 +769,6 @@ endfunction
 
 function! s:fail(interface_key_mapping_lhs)
   throw printf('Text object %s is not defined', a:interface_key_mapping_lhs)
-endfunction
-
-noremap <expr> <SID>(save-marks) <SID>save_marks()
-noremap! <expr> <SID>(save-marks) <SID>save_marks()
-noremap <expr> <SID>(restore-marks) <SID>restore_marks()
-noremap! <expr> <SID>(restore-marks) <SID>restore_marks()
-
-let s:original_marks = {}
-
-function! s:save_marks()
-  let s:original_marks['<'] = getpos("'<")
-  let s:original_marks['>'] = getpos("'>")
-  return ''
-endfunction
-
-function! s:restore_marks()
-  call setpos("'<", s:original_marks['<'])
-  call setpos("'>", s:original_marks['>'])
-  return ''
 endfunction
 
 

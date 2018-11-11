@@ -103,11 +103,39 @@ function! s:test_on_visual_mode(type, cases)
   for [il, ic, c, d, ebl, ebc, eel, eec] in a:cases
     call cursor(il, ic)
     Expect [il, ic] == getpos('.')[1:2]
-    execute 'silent! normal' printf("v%s[%s%s]\<Esc>", c ? c : '', a:type, d)
-    let [_, al, ac, _] = getpos('.')
+
     let el = d =~# '[pP]' ? ebl : eel
     let ec = d =~# '[pP]' ? ebc : eec
+
+    execute 'silent! normal' printf("\<Esc>v%s[%s%s]", c ? c : '', a:type, d)
+
+    Expect [il, ic, c, d, mode()] == [il, ic, c, d, 'v']
+    execute 'silent! normal' . "\<Esc>"
+    let evm = d =~# '[pP]' ? "'<" : "'>"
+    let [_, avl, avc, _] = getpos(evm)
+    Expect [il, ic, c, d, avl, avc] == [il, ic, c, d, el, ec]
+
+    let [_, al, ac, _] = getpos('.')
     Expect [il, ic, c, d, al, ac] == [il, ic, c, d, el, ec]
+
+    if c <= 1
+      continue
+    endif
+
+    " Test that repeated movements stay in visual mode and are identical to <count> movements
+    call cursor(il, ic)
+    Expect [il, ic] == getpos('.')[1:2]
+
+    execute 'silent! normal ' . "\<Esc>v"
+    for _ in range(c)
+      execute 'silent! normal' printf("[%s%s]", a:type, d)
+    endfor
+
+    Expect [il, ic, c, d, mode()] == [il, ic, c, d, 'v']
+    execute 'silent! normal' . "\<Esc>"
+    let evm = d =~# '[pP]' ? "'<" : "'>"
+    let [_, arvl, arvc, _] = getpos(evm)
+    Expect [il, ic, c, d, arvl, arvc] == [il, ic, c, d, el, ec]
   endfor
 endfunction
 

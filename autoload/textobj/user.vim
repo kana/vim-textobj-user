@@ -26,12 +26,19 @@
 
 function! textobj#user#move(pattern, flags, previous_mode)
   let i = v:count1
+  let result = [0, 0]
 
   call s:prepare_movement(a:previous_mode)
   while 0 < i
-    let result = searchpos(a:pattern, a:flags.'W')
+    let nextresult = searchpos(a:pattern, a:flags.'W')
+    if nextresult == [0, 0]
+      return result
+    endif
+
+    let result = nextresult
     let i = i - 1
   endwhile
+
   return result
 endfunction
 
@@ -443,11 +450,11 @@ endfunction
 
 function! s:plugin.define_interface_key_mappings()  "{{{3
   let RHS_FORMAT =
-  \   ':<C-u>call g:__textobj_' . self.name . '.%s('
+  \   'g:__textobj_' . self.name . '.%s('
   \ .   '"%s",'
   \ .   '"%s",'
   \ .   '"<mode>"'
-  \ . ')<Return>'
+  \ . ')'
 
   for [obj_name, specs] in items(self.obj_specs)
     for spec_name in filter(keys(specs), 's:is_ui_property_name(v:val)')
@@ -500,7 +507,7 @@ function! s:plugin.do_by_pattern(spec_name, obj_name, previous_mode)
   let flags = s:PATTERN_FLAGS_TABLE[a:spec_name]
   \           . (a:spec_name =~# '^select' ? specs['region-type'] : '')
   \           . (a:spec_name ==# 'select' ? specs['scan'][0] : '')
-  call {s:PATTERN_IMPL_TABLE[a:spec_name]}(
+  return {s:PATTERN_IMPL_TABLE[a:spec_name]}(
   \   specs['pattern'],
   \   flags,
   \   a:previous_mode
@@ -529,11 +536,14 @@ let s:PATTERN_FLAGS_TABLE = {
 
 function! s:move_wrapper(patterns, flags, previous_mode)
   " \x16 = CTRL-V
-  call textobj#user#move(
+  let [line, col] = textobj#user#move(
   \   a:patterns,
   \   substitute(a:flags, '[vV\x16]', '', 'g'),
   \   a:previous_mode
   \ )
+
+  " Return the motion as <count>go for the visual-mode expr mappings.
+  return s:position_to_keys(line, col)
 endfunction
 
 function! s:select_pair_wrapper(patterns, flags, previous_mode)
@@ -549,7 +559,7 @@ endfunction
 " "*-function" wrappers  "{{{3
 function! s:plugin.do_by_function(spec_name, obj_name, previous_mode)
   let specs = self.obj_specs[a:obj_name]
-  call {s:FUNCTION_IMPL_TABLE[a:spec_name]}(
+  return {s:FUNCTION_IMPL_TABLE[a:spec_name]}(
   \   specs[a:spec_name . '-function'],
   \   a:spec_name,
   \   a:previous_mode
@@ -583,16 +593,23 @@ function! s:select_function_wrapper(function_name, spec_name, previous_mode)
 endfunction
 
 function! s:move_function_wrapper(function_name, spec_name, previous_mode)
-  let ORIG_POS = s:gpos_to_spos(getpos('.'))
+  let [orig_line, orig_col] = s:gpos_to_spos(getpos('.'))
 
   let _ = function(a:function_name)()
   if _ is 0
-    call cursor(ORIG_POS)
+    call cursor([orig_line, orig_col])
+    return s:position_to_keys(orig_line, orig_col)
   else
     " FIXME: Support motion_type.  But unlike selecting a text object, the
     " motion_type must be known before calling a user-given function.
     let [motion_type, start_position, end_position] = _
-    call setpos('.', a:spec_name =~# '[np]$' ? start_position : end_position)
+    let position = a:spec_name =~# '[np]$' ? start_position : end_position
+
+    call setpos('.', position)
+
+    " Return the motion as <count>go for the visual-mode expr mappings.
+    let [_, line, col, _] = position
+    return s:position_to_keys(line, col)
   endif
 endfunction
 
@@ -608,12 +625,22 @@ endfunction
 
 function! s:noremap(forced_p, lhs, rhs)
   let v = s:proper_visual_mode(a:lhs)
-  call s:_map(['nnoremap', v.'noremap', 'onoremap'], a:forced_p, a:lhs, a:rhs)
+  call s:_map(['nnoremap', 'onoremap'], a:forced_p,
+  \   a:lhs,
+  \   ':<C-u>call ' . a:rhs . '<Return>'
+  \ )
+  call s:_map([v.'noremap'], a:forced_p,
+  \   '<expr>' . a:lhs,
+  \   a:rhs
+  \ )
 endfunction
 
 function! s:objnoremap(forced_p, lhs, rhs)
   let v = s:proper_visual_mode(a:lhs)
-  call s:_map([v.'noremap', 'onoremap'], a:forced_p, a:lhs, a:rhs)
+  call s:_map([v.'noremap', 'onoremap'], a:forced_p,
+  \   a:lhs,
+  \   ':<C-u>call ' . a:rhs . '<Return>'
+  \ )
 endfunction
 
 
@@ -759,7 +786,7 @@ function! s:define_failsafe_key_mappings(plugin_name, obj_specs)
           let mapf = spec_name =~# '^move-[npNP]$'
           \          ? 's:noremap'
           \          : 's:objnoremap'
-          call {mapf}(0, '<expr>' . lhs, rhs)
+          call {mapf}(0, lhs, rhs)
         endif
       endif
       unlet spec_info  " to avoid E706.
@@ -769,6 +796,17 @@ endfunction
 
 function! s:fail(interface_key_mapping_lhs)
   throw printf('Text object %s is not defined', a:interface_key_mapping_lhs)
+endfunction
+
+function! s:position_to_keys(line, col)
+  if a:line == 0 && a:col == 0
+    " FIXME: Empty string doesn't stay in visual mode (according to the test
+    " scripts), not sure why.
+    return '@_'
+  endif
+
+  " The @_ is necessary to absorb any count, so that it does not affect the `go` offset.
+  return printf('@_%dgo', line2byte(a:line) + a:col - 1)
 endfunction
 
 

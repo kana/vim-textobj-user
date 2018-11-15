@@ -586,6 +586,8 @@ function! s:move_function_wrapper(function_name, spec_name, previous_mode)
   let ORIG_POS = s:gpos_to_spos(getpos('.'))
 
   let _ = function(a:function_name)()
+
+  call s:prepare_movement(a:previous_mode)
   if _ is 0
     call cursor(ORIG_POS)
   else

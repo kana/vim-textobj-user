@@ -125,6 +125,24 @@ function! s:test_on_visual_mode_kept(type, cases)
   endfor
 endfunction
 
+function! s:test_on_visual_mode_manually_repeated(type, cases)
+  for [il, ic, c, d, ebl, ebc, eel, eec, eyanked] in a:cases
+    call cursor(il, ic)
+    Expect [il, ic] == getpos('.')[1:2]
+    let @0 = 'some random string'
+    " If Visual mode is not kept by the move command, nothing is yanked.
+    silent! normal! v
+    for i in range(c)
+      execute 'silent! normal' printf("[%s%s]", a:type, d)
+    endfor
+    silent! normal! y
+    let [vbl, vbc] = getpos("'<")[1:2]
+    let [vel, vec] = getpos("'>")[1:2]
+    Expect [vbl, vbc] == getpos('.')[1:2]
+    Expect [il, ic, c, d, vbl, vbc, vel, vec, @0] == [il, ic, c, d, ebl, ebc, eel, eec, eyanked]
+  endfor
+endfunction
+
 function! s:test_on_operator_pending_mode(type, cases)
   for [il, ic, c, d, ebl, ebc, eel, eec, eyanked] in a:cases
     call cursor(il, ic)
@@ -229,6 +247,7 @@ describe '"move-*"'
     it 'works in Visual mode'
       call s:test_on_visual_mode_basic('p', s:cases)
       call s:test_on_visual_mode_kept('p', s:cases)
+      call s:test_on_visual_mode_manually_repeated('p', s:cases)
     end
 
     it 'works in Operator-pending mode'
@@ -244,6 +263,7 @@ describe '"move-*"'
     it 'works in Visual mode'
       call s:test_on_visual_mode_basic('f', s:cases)
       call s:test_on_visual_mode_kept('f', s:cases)
+      call s:test_on_visual_mode_manually_repeated('f', s:cases)
     end
 
     it 'works in Operator-pending mode'

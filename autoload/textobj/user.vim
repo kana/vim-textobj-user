@@ -598,13 +598,27 @@ function! s:select_function_wrapper(function_name, spec_name, previous_mode)
 endfunction
 
 function! s:move_function_wrapper(function_name, spec_name, previous_mode)
-  let ORIG_POS = s:gpos_to_spos(getpos('.'))
+  " ":" in Visual mode moves the cursor to '< before executing Ex command
+  " (= the context where this function is called).  For example:
+  "
+  " -----------------------------------------
+  " | User typed | Cursor | '<     | '>     |
+  " |---------------------------------------|
+  " | 1GVV       | Line 1 | Line 1 | Line 1 |
+  " |     Vjj    | Line 3 | Line 1 | Line 1 |
+  " |        :   | Line 1 | Line 1 | Line 3 |
+  " -----------------------------------------
+  "
+  " So that user-defined motion does not work correctly in Visual mode if the
+  " last "expected" cursor position is not '<.  That's why we have to save and
+  " restore s:last_cursor_gpos explicitly.
+  call cursor(s:gpos_to_spos(s:last_cursor_gpos))
 
   let _ = function(a:function_name)()
 
   call s:prepare_movement(a:previous_mode)
   if _ is 0
-    call cursor(ORIG_POS)
+    call cursor(s:gpos_to_spos(s:last_cursor_gpos))
   else
     " FIXME: Support motion_type.  But unlike selecting a text object, the
     " motion_type must be known before calling a user-given function.

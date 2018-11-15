@@ -122,7 +122,7 @@ function! s:test_on_visual_mode(type, cases, variant)
       let @0 = 'some random string'
       " If Visual mode is not kept by the move command, nothing is yanked.
       silent! normal! v
-      for i in range(c)
+      for i in range(max([1, c]))
         execute 'silent! normal' printf("[%s%s]", a:type, d)
       endfor
       silent! normal! y

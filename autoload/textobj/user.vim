@@ -332,6 +332,20 @@ endfunction
 
 
 
+" Save the last cursort position  "{{{2
+
+noremap <expr> <SID>(save-cursor-pos) <SID>save_cursor_pos()
+
+" let s:last_cursor_gpos = getpos('.')
+
+function! s:save_cursor_pos()
+  let s:last_cursor_gpos = getpos('.')
+  return ''
+endfunction
+
+
+
+
 " for textobj#user#define()  "{{{2
 
 function! s:rhs_escape(pattern)
@@ -443,7 +457,8 @@ endfunction
 
 function! s:plugin.define_interface_key_mappings()  "{{{3
   let RHS_FORMAT =
-  \   ':<C-u>call g:__textobj_' . self.name . '.%s('
+  \   '<SID>(save-cursor-pos)'
+  \ . ':<C-u>call g:__textobj_' . self.name . '.%s('
   \ .   '"%s",'
   \ .   '"%s",'
   \ .   '"<mode>"'

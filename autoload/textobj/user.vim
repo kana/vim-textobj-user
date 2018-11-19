@@ -1,5 +1,5 @@
 " textobj-user - Create your own text objects
-" Version: 0.7.5
+" Version: 0.7.6
 " Copyright (C) 2007-2018 Kana Natsuno <http://whileimautomaton.net/>
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining

@@ -1,8 +1,8 @@
 *textobj-user.txt*	Create your own text objects
 
-Version 0.7.5
+Version 0.7.6
 Script ID: 2100
-Copyright (C) 2007-2017 Kana Natsuno <http://whileimautomaton.net/>
+Copyright (C) 2007-2018 Kana Natsuno <http://whileimautomaton.net/>
 License: MIT license  {{{
     Permission is hereby granted, free of charge, to any person obtaining
     a copy of this software and associated documentation files (the
@@ -564,6 +564,10 @@ KNOWN ISSUES					*textobj-user-known-issues*
 
 ==============================================================================
 CHANGELOG					*textobj-user-changelog*
+
+0.7.6	2018-11-19T19:06:11+09:00		*textobj-user-changelog-0.7.6*
+	- Fix "move-n-function" and others in Visual mode not to leave Visual
+	  mode.
 
 0.7.5	2017-09-28T20:38:39+09:00		*textobj-user-changelog-0.7.5*
 	- Revert changes from 0.7.3-0.7.4 for compatibility with custom

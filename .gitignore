@@ -1,3 +1,5 @@
 .vim-flavor
 Gemfile.lock
 VimFlavor.lock
+# Ignore generate doc tags
+/doc/tags

@@ -34,15 +34,15 @@ call textobj#user#plugin('datetime', {
 
 ### Simple text objects surrounded by a pair of patterns
 
-Define `aP` to select a PHP code with `<?php` and `?>`, and
-define `iP` to select a PHP code without `<?php` and `?>`:
+Define `aA` to select text from `<<` to the matching `>>`, and
+define `iA` to select text inside `<<` and `>>`:
 
 ```vim
-call textobj#user#plugin('php', {
-\   'code': {
-\     'pattern': ['<?php\>', '?>'],
-\     'select-a': 'aP',
-\     'select-i': 'iP',
+call textobj#user#plugin('braces', {
+\   'angle': {
+\     'pattern': ['<<', '>>'],
+\     'select-a': 'aA',
+\     'select-i': 'iA',
 \   },
 \ })
 ```
@@ -82,6 +82,33 @@ function! CurrentLineI()
   \ ? ['v', head_pos, tail_pos]
   \ : 0
 endfunction
+```
+
+
+### Text objects for a specific filetype
+
+Define `a(` to select text from `\left(` to the matching `\right)`, and
+define `i(` to select text inside `\left(` to the matching `\right)`,
+but *only for tex files*:
+
+```vim
+call textobj#user#plugin('tex', {
+\   'paren-math': {
+\     'pattern': ['\\left(', '\\right)'],
+\     'select-a': [],
+\     'select-i': [],
+\   },
+\ })
+
+augroup tex_textobjs
+  autocmd!
+  autocmd FileType tex call textobj#user#map('tex', {
+  \   'paren-math': {
+  \     'select-a': '<buffer> a(',
+  \     'select-i': '<buffer> i(',
+  \   },
+  \ })
+augroup END
 ```
 
 

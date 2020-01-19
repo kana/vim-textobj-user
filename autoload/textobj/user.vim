@@ -523,10 +523,10 @@ function! s:plugin.do_by_pattern(spec_name, obj_name, previous_mode)
 endfunction
 
 let s:PATTERN_IMPL_TABLE = {
-\   'move-n': 's:move_wrapper',
-\   'move-N': 's:move_wrapper',
-\   'move-p': 's:move_wrapper',
-\   'move-P': 's:move_wrapper',
+\   'move-n': 's:move_wrapper_start',
+\   'move-N': 's:move_wrapper_end',
+\   'move-p': 's:move_wrapper_start',
+\   'move-P': 's:move_wrapper_end',
 \   'select': 'textobj#user#select',
 \   'select-a': 's:select_pair_wrapper',
 \   'select-i': 's:select_pair_wrapper',
@@ -542,10 +542,27 @@ let s:PATTERN_FLAGS_TABLE = {
 \   'select-i': 'i',
 \ }
 
-function! s:move_wrapper(patterns, flags, previous_mode)
+function! s:move_wrapper_start(patterns, flags, previous_mode)
   " \x16 = CTRL-V
+  let pat = a:patterns
+  if type(pat) == type([])
+      let pat = pat[0]
+  endif
   call textobj#user#move(
-  \   a:patterns,
+  \   pat,
+  \   substitute(a:flags, '[vV\x16]', '', 'g'),
+  \   a:previous_mode
+  \ )
+endfunction
+
+function! s:move_wrapper_end(patterns, flags, previous_mode)
+  " \x16 = CTRL-V
+  let pat = a:patterns
+  if type(pat) == type([])
+      let pat = pat[1]
+  endif
+  call textobj#user#move(
+  \   pat,
   \   substitute(a:flags, '[vV\x16]', '', 'g'),
   \   a:previous_mode
   \ )
